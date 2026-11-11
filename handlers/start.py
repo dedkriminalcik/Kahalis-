@@ -10,9 +10,11 @@ def get_main_keyboard():
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="👤 Профиль", callback_data="profile"),
          InlineKeyboardButton(text="⛏ Работа", callback_data="work_menu")],
-        [InlineKeyboardButton(text="🌌 Галактики", callback_data="galaxy_menu"),
+        [InlineKeyboardButton(text="🌌 Галактики & Рынок", callback_data="galaxy_menu"),
+         InlineKeyboardButton(text="🚀 Космический Транспорт", callback_data="transport_menu")],
+        [InlineKeyboardButton(text="💥 Рейды и Нападения", callback_data="raids_menu"),
          InlineKeyboardButton(text="🛡 Защита (Щиты)", callback_data="shields_menu")],
-        [InlineKeyboardButton(text="🎁 Ежедневный бонус", callback_data="daily_bonus"),
+        [InlineKeyboardButton(text="🎁 Бонус", callback_data="daily_bonus"),
          InlineKeyboardButton(text="🎲 Ставки", callback_data="gambling_menu")]
     ])
 
@@ -31,12 +33,12 @@ async def cmd_start(message: Message):
             await session.commit()
 
     text = (
-        f"🤖 Привет, **{message.from_user.first_name}**! Бот активен и готов к работе!\n\n"
-        "🌌 Добро пожаловать в масштабную космическую RPG!\n"
-        "• Зарабатывай **нейтрино (🪙)** на разных работах.\n"
-        "• Покупай уникальные **Галактики** и строй экономику.\n"
-        "• Приобретай **защитные поля (слойки)**, чтобы полностью отражать урон соперников 💥.\n"
-        "• Испытывай удачу в ставках и забирай ежедневные бонусы!"
+        f"🤖 Привет, **{message.from_user.first_name}**! Все модули бота активированы!\n\n"
+        "🌌 **Космическая Империя — Обновление:**\n"
+        "• Покупай галактики разного объема и цены, прокачивай и продавай их 📈.\n"
+        "• Используй космический транспорт 🚀 для передвижения между секторами.\n"
+        "• Совершай рейды на базы соперников и грабь часть их ресурсов 📦 (если пробьешь щиты).\n"
+        "• Зарабатывай нейтрино (🪙), крути ставки и собирай бонусы!"
     )
 
     await message.answer(text, reply_markup=get_main_keyboard(), parse_mode="Markdown")
