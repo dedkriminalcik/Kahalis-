@@ -1,48 +1,40 @@
 from aiogram import Router, F
-from aiogram.filters import CommandStart
-from aiogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
-from sqlalchemy.future import select
-from database.models import async_session, User
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 router = Router()
 
-def get_main_keyboard():
-    return InlineKeyboardMarkup(inline_keyboard=[
+# Динамическая генерация кнопок в зависимости от статуса игрока
+def get_dynamic_keyboard(level: int):
+    buttons = [
         [InlineKeyboardButton(text="👤 Профиль", callback_data="profile"),
-         InlineKeyboardButton(text="⛏ Работа", callback_data="work_menu")],
-        [InlineKeyboardButton(text="🌌 Галактики & Рынок", callback_data="galaxy_menu"),
-         InlineKeyboardButton(text="🚀 Космический Транспорт", callback_data="transport_menu")],
-        [InlineKeyboardButton(text="💥 Рейды и Нападения", callback_data="raids_menu"),
-         InlineKeyboardButton(text="🛡 Защита (Щиты)", callback_data="shields_menu")],
-        [InlineKeyboardButton(text="🎁 Бонус", callback_data="daily_bonus"),
-         InlineKeyboardButton(text="🎲 Ставки", callback_data="gambling_menu")]
-    ])
+         InlineKeyboardButton(text="⛏ Работать", callback_data="work")]
+    ]
+    
+    # Если уровень игрока выше 5, открывается секретный сектор
+    if level >= 5:
+        buttons.append([InlineKeyboardButton(text="🌌 Секретный Сектор ✨", callback_data="secret_galaxy")])
+        
+    buttons.append([InlineKeyboardButton(text="🔄 Обновить меню", callback_data="refresh_menu")])
+    return InlineKeyboardMarkup(inline_keyboard=buttons)
 
-@router.message(CommandStart())
+@router.message(F.text == "/start")
 async def cmd_start(message: Message):
-    async with async_session() as session:
-        result = await session.execute(select(User).where(User.id == message.from_user.id))
-        user = result.scalars().first()
-
-        if not user:
-            user = User(
-                id=message.from_user.id,
-                username=message.from_user.username or message.from_user.first_name
-            )
-            session.add(user)
-            await session.commit()
-
+    # Допустим, уровень игрока равен 3 (для примера)
+    player_level = 3
+    
     text = (
-        f"🤖 Привет, **{message.from_user.first_name}**! Все модули бота активированы!\n\n"
-        "🌌 **Космическая Империя — Обновление:**\n"
-        "• Покупай галактики разного объема и цены, прокачивай и продавай их 📈.\n"
-        "• Используй космический транспорт 🚀 для передвижения между секторами.\n"
-        "• Совершай рейды на базы соперников и грабь часть их ресурсов 📦 (если пробьешь щиты).\n"
-        "• Зарабатывай нейтрино (🪙), крути ставки и собирай бонусы!"
+        f"🛸 **Космический терминал активен!**\n"
+        f"Ваш текущий уровень: {level_text := player_level}\n\n"
+        "Выберите действие на панели управления:"
     )
+    await message.answer(text, reply_markup=get_dynamic_keyboard(player_level), parse_mode="Markdown")
 
-    await message.answer(text, reply_markup=get_main_keyboard(), parse_mode="Markdown")
-
-@router.callback_query(F.data == "back_main")
-async def back_main(call: CallbackQuery):
-    await call.message.edit_text("🛸 **Главное меню управления империей:**", reply_markup=get_main_keyboard(), parse_mode="Markdown")
+@router.callback_query(F.data == "refresh_menu")
+async def refresh_menu(call: CallbackQuery):
+    # Пример изменения кнопок «на лету» при обновлении
+    await call.message.edit_text(
+        "🔄 Меню успешно обновлено актуальными данными из базы!",
+        reply_markup=get_dynamic_keyboard(level=5), # Меняем уровень, чтобы показать появление новой кнопки
+        parse_mode="Markdown"
+    )
+    await call.answer("Данные синхронизированы!")
