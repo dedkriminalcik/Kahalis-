@@ -4,25 +4,31 @@ from sqlalchemy.future import select
 from database.models import async_session, User, Galaxy
 
 router = Router()
-GALAXY_PRICE = 50000
 
-@router.callback_query(F.data == "my_galaxy")
-async def my_galaxy(call: CallbackQuery):
+GALAXY_TYPES = {
+    "spiral": {"name": "Спиральная Галактика", "price": 25000, "type": "Спиральная"},
+    "elliptical": {"name": "Эллиптическая Галактика", "price": 75000, "type": "Эллиптическая"},
+    "blackhole": {"name": "Галактика Черной Дыры", "price": 200000, "type": "Черная Дыра"},
+    "quasar": {"name": "Кварковая Мега-Галактика", "price": 500000, "type": "Кварковая"}
+}
+
+@router.callback_query(F.data == "galaxy_menu")
+async def galaxy_menu(call: CallbackQuery):
     async with async_session() as session:
         result = await session.execute(select(User).where(User.id == call.from_user.id))
         user = result.scalars().first()
 
         if not user.own_galaxy_id:
             text = (
-                "🌌 **У вас пока нет собственной Галактики.**\n\n"
-                "Вы находитесь в Общем Секторе. Покупка личной галактики дает возможность:\n"
-                "• Строить планетные системы и щиты\n"
-                "• Собирать налоги с прилетающих игроков\n"
-                "• Защищать свои богатства от набегов врагов!\n\n"
-                f"💰 **Стоимость лицензии Галактики:** {GALAXY_PRICE:,} кредитов."
+                "🌌 **РИНОК ГАЛАКТИК**\n\n"
+                "Вы можете приобрести собственную галактику, собирать с нее налоги и строить империю!\n"
+                "Выберите класс галактики для покупки:"
             )
             kb = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text=f"💳 Купить Галактику ({GALAXY_PRICE:,})", callback_data="buy_galaxy")],
+                [InlineKeyboardButton(text="🌀 Спиральная (25,000 🪙)", callback_data="buy_gal_spiral")],
+                [InlineKeyboardButton(text="🪐 Эллиптическая (75,000 🪙)", callback_data="buy_gal_elliptical")],
+                [InlineKeyboardButton(text="🕳 Черная Дыра (200,000 🪙)", callback_data="buy_gal_blackhole")],
+                [InlineKeyboardButton(text="✨ Кварковая (500,000 🪙)", callback_data="buy_gal_quasar")],
                 [InlineKeyboardButton(text="◀️ В меню", callback_data="back_main")]
             ])
         else:
@@ -30,22 +36,24 @@ async def my_galaxy(call: CallbackQuery):
             gal = g_res.scalars().first()
 
             text = (
-                f"🌌 **ГАЛАКТИКА:** {gal.name}\n"
-                f"━━━━━━━━━━━━━━━━━━\n"
-                f"🛡 **Уровень обороны / Щитов:** {gal.defense_level}\n"
-                f"🏗 **Уровень экономики:** {gal.economy_level}\n\n"
-                "Ваша галактика защищена от полной потери! Враги могут лишить вас лишь части наворованных ресурсов при пробое щитов."
+                f"🌌 **ВАША ГАЛАКТИКА:** {gal.name}\n"
+                f"🌟 **Класс:** {gal.galaxy_type}\n"
+                f"🛡 **Уровень обороны сектора:** {gal.defense_level}\n"
+                f"🪙 **Экономический потенциал:** {gal.economy_level}\n\n"
+                "Ваша галактика полностью защищена от захвата! Другие игроки могут лишь пытаться грабить ресурсы, если пробьют ваши силовые щиты."
             )
             kb = InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="🛡 Улучшить Щиты (10,000)", callback_data="upgrade_defense")],
-                [InlineKeyboardButton(text="🏗 Улучшить Экономику (10,000)", callback_data="upgrade_economy")],
+                [InlineKeyboardButton(text="🛡 Улучшить щиты сектора (15,000 🪙)", callback_data="upgrade_g_def")],
                 [InlineKeyboardButton(text="◀️ В меню", callback_data="back_main")]
             ])
 
         await call.message.edit_text(text, reply_markup=kb, parse_mode="Markdown")
 
-@router.callback_query(F.data == "buy_galaxy")
-async def buy_galaxy(call: CallbackQuery):
+@router.callback_query(F.data.startswith("buy_gal_"))
+async def buy_galaxy_action(call: CallbackQuery):
+    key = call.data.replace("buy_gal_", "")
+    info = GALAXY_TYPES.get(key)
+
     async with async_session() as session:
         result = await session.execute(select(User).where(User.id == call.from_user.id))
         user = result.scalars().first()
@@ -54,17 +62,21 @@ async def buy_galaxy(call: CallbackQuery):
             await call.answer("У вас уже есть галактика!", show_alert=True)
             return
 
-        if user.credits < GALAXY_PRICE:
-            await call.answer("Недостаточно кредитов!", show_alert=True)
+        if user.neutrinos < info["price"]:
+            await call.answer("Недостаточно нейтрино (🪙)!", show_alert=True)
             return
 
-        user.credits -= GALAXY_PRICE
-        new_galaxy = Galaxy(name=f"Сектор {user.username}", owner_id=user.id)
-        session.add(new_galaxy)
+        user.neutrinos -= info["price"]
+        new_gal = Galaxy(
+            name=f"Галактика {user.username}",
+            galaxy_type=info["type"],
+            owner_id=user.id
+        )
+        session.add(new_gal)
         await session.flush()
 
-        user.own_galaxy_id = new_galaxy.id
+        user.own_galaxy_id = new_gal.id
         await session.commit()
 
-        await call.answer("🎉 Поздравляем! Вы приобрели собственную Галактику!", show_alert=True)
-        await my_galaxy(call)
+        await call.answer(f"🎉 Поздравляем! Вы приобрели {info['name']}!", show_alert=True)
+        await galaxy_menu(call)
