@@ -17,34 +17,38 @@ class User(Base):
     username = Column(String, nullable=True)
     level = Column(Integer, default=1)
     exp = Column(Integer, default=0)
-    credits = Column(BigInteger, default=1000)      # Валюта
-    dark_matter = Column(Integer, default=10)       # Премиум-валюта
+    
+    # Валюта
+    neutrinos = Column(BigInteger, default=1500)  # Основная валюта 🪙
+    quantium = Column(Integer, default=10)        # Премиум 💎
 
-    # Боевые характеристики корабля
-    ship_name = Column(String, default="Разведчик-1")
-    attack = Column(Integer, default=10)
-    defense = Column(Integer, default=5)
+    # Корабль и щиты (защита от урона 💥)
+    ship_name = Column(String, default="Разведчик МК-1")
+    attack = Column(Integer, default=15)
+    defense = Column(Integer, default=10)
     health = Column(Integer, default=100)
     max_health = Column(Integer, default=100)
+    shield_type = Column(String, default="Отсутствует") # Слойка/Щит от урона
+    shield_power = Column(Integer, default=0)           # Прочность щита
 
-    # Привязка к Клану и Галактике
+    # Клан и Галактика
     clan_id = Column(Integer, ForeignKey('clans.id'), nullable=True)
     own_galaxy_id = Column(Integer, ForeignKey('galaxies.id'), nullable=True)
 
-    # Кулдаун работы (защита от спама)
+    # Таймеры
     last_work_time = Column(DateTime, default=datetime.datetime.min)
+    last_bonus_time = Column(DateTime, default=datetime.datetime.min)
 
 class Galaxy(Base):
     __tablename__ = 'galaxies'
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     name = Column(String, nullable=False)
+    galaxy_type = Column(String, default="Спиральная") # Тип галактики
     owner_id = Column(BigInteger, ForeignKey('users.id'), nullable=True)
-    clan_owner_id = Column(Integer, ForeignKey('clans.id'), nullable=True)
-
-    defense_level = Column(Integer, default=1)   # Щиты и оборонительные форпосты
-    economy_level = Column(Integer, default=1)   # Уровень дохода/пассивного налога
-    is_clan_territory = Column(Boolean, default=False)
+    
+    defense_level = Column(Integer, default=1)   # Щиты сектора
+    economy_level = Column(Integer, default=1)   # Доход налога
 
 class Clan(Base):
     __tablename__ = 'clans'
