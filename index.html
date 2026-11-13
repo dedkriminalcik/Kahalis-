@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V22 CONTROL</title>
+    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V23 MEGA MASSIVE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -150,7 +150,7 @@
 </header>
 
 <div class="container">
-    <!-- 1. МОСТИК (50 КОРАБЛЕЙ И 50 ГАЛАКТИК) -->
+    <!-- 1. МОСТИК -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
             <div class="card-title"><span>🛸 Ангар Кораблей (50 Моделей)</span></div>
@@ -258,7 +258,7 @@
         </div>
     </section>
 
-    <!-- 5. ПРОФИЛЬ, НАСТРОЙКИ (50 ТЕМ) И РАСШИРЕННЫЙ ДОНАТ -->
+    <!-- 5. ПРОФИЛЬ И ДОНАТ ОТ МАЛОГО ДО ВЕЛИКОГО -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>👤 Досье Пилота</span></div>
@@ -276,14 +276,22 @@
 
         <div class="cyber-card">
             <div class="card-title"><span>⭐ Магазин Доната (От малого до великого)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Выберите монеты или алмазы с отправкой в ЛС @bobik11222:</p>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Монеты и Алмазы с отправкой в ЛС @bobik11222:</p>
             <div class="grid-2">
                 <button class="btn btn-stars" onclick="buyDonate('coins', 25, 25000)">🪙 25k Монет<br><small>25 Stars</small></button>
-                <button class="btn btn-stars" onclick="buyDonate('coins', 100, 150000)">🪙 150k Монет<br><small>100 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('coins', 50, 75000)">🪙 75k Монет<br><small>50 Stars</small></button>
             </div>
-            <div class="grid-2" style="margin-top:8px;">
+            <div class="grid-2" style="margin-top:6px;">
+                <button class="btn btn-stars" onclick="buyDonate('coins', 100, 200000)">🪙 200k Монет<br><small>100 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('coins', 250, 1000000)">🪙 1M Монет<br><small>250 Stars</small></button>
+            </div>
+            <div class="grid-2" style="margin-top:10px;">
                 <button class="btn btn-stars" onclick="buyDonate('crystals', 25, 1000)">💎 1k Алмазов<br><small>25 Stars</small></button>
-                <button class="btn btn-stars" onclick="buyDonate('crystals', 100, 6000)">💎 6k Алмазов<br><small>100 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('crystals', 50, 3000)">💎 3k Алмазов<br><small>50 Stars</small></button>
+            </div>
+            <div class="grid-2" style="margin-top:6px;">
+                <button class="btn btn-stars" onclick="buyDonate('crystals', 100, 8000)">💎 8k Алмазов<br><small>100 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('crystals', 250, 25000)">💎 25k Алмазов<br><small>250 Stars</small></button>
             </div>
         </div>
 
@@ -300,18 +308,17 @@
                 <option value="theme8">Тема #8: Dark Matter</option>
                 <option value="theme9">Тема #9: Deep Space</option>
                 <option value="theme10">Тема #10: Supernova</option>
-                <!-- Дополнено до 50 тем -->
             </select>
         </div>
     </section>
 
-    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА С УПРАВЛЕНИЕМ УРОВНЯМИ И РЕСУРСАМИ -->
+    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА С РАЗДЕЛЬНОЙ ВЫДАЧЕЙ УРОВНЕЙ И РЕСУРСОВ -->
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
             <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ УПРАВЛЕНИЯ</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Выдача ресурсов и уровней игроку по ID:</p>
-            <input type="text" id="target-user-id" class="cyber-input" placeholder="Telegram ID (пусто = себе)">
-            <input type="number" id="custom-amount" class="cyber-input" placeholder="Количество (число, например: 50)">
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Точная выдача ресурсов и уровней через консоль:</p>
+            <input type="text" id="target-user-id" class="cyber-input" placeholder="Telegram ID (пусто = ваш аккаунт)">
+            <input type="number" id="custom-amount" class="cyber-input" placeholder="Количество (например: 50, 10000, 1)">
             <div class="grid-2">
                 <button class="btn btn-gold" onclick="adminGiveCustomCoins()">🪙 Выдать Монеты</button>
                 <button class="btn btn-cyan" onclick="adminGiveCustomCrystals()">💎 Выдать Алмазы</button>
@@ -346,7 +353,7 @@
     let tg = null;
     try { if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; tg.expand(); } } catch(e) {}
 
-    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v22')) || {
+    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v23')) || {
         credits: 15000, crystals: 500, stars: 0, parts: 5, lvl: 1, playerHp: 100, enemyHp: 300,
         galaxy: "Альфа-1", ship: "Икар MK-I", upgradeLvl: 1, gpus: 2, inertia: 10,
         lastInertiaCheck: Date.now(), theme: "default", lang: "ru", staffRoles: {}
@@ -361,7 +368,7 @@
     } catch(e) {}
 
     function save() {
-        try { localStorage.setItem('kahalis_supreme_v22', JSON.stringify(state)); } catch(e) {}
+        try { localStorage.setItem('kahalis_supreme_v23', JSON.stringify(state)); } catch(e) {}
         updateUI();
     }
 
@@ -426,7 +433,7 @@
             setTheme(state.theme || 'default');
             renderStores();
             updateUI();
-            addLog("KAHALIS SUPREME V22 запущен. Консоль управления уровнями активна.");
+            addLog("KAHALIS SUPREME V23 запущен. Управление уровнями и ресурсами активно.");
         } catch(e) {}
     }
 
@@ -715,7 +722,7 @@
 
     function setCustomTheme(themeName) { setTheme(themeName); }
 
-    // Консольные функции выдачи через Root-панель
+    // Консольные функции выдачи через Root-панель (полностью исправленные и гибкие)
     function adminGiveCustomCoins() {
         let amount = parseInt(document.getElementById('custom-amount').value) || 10000;
         state.credits += amount;
