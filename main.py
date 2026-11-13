@@ -2,22 +2,34 @@ import asyncio
 import logging
 import os
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv("8709941951:AAEWBX1IQJZoikAgEYh8trfT0xtKGo7-0KU")
+TOKEN = os.getenv("8709941951:AAE_RN2C43TgbcOw4k16bGctfdKGvNmI2uc")
+
+# Впиши сюда свой Telegram ID (цифрами), чтобы получить роль Владельца
+OWNER_ID = 123456789  # Замени на свой реальный ID!
 
 logging.basicConfig(level=logging.INFO)
 
-# 1. Главное меню
-def get_main_menu():
-    return InlineKeyboardMarkup(inline_keyboard=[
+# Ссылка на твой Mini App (замени на свою ссылку GitHub Pages или хостинга)
+WEBAPP_URL = "https://t.me/your_webapp_link" 
+
+# Главное меню пилота
+def get_main_menu(is_owner: bool = False):
+    keyboard = [
+        [InlineKeyboardButton(text="🚀 Запустить Mini App", web_app=WebAppInfo(url=WEBAPP_URL))],
         [InlineKeyboardButton(text="🛠 Работа", callback_data="menu_work"),
          InlineKeyboardButton(text="👤 Профиль", callback_data="menu_profile")]
-    ])
+    ]
+    # Если пользователь — владелец, добавляем секретную кнопку консоли
+    if is_owner:
+        keyboard.insert(0, [InlineKeyboardButton(text="⚙️ Консоль владельца", callback_data="owner_console")])
+        
+    return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
-# 2. Меню заданий (появляется при нажатии на «Работа»)
+# Меню заданий
 def get_work_menu():
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="⛏ Шахта", callback_data="task_mine"),
@@ -25,7 +37,6 @@ def get_work_menu():
         [InlineKeyboardButton(text="◀️ Назад в меню", callback_data="menu_main")]
     ])
 
-# 3. Кнопка возврата назад к списку работ
 def get_back_to_work():
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="◀️ Назад к работе", callback_data="menu_work")]
@@ -41,17 +52,43 @@ async def main():
 
     @dp.message(F.text == "/start")
     async def cmd_start(message: Message):
+        # Проверяем, является ли пользователь владельцем
+        is_owner = (message.from_user.id == OWNER_ID)
+        
         await message.answer(
-            "🌌 **Космический терминал управления:**\nВыберите нужный раздел:",
-            reply_markup=get_main_menu(),
+            "🌌 **Космический терминал управления:**\n"
+            "Добро пожаловать в сектор! Выберите действие или откройте Mini App:",
+            reply_markup=get_main_menu(is_owner),
             parse_mode="Markdown"
         )
 
+    # Консоль владельца (админка)
+    @dp.callback_query(F.data == "owner_console")
+    async def owner_console(call: CallbackQuery):
+        if call.from_user.id != OWNER_ID:
+            await call.answer("⛔ У вас нет доступа к этой панели!", show_alert=True)
+            return
+            
+        await call.message.edit_text(
+            "⚙️ **Панель управления владельца (Консоль):**\n\n"
+            "• Статус ядра: Активно\n"
+            "• Ошибок в базе: 0\n"
+            "• Управление ролями и экономикой доступно ниже:",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="📊 Статистика серверов", callback_data="stat_servers")],
+                [InlineKeyboardButton(text="📢 Рассылка игрокам", callback_data="owner_broadcast")],
+                [InlineKeyboardButton(text="◀️ Назад", callback_data="menu_main")]
+            ]),
+            parse_mode="Markdown"
+        )
+        await call.answer()
+
     @dp.callback_query(F.data == "menu_main")
     async def back_to_main(call: CallbackQuery):
+        is_owner = (call.from_user.id == OWNER_ID)
         await call.message.edit_text(
             "🌌 **Космический терминал управления:**\nВыберите нужный раздел:",
-            reply_markup=get_main_menu(),
+            reply_markup=get_main_menu(is_owner),
             parse_mode="Markdown"
         )
         await call.answer()
@@ -94,7 +131,7 @@ async def main():
         )
         await call.answer()
 
-    print("🚀 Бот успешно запущен!")
+    print("🚀 Бот успешно запущен со всеми ролями и Mini App!")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
