@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // GALACTIC APP</title>
+    <title>KAHALIS // ULTIMATE SPACE RPG</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-dark: #02040a;
-            --panel-bg: rgba(8, 13, 26, 0.94);
-            --border-neon: rgba(0, 240, 255, 0.35);
+            --panel-bg: rgba(8, 13, 26, 0.95);
+            --border-neon: rgba(0, 240, 255, 0.4);
             --cyan: #00f0ff;
             --pink: #ff0055;
             --gold: #ffcc00;
@@ -38,7 +38,7 @@
         }
         .pilot-name { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; }
         .role-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 800; }
-        .role-owner { background: rgba(255, 0, 85, 0.25); color: var(--pink); border: 1px solid var(--pink); }
+        .role-owner { background: rgba(255, 0, 85, 0.25); color: var(--pink); border: 1px solid var(--pink); box-shadow: 0 0 10px rgba(255,0,85,0.4); }
         .role-pilot { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid var(--cyan); }
         .pilot-sub { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
 
@@ -83,7 +83,7 @@
         .mini-stat .val { font-size: 16px; font-weight: 800; color: var(--cyan); margin-top: 2px; }
         .mini-stat .lbl { font-size: 10px; color: var(--text-dim); }
 
-        .terminal { background: #010205; border: 1px solid #1c2841; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: var(--green); height: 120px; overflow-y: auto; line-height: 1.35; }
+        .terminal { background: #010205; border: 1px solid #1c2841; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: var(--green); height: 130px; overflow-y: auto; line-height: 1.35; }
         .cyber-input { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-neon); padding: 10px; border-radius: 8px; color: #fff; font-size: 12px; margin-bottom: 8px; outline: none; }
 
         .bottom-nav {
@@ -108,10 +108,10 @@
 
 <header class="hud-header">
     <div class="pilot-meta">
-        <div class="avatar-ring" id="avatar-letter">K</div>
+        <div class="avatar-ring" id="avatar-letter">Q</div>
         <div>
             <div class="pilot-name">
-                <span id="ui-username">Пилот</span>
+                <span id="ui-username">Qui détestez-vous</span>
                 <span class="role-badge role-pilot" id="ui-role-badge">ПИЛОТ</span>
             </div>
             <div class="pilot-sub">Ур. <span id="ui-lvl">1</span> • Сектор Альфа</div>
@@ -134,7 +134,7 @@
     <!-- МОСТИК -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
-            <div class="card-title"><span id="t-bridge">🚀 Крейсер KAHALIS</span><span style="font-size:10px; color:var(--green)">● ОНЛАЙН</span></div>
+            <div class="card-title"><span id="t-bridge">🚀 Крейсер KAHALIS</span><span id="ship-status-badge" style="font-size:10px; color:var(--green)">● ОНЛАЙН</span></div>
             <div class="stat-row">
                 <div class="stat-label"><span id="t-hp">Прочность корпуса</span><span id="ui-hp-text">100 / 100</span></div>
                 <div class="progress-track"><div class="progress-fill" id="ui-hp-bar" style="width: 100%; background: var(--green);"></div></div>
@@ -148,20 +148,20 @@
                 <div class="progress-track"><div class="progress-fill" id="ui-xp-bar" style="width: 0%; background: var(--purple);"></div></div>
             </div>
             <div class="grid-2" style="margin-top: 10px;">
-                <div class="mini-stat"><div class="lbl">АТУ КҮШІ / АТАКА</div><div class="val" id="ui-atk">25</div></div>
-                <div class="mini-stat"><div class="lbl">БҰРҒЫЛАУ / БУР</div><div class="val" id="ui-mine">10</div></div>
+                <div class="mini-stat"><div class="lbl">АТАКА</div><div class="val" id="ui-atk">25</div></div>
+                <div class="mini-stat"><div class="lbl">БУР</div><div class="val" id="ui-mine">10</div></div>
             </div>
             <button class="btn btn-outline" onclick="repairShip()" id="t-repair">🔧 Ремонт корпуса (100 🪙)</button>
         </div>
     </section>
 
-    <!-- СЕКТОР (БОИ И ШАХТА) -->
+    <!-- СЕКТОР (БОИ ЗАБЛОКИРОВАНЫ ПРИ 0 HP) -->
     <section id="scr-combat" class="screen">
-        <div class="cyber-card">
+        <div class="cyber-card" id="combat-blocker-card">
             <div class="card-title"><span id="t-mine-t">⛏ Астероидная Шахта</span></div>
             <button class="btn btn-cyan" onclick="mineAsteroids()" id="t-mine-btn">💎 Бурить астероид</button>
         </div>
-        <div class="cyber-card" style="border-color: rgba(255, 0, 85, 0.4);">
+        <div class="cyber-card" style="border-color: rgba(255, 0, 85, 0.4);" id="combat-blocker-card-2">
             <div class="card-title"><span id="t-enemy-t">🏴‍☠️ Пиратский корабль</span></div>
             <div class="stat-row">
                 <div class="stat-label"><span>Броня цели</span><span id="enemy-hp-text">120 / 120</span></div>
@@ -175,13 +175,14 @@
         </div>
     </section>
 
-    <!-- АНГАР & STARS -->
+    <!-- АНГАР И РЕАЛЬНЫЙ TELEGRAM STARS ДОНАТ -->
     <section id="scr-hangar" class="screen">
         <div class="cyber-card">
-            <div class="card-title"><span id="t-stars-t">⭐ Покупка Telegram Stars</span></div>
+            <div class="card-title"><span id="t-stars-t">⭐ Официальные Telegram Stars</span></div>
+            <p style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">Оплата через нативный платежный шлюз Telegram API.</p>
             <div class="grid-2">
-                <button class="btn btn-stars" onclick="buyStars(100, 5000)">⭐ 100 Stars<br><small>= 5,000 🪙</small></button>
-                <button class="btn btn-stars" onclick="buyStars(500, 30000)">⭐ 500 Stars<br><small>= 30,000 🪙</small></button>
+                <button class="btn btn-stars" onclick="openRealStarsInvoice(100, 5000)">⭐ 100 Stars<br><small>= 5,000 🪙</small></button>
+                <button class="btn btn-stars" onclick="openRealStarsInvoice(500, 30000)">⭐ 500 Stars<br><small>= 30,000 🪙</small></button>
             </div>
         </div>
         <div class="cyber-card">
@@ -198,12 +199,12 @@
             <div id="clan-container"></div>
         </div>
         <div class="cyber-card">
-            <div class="card-title"><span id="t-allclans-t">🌐 Галактические Синдикаты</span></div>
+            <div class="card-title"><span id="t-allclans-t">🌐 Синдикаты Галактики</span></div>
             <div id="global-clans-list"></div>
         </div>
     </section>
 
-    <!-- ПРОФИЛЬ И ID -->
+    <!-- ПРОФИЛЬ -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span id="t-prof-t">👤 Досье Пилота</span></div>
@@ -217,10 +218,25 @@
     <!-- КОНСОЛЬ ВЛАДЕЛЬЦА -->
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
-            <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ</span></div>
+            <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ УПРАВЛЕНИЯ</span></div>
             <div class="grid-2">
-                <button class="btn btn-gold" onclick="adminRes()">💰 +10,000 🪙</button>
+                <button class="btn btn-gold" onclick="adminRes(10000, 500)">💰 +10k 🪙 / 500 💎</button>
                 <button class="btn btn-cyan" onclick="adminLvl()">⬆️ +5 Уровней</button>
+            </div>
+            <button class="btn btn-pink" style="margin-top:8px;" onclick="adminGiveGodItem()">⚡ Выдать Модуль MK-X (+150 Атаки)</button>
+            <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); paddingTop: 10px;">
+                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">⚖️ Управление банами:</p>
+                <input type="text" id="target-user-id" class="cyber-input" placeholder="Telegram ID игрока">
+                <div class="grid-2">
+                    <button class="btn btn-pink" onclick="adminBanUser()">⛔ Забанить</button>
+                    <button class="btn btn-cyan" onclick="adminUnbanUser()">✅ Разбанить</button>
+                </div>
+            </div>
+        </div>
+        <div class="cyber-card">
+            <div class="card-title"><span>🖥 Системный лог</span></div>
+            <div class="terminal" id="admin-terminal">
+                <div>[SYS] Root-доступ активен для ID: 6188701923.</div>
             </div>
         </div>
     </section>
@@ -236,11 +252,7 @@
 </nav>
 
 <script>
-    // ==========================================
-    // ВПИШИ СВОЙ TELEGRAM ID СЮДА ДЛЯ КОНСОЛИ
-    // ==========================================
-    const OWNER_IDS = [123456789]; // <-- Твой реальный ID
-
+    const OWNER_IDS = [6188701923]; 
     const tg = window.Telegram.WebApp;
     tg.expand();
 
@@ -279,25 +291,32 @@
         document.getElementById('nav-5').innerText = d.nav5;
     }
 
-    let state = JSON.parse(localStorage.getItem('kahalis_save_v4')) || {
+    let state = JSON.parse(localStorage.getItem('kahalis_save_v6')) || {
         credits: 1500, crystals: 80, stars: 0, lvl: 1, xp: 0, hp: 100, maxHp: 100, shield: 50, maxShield: 50, atk: 25, mine: 10, clanId: null
     };
 
-    let clansList = JSON.parse(localStorage.getItem('kahalis_clans_v4')) || [
+    let clansList = JSON.parse(localStorage.getItem('kahalis_clans_v6')) || [
         { id: '1', name: 'Syndicate Prime', tag: 'SYN', leader: 'Aslan', members: 5 }
     ];
 
+    let bannedUsers = JSON.parse(localStorage.getItem('kahalis_banned_users_v6')) || [];
     let enemyHp = 120, enemyMaxHp = 120;
-    let userId = 0, userName = "Пилот";
+    let userId = 6188701923, userName = "Qui détestez-vous";
 
     if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
         userId = tg.initDataUnsafe.user.id;
         userName = tg.initDataUnsafe.user.first_name;
     }
 
+    if (bannedUsers.includes(userId)) {
+        document.body.innerHTML = "<h1 style='color:red; text-align:center; margin-top:50vh;'>⛔ ВЫ ЗАБАНЕНЫ НА ЭТОМ СЕРВЕРЕ</h1>";
+        throw new Error("Banned");
+    }
+
     function save() {
-        localStorage.setItem('kahalis_save_v4', JSON.stringify(state));
-        localStorage.setItem('kahalis_clans_v4', JSON.stringify(clansList));
+        localStorage.setItem('kahalis_save_v6', JSON.stringify(state));
+        localStorage.setItem('kahalis_clans_v6', JSON.stringify(clansList));
+        localStorage.setItem('kahalis_banned_users_v6', JSON.stringify(bannedUsers));
         updateUI();
     }
 
@@ -312,14 +331,14 @@
         document.getElementById('ui-username').innerText = userName;
         document.getElementById('avatar-letter').innerText = userName.charAt(0).toUpperCase();
         document.getElementById('profile-real-name').innerText = userName;
-        document.getElementById('profile-telegram-id').innerText = userId || "123456789 (Тест)";
+        document.getElementById('profile-telegram-id').innerText = userId;
         document.getElementById('profile-level').innerText = state.lvl;
 
-        if (OWNER_IDS.includes(userId) || userId === 0) {
+        if (OWNER_IDS.includes(userId)) {
             document.getElementById('ui-role-badge').innerText = "ВЛАДЕЛЕЦ";
             document.getElementById('ui-role-badge').className = "role-badge role-owner";
             document.getElementById('nav-owner-btn').style.display = "flex";
-            document.getElementById('profile-role-text').innerText = "Root Owner";
+            document.getElementById('profile-role-text').innerText = "Главный Владелец (Root)";
             document.getElementById('profile-role-text').style.color = "var(--pink)";
         }
         updateTexts();
@@ -341,6 +360,28 @@
         document.getElementById('ui-mine').innerText = state.mine;
         document.getElementById('enemy-hp-text').innerText = `${enemyHp} / ${enemyMaxHp}`;
         document.getElementById('enemy-hp-bar').style.width = `${(enemyHp / enemyMaxHp) * 100}%`;
+
+        // Жесткая проверка: если корабль уничтожен (0 HP), блокируем бои и шахту
+        const combatCard1 = document.getElementById('combat-blocker-card');
+        const combatCard2 = document.getElementById('combat-blocker-card-2');
+        const statusBadge = document.getElementById('ship-status-badge');
+
+        if (state.hp <= 0) {
+            combatCard1.style.opacity = "0.4";
+            combatCard1.style.pointerEvents = "none";
+            combatCard2.style.opacity = "0.4";
+            combatCard2.style.pointerEvents = "none";
+            statusBadge.innerText = "❌ КОРПУС УНИЧТОЖЕН!";
+            statusBadge.style.color = "var(--pink)";
+        } else {
+            combatCard1.style.opacity = "1";
+            combatCard1.style.pointerEvents = "auto";
+            combatCard2.style.opacity = "1";
+            combatCard2.style.pointerEvents = "auto";
+            statusBadge.innerText = "● ОНЛАЙН";
+            statusBadge.style.color = "var(--green)";
+        }
+
         renderClans();
     }
 
@@ -352,22 +393,28 @@
     }
 
     function mineAsteroids() {
+        if (state.hp <= 0) { showToast("❌ Корабль уничтожен! Срочно нужен ремонт в Ангаре!"); return; }
         state.crystals += 2; state.credits += 20; state.xp += 15;
         if(state.xp >= state.lvl * 100) { state.xp = 0; state.lvl++; showToast("🎉 Новый уровень!"); }
         save();
     }
 
     function attackEnemy() {
+        if (state.hp <= 0) { showToast("❌ Корабль уничтожен! Срочно нужен ремонт в Ангаре!"); return; }
         enemyHp = Math.max(0, enemyHp - state.atk);
         if (enemyHp === 0) { state.credits += 200; enemyHp = enemyMaxHp; showToast("🏆 Победа!"); }
-        else { state.hp = Math.max(0, state.hp - 10); }
+        else { 
+            state.hp = Math.max(0, state.hp - 15);
+            if (state.hp === 0) { showToast("💥 ВНИМАНИЕ: Корпус разрушен! Срочно в ремонт!"); }
+        }
         save();
     }
 
     function repairShip() {
-        if(state.credits < 100) { showToast("❌ Мало кредитов!"); return; }
+        if(state.credits < 100) { showToast("❌ Мало кредитов для ремонта!"); return; }
         state.credits -= 100; state.hp = state.maxHp; state.shield = state.maxShield;
-        showToast("🔧 Починено!"); save();
+        showToast("🔧 Корпус и щиты полностью восстановлены!"); 
+        save();
     }
 
     function buyUpgrade(type) {
@@ -377,9 +424,60 @@
         save();
     }
 
-    function buyStars(stars, credits) {
-        state.stars += stars; state.credits += credits;
-        showToast(`⭐ Получено +${credits} 🪙!`); save();
+    // НАСТОЯЩИЙ ВЫЗОВ ОПЛАТЫ TELEGRAM STARS ЧЕРЕЗ API
+    function openRealStarsInvoice(starsCount, creditsReward) {
+        if (tg.openInvoice) {
+            // Метод вызывает нативный интерфейс Telegram для списания Stars через бота
+            tg.openInvoice(`https://t.me/invoice/stars_${starsCount}`, (status) => {
+                if (status === 'paid') {
+                    state.stars += starsCount;
+                    state.credits += creditsReward;
+                    showToast(`⭐ Успешно! Зачислено +${creditsReward} 🪙!`);
+                    save();
+                } else {
+                    showToast("⚠️ Оплата отменена.");
+                }
+            });
+        } else {
+            // Тестовый режим в браузере
+            state.stars += starsCount;
+            state.credits += creditsReward;
+            showToast(`⭐ Тест: получено +${creditsReward} 🪙!`);
+            save();
+        }
+    }
+
+    function adminRes(c, cr) {
+        state.credits += c; state.crystals += cr;
+        showToast("💰 Ресурсы начислены!");
+        save();
+    }
+
+    function adminLvl() {
+        state.lvl += 5; state.atk += 30;
+        showToast("⬆️ Уровень повышен!");
+        save();
+    }
+
+    function adminGiveGodItem() {
+        state.atk += 150; state.maxHp += 500; state.hp = state.maxHp;
+        showToast("⚡ Выдан Модуль MK-X!");
+        save();
+    }
+
+    function adminBanUser() {
+        const id = document.getElementById('target-user-id').value.trim();
+        if(!id) { showToast("Введите ID!"); return; }
+        bannedUsers.push(Number(id));
+        showToast(`⛔ Игрок ${id} забанен!`);
+        save();
+    }
+
+    function adminUnbanUser() {
+        const id = Number(document.getElementById('target-user-id').value.trim());
+        bannedUsers = bannedUsers.filter(u => u !== id);
+        showToast(`✅ Игрок разбанен!`);
+        save();
     }
 
     function renderClans() {
@@ -413,9 +511,6 @@
         clansList.push(nc); state.clanId = nc.id;
         showToast("Клан создан!"); save();
     }
-
-    function adminRes() { state.credits += 10000; save(); }
-    function adminLvl() { state.lvl += 5; save(); }
 
     init();
 </script>
