@@ -6,7 +6,7 @@ from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv("8709941951:AAH7PwqO__uc59BCYKWzary6I_8CX4Pt3Uk")
+TOKEN = os.getenv("8709941951:AAEWBX1IQJZoikAgEYh8trfT0xtKGo7-0KU")
 
 logging.basicConfig(level=logging.INFO)
 
