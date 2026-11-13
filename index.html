@@ -3,27 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // GALACTIC RPG</title>
+    <title>KAHALIS // ULTIMATE SPACE RPG</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-dark: #05070e;
-            --panel-bg: rgba(14, 20, 36, 0.85);
-            --border-neon: rgba(0, 240, 255, 0.25);
+            --bg-dark: #03050a;
+            --panel-bg: rgba(10, 15, 28, 0.9);
+            --border-neon: rgba(0, 240, 255, 0.3);
             --cyan: #00f0ff;
             --pink: #ff0055;
             --gold: #ffcc00;
             --green: #00ff88;
             --purple: #b829ea;
-            --text-main: #e6f1ff;
-            --text-dim: #7f8ea3;
+            --stars: #ffaa00;
+            --text-main: #f0f6fc;
+            --text-dim: #8b949e;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
             user-select: none;
         }
@@ -32,390 +33,173 @@
             background-color: var(--bg-dark);
             color: var(--text-main);
             overflow-x: hidden;
-            padding-bottom: 85px;
+            padding-bottom: 90px;
             min-height: 100vh;
         }
 
-        /* Живой фон звездного неба */
         #starfield {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
-            background: radial-gradient(ellipse at bottom, #0d1528 0%, #03050a 100%);
+            background: radial-gradient(circle at center, #0d1b33 0%, #03050a 100%);
         }
 
-        /* Верхняя панель пилота */
+        /* Шапка HUD */
         .hud-header {
             position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(7, 10, 19, 0.92);
-            backdrop-filter: blur(12px);
+            top: 0; z-index: 50;
+            background: rgba(5, 8, 17, 0.95);
+            backdrop-filter: blur(15px);
             border-bottom: 1px solid var(--border-neon);
-            padding: 12px 16px;
+            padding: 10px 14px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.7);
         }
 
-        .pilot-meta {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
+        .pilot-meta { display: flex; align-items: center; gap: 10px; }
         .avatar-ring {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
+            width: 38px; height: 38px; border-radius: 50%;
             background: linear-gradient(135deg, var(--cyan), var(--purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 900;
-            font-size: 16px;
-            color: #000;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; font-size: 15px; color: #000;
             box-shadow: 0 0 12px rgba(0, 240, 255, 0.5);
         }
 
-        .pilot-name {
-            font-weight: 700;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
+        .pilot-name { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; }
         .role-badge {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            text-transform: uppercase;
-            font-weight: 800;
-            letter-spacing: 0.5px;
+            font-size: 9px; padding: 2px 5px; border-radius: 4px;
+            text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;
         }
-
         .role-owner { background: rgba(255, 0, 85, 0.2); color: var(--pink); border: 1px solid var(--pink); }
-        .role-admin { background: rgba(184, 41, 234, 0.2); color: var(--purple); border: 1px solid var(--purple); }
         .role-pilot { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid var(--cyan); }
 
-        .pilot-lvl {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 2px;
-        }
+        .pilot-sub { font-size: 10px; color: var(--text-dim); margin-top: 1px; }
 
-        .resources {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-end;
-            gap: 4px;
-        }
-
+        .resources-bar { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
         .res-pill {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 5px;
+            padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 700;
+            display: flex; align-items: center; gap: 4px;
         }
-
         .res-credits { color: var(--gold); border-color: rgba(255, 204, 0, 0.3); }
         .res-crystals { color: var(--cyan); border-color: rgba(0, 240, 255, 0.3); }
+        .res-stars { color: var(--stars); border-color: rgba(255, 170, 0, 0.3); }
 
-        /* Контейнер экранов */
-        .container {
-            padding: 16px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
+        /* Контейнер */
+        .container { padding: 14px; max-width: 480px; margin: 0 auto; }
+        .screen { display: none; animation: fadeIn 0.2s ease-out; }
+        .screen.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
 
-        .screen {
-            display: none;
-            animation: fadeIn 0.25s ease-out;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Карточки */
+        /* Кибер-карточки */
         .cyber-card {
             background: var(--panel-bg);
             border: 1px solid var(--border-neon);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 14px;
-            backdrop-filter: blur(8px);
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 12px;
+            backdrop-filter: blur(10px);
             position: relative;
             overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
         }
-
         .cyber-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 2px;
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
             background: linear-gradient(90deg, transparent, var(--cyan), transparent);
         }
 
         .card-title {
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-transform: uppercase;
+            font-size: 15px; font-weight: 800; letter-spacing: 0.5px;
+            margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+            text-transform: uppercase; color: #fff;
         }
 
-        /* Полоски прогресса */
-        .stat-row {
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            display: flex;
-            justify-content: space-between;
-            font-size: 12px;
-            margin-bottom: 4px;
-            color: var(--text-dim);
-        }
-
-        .progress-track {
-            height: 8px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 4px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
+        /* Прогресс бары */
+        .stat-row { margin-bottom: 8px; }
+        .stat-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; color: var(--text-dim); }
+        .progress-track { height: 7px; background: rgba(255, 255, 255, 0.06); border-radius: 4px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; }
 
         /* Кнопки */
         .btn {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 10px;
-            font-weight: 800;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            cursor: pointer;
-            transition: all 0.15s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 8px;
+            width: 100%; padding: 11px; border: none; border-radius: 10px;
+            font-weight: 800; font-size: 12px; text-transform: uppercase; letter-spacing: 0.8px;
+            cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
         }
+        .btn:active { transform: scale(0.97); }
+        .btn-cyan { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3); }
+        .btn-pink { background: linear-gradient(135deg, #ff0055, #900025); color: #fff; box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3); }
+        .btn-gold { background: linear-gradient(135deg, #ffcc00, #cc7700); color: #000; box-shadow: 0 4px 15px rgba(255, 204, 0, 0.25); }
+        .btn-stars { background: linear-gradient(135deg, #ffaa00, #ff5500); color: #000; box-shadow: 0 4px 15px rgba(255, 170, 0, 0.3); }
+        .btn-outline { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-neon); color: var(--text-main); }
 
-        .btn:active { transform: scale(0.96); }
-
-        .btn-cyan {
-            background: linear-gradient(135deg, #00f0ff, #0088ff);
-            color: #000;
-            box-shadow: 0 4px 15px rgba(0, 240, 255, 0.3);
-        }
-
-        .btn-pink {
-            background: linear-gradient(135deg, #ff0055, #b8003d);
-            color: #fff;
-            box-shadow: 0 4px 15px rgba(255, 0, 85, 0.3);
-        }
-
-        .btn-gold {
-            background: linear-gradient(135deg, #ffcc00, #ff8800);
-            color: #000;
-            box-shadow: 0 4px 15px rgba(255, 204, 0, 0.25);
-        }
-
-        .btn-outline {
-            background: rgba(255, 255, 255, 0.04);
-            border: 1px solid var(--border-neon);
-            color: var(--text-main);
-        }
-
-        /* Сетка характеристик */
-        .grid-2 {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .mini-stat {
-            background: rgba(0, 0, 0, 0.35);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            padding: 10px;
-            border-radius: 10px;
-            text-align: center;
+            background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 8px; border-radius: 8px; text-align: center;
         }
+        .mini-stat .val { font-size: 16px; font-weight: 800; color: var(--cyan); margin-top: 2px; }
+        .mini-stat .lbl { font-size: 10px; color: var(--text-dim); }
 
-        .mini-stat .val {
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--cyan);
-            margin-top: 4px;
-        }
-
-        .mini-stat .lbl {
-            font-size: 11px;
-            color: var(--text-dim);
-        }
-
-        /* Терминал логов */
+        /* Терминалы логов */
         .terminal {
-            background: #020408;
-            border: 1px solid #1c2841;
-            border-radius: 10px;
-            padding: 12px;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 12px;
-            color: var(--green);
-            height: 130px;
-            overflow-y: auto;
-            line-height: 1.4;
+            background: #020408; border: 1px solid #1c2841; border-radius: 8px;
+            padding: 10px; font-family: monospace; font-size: 11px; color: var(--green);
+            height: 110px; overflow-y: auto; line-height: 1.35;
         }
-
-        .terminal div { margin-bottom: 4px; }
+        .terminal div { margin-bottom: 3px; }
         .log-warn { color: var(--gold); }
         .log-err { color: var(--pink); }
 
-        /* Элементы магазина / улучшений */
-        .upgrade-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-        }
-        .upgrade-item:last-child { border-bottom: none; }
-
-        .upg-info h4 { font-size: 14px; color: #fff; }
-        .upg-info p { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
-
-        .upg-btn {
-            padding: 8px 14px;
-            border-radius: 8px;
-            border: none;
-            background: rgba(0, 240, 255, 0.15);
-            border: 1px solid var(--cyan);
-            color: var(--cyan);
-            font-weight: 700;
-            font-size: 12px;
-            cursor: pointer;
-        }
-        .upg-btn:active { background: var(--cyan); color: #000; }
-
         /* Инпуты */
         .cyber-input {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border-neon);
-            padding: 10px 12px;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 13px;
-            margin-bottom: 8px;
-            outline: none;
+            width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-neon);
+            padding: 10px; border-radius: 8px; color: #fff; font-size: 12px; margin-bottom: 8px; outline: none;
         }
         .cyber-input:focus { border-color: var(--cyan); }
 
-        /* Нижняя навигация */
+        /* Нижнее меню */
         .bottom-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(7, 10, 19, 0.96);
-            backdrop-filter: blur(15px);
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(5, 8, 17, 0.96); backdrop-filter: blur(15px);
             border-top: 1px solid var(--border-neon);
-            display: flex;
-            justify-content: space-around;
-            padding: 8px 4px 12px;
-            z-index: 100;
+            display: flex; justify-content: space-around; padding: 6px 2px 10px; z-index: 100;
         }
-
         .nav-btn {
-            background: none;
-            border: none;
-            color: var(--text-dim);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            font-size: 10px;
-            font-weight: 600;
-            gap: 4px;
-            cursor: pointer;
-            flex: 1;
-            transition: 0.2s;
+            background: none; border: none; color: var(--text-dim);
+            display: flex; flex-direction: column; align-items: center; font-size: 9px; font-weight: 600; gap: 3px; cursor: pointer; flex: 1; transition: 0.2s;
         }
-
-        .nav-btn .icon {
-            font-size: 20px;
-            transition: transform 0.2s;
-        }
-
-        .nav-btn.active {
-            color: var(--cyan);
-        }
-
-        .nav-btn.active .icon {
-            transform: translateY(-2px);
-            text-shadow: 0 0 10px var(--cyan);
-        }
-
+        .nav-btn .icon { font-size: 18px; }
+        .nav-btn.active { color: var(--cyan); }
         .nav-btn.owner-tab { color: var(--pink); }
-        .nav-btn.owner-tab.active { text-shadow: 0 0 10px var(--pink); }
 
-        /* Уведомление Toast */
+        /* Выпадающий выбор языка */
+        .lang-switcher {
+            display: flex; gap: 5px; margin-bottom: 10px; justify-content: center;
+        }
+        .lang-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-dim); padding: 4px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: 700;
+        }
+        .lang-btn.active { background: var(--cyan); color: #000; border-color: var(--cyan); }
+
+        /* Тоаст уведомление */
         #toast {
-            position: fixed;
-            top: 75px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-20px);
-            background: rgba(14, 20, 36, 0.95);
-            border: 1px solid var(--cyan);
-            color: #fff;
-            padding: 10px 18px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 700;
-            opacity: 0;
-            pointer-events: none;
-            transition: all 0.3s;
-            z-index: 200;
-            box-shadow: 0 5px 20px rgba(0, 240, 255, 0.3);
-            white-space: nowrap;
+            position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px);
+            background: rgba(10, 15, 28, 0.95); border: 1px solid var(--cyan); color: #fff;
+            padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 700;
+            opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 200; box-shadow: 0 4px 20px rgba(0, 240, 255, 0.4);
         }
-        #toast.show {
-            opacity: 1;
-            transform: translateX(-50%) translateY(0);
-        }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
 <body>
 
 <canvas id="starfield"></canvas>
-<div id="toast">Уведомление</div>
+<div id="toast"></div>
 
 <!-- Шапка HUD -->
 <header class="hud-header">
@@ -426,594 +210,360 @@
                 <span id="ui-username">Пилот</span>
                 <span class="role-badge role-pilot" id="ui-role-badge">ПИЛОТ</span>
             </div>
-            <div class="pilot-lvl">Уровень <span id="ui-lvl">1</span> • Сектор <span id="ui-sector">Альфа-1</span></div>
+            <div class="pilot-sub" id="txt-lvl-sec">Ур. <span id="ui-lvl">1</span> • Сектор Альфа</div>
         </div>
     </div>
-    <div class="resources">
+    <div class="resources-bar">
         <div class="res-pill res-credits">🪙 <span id="ui-credits">1000</span></div>
         <div class="res-pill res-crystals">💎 <span id="ui-crystals">50</span></div>
+        <div class="res-pill res-stars">⭐ <span id="ui-stars">0</span></div>
     </div>
 </header>
 
 <div class="container">
 
-    <!-- ЭКРАН 1: МОСТИК КОРАБЛЯ -->
+    <!-- Переключатель языка -->
+    <div class="lang-switcher">
+        <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+        <button class="lang-btn" onclick="setLang('en')">EN</button>
+        <button class="lang-btn" onclick="setLang('kk')">KK</button>
+    </div>
+
+    <!-- ЭКРАН 1: МОСТИК -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
             <div class="card-title">
-                <span>🚀 Крейсер «KAHALIS-X»</span>
-                <span style="font-size: 11px; color: var(--green);" id="event-status">● ШТАТНЫЙ РЕЖИМ</span>
+                <span id="t-bridge-title">🚀 Крейсер «KAHALIS»</span>
+                <span style="font-size: 10px; color: var(--green);" id="event-status">● ШТАТНЫЙ РЕЖИМ</span>
             </div>
 
             <div class="stat-row">
-                <div class="stat-label"><span>Прочность корпуса</span><span id="ui-hp-text">100 / 100</span></div>
+                <div class="stat-label"><span id="t-hp">Прочность корпуса</span><span id="ui-hp-text">100 / 100</span></div>
                 <div class="progress-track"><div class="progress-fill" id="ui-hp-bar" style="width: 100%; background: var(--green);"></div></div>
             </div>
 
             <div class="stat-row">
-                <div class="stat-label"><span>Энергия щитов</span><span id="ui-shield-text">50 / 50</span></div>
+                <div class="stat-label"><span id="t-shield">Энергия щитов</span><span id="ui-shield-text">50 / 50</span></div>
                 <div class="progress-track"><div class="progress-fill" id="ui-shield-bar" style="width: 100%; background: var(--cyan);"></div></div>
             </div>
 
             <div class="stat-row">
-                <div class="stat-label"><span>Опыт пилота</span><span id="ui-xp-text">0 / 100 XP</span></div>
+                <div class="stat-label"><span id="t-xp">Опыт пилота</span><span id="ui-xp-text">0 / 100 XP</span></div>
                 <div class="progress-track"><div class="progress-fill" id="ui-xp-bar" style="width: 0%; background: var(--purple);"></div></div>
             </div>
 
-            <div class="grid-2" style="margin-top: 12px;">
+            <div class="grid-2" style="margin-top: 10px;">
                 <div class="mini-stat">
-                    <div class="lbl">ОГНЕВАЯ МОЩЬ</div>
+                    <div class="lbl" id="t-atk-lbl">ОГНЕВАЯ МОЩЬ</div>
                     <div class="val" id="ui-atk">25</div>
                 </div>
                 <div class="mini-stat">
-                    <div class="lbl">МОЩНОСТЬ БУРА</div>
+                    <div class="lbl" id="t-mine-lbl">МОЩНОСТЬ БУРА</div>
                     <div class="val" id="ui-mine">10</div>
                 </div>
             </div>
 
-            <button class="btn btn-outline" onclick="repairShip()">🔧 Ремонт корпуса (100 🪙)</button>
+            <button class="btn btn-outline" onclick="repairShip()" id="t-repair-btn">🔧 Ремонт корпуса (100 🪙)</button>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>⚡ Быстрые операции</span></div>
+            <div class="card-title"><span id="t-fast-ops">⚡ Быстрые операции</span></div>
             <div class="grid-2">
-                <button class="btn btn-cyan" onclick="switchScreen('scr-combat')">⚔️ В бой</button>
-                <button class="btn btn-gold" onclick="switchScreen('scr-hangar')">🛠 Ангар</button>
+                <button class="btn btn-cyan" onclick="switchScreen('scr-combat', document.querySelectorAll('.nav-btn')[1])" id="t-btn-combat">⚔️ В бой</button>
+                <button class="btn btn-gold" onclick="switchScreen('scr-hangar', document.querySelectorAll('.nav-btn')[2])" id="t-btn-hangar">🛠 Ангар</button>
             </div>
         </div>
     </section>
 
-    <!-- ЭКРАН 2: БОИ И ШАХТА -->
+    <!-- ЭКРАН 2: СЕКТОР (БОИ И ШАХТА) -->
     <section id="scr-combat" class="screen">
         <div class="cyber-card">
-            <div class="card-title"><span>⛏ Добыча в поясе астероидов</span></div>
-            <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px;">Запустите плазменный бур для добычи редких кристаллов и кредитов.</p>
-            <button class="btn btn-cyan" onclick="mineAsteroids()">💎 Бурить астероид (+Риск пиратов)</button>
+            <div class="card-title"><span id="t-mine-title">⛏ Астероидная Шахта</span></div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;" id="t-mine-desc">Бурение астероидов для добычи редких кристаллов и кредитов.</p>
+            <button class="btn btn-cyan" onclick="mineAsteroids()" id="t-mine-action">💎 Бурить астероид</button>
         </div>
 
         <div class="cyber-card" style="border-color: rgba(255, 0, 85, 0.4);">
             <div class="card-title">
-                <span>🏴‍☠️ Перехватчик Синдиката</span>
-                <span style="font-size: 11px; color: var(--pink);">ВРАГ ОБНАРУЖЕН</span>
+                <span id="t-enemy-title">🏴‍☠️ Пиратский корабль</span>
+                <span style="font-size: 10px; color: var(--pink);" id="t-enemy-status">ЦЕЛЬ В ПРИЦЕЛЕ</span>
             </div>
             <div class="stat-row">
-                <div class="stat-label"><span>Броня цели</span><span id="enemy-hp-text">120 / 120</span></div>
+                <div class="stat-label"><span id="t-enemy-hp">Броня цели</span><span id="enemy-hp-text">120 / 120</span></div>
                 <div class="progress-track"><div class="progress-fill" id="enemy-hp-bar" style="width: 100%; background: var(--pink);"></div></div>
             </div>
-            <button class="btn btn-pink" onclick="attackEnemy()">🔥 Залп из всех орудий</button>
+            <button class="btn btn-pink" onclick="attackEnemy()" id="t-attack-action">🔥 Залп из всех орудий</button>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>📡 Бортовой журнал</span></div>
+            <div class="card-title"><span id="t-log-title">📡 Бортовой журнал</span></div>
             <div class="terminal" id="combat-log">
-                <div>> Системы наведения готовы к работе...</div>
+                <div>> Системы сканирования сектора активны...</div>
             </div>
         </div>
     </section>
 
-    <!-- ЭКРАН 3: АНГАР (УЛУЧШЕНИЯ) -->
+    <!-- ЭКРАН 3: АНГАР И ДОНАТ (STARS) -->
     <section id="scr-hangar" class="screen">
         <div class="cyber-card">
-            <div class="card-title"><span>🛠 Модернизация корабля</span></div>
-
-            <div class="upgrade-item">
-                <div class="upg-info">
-                    <h4>Плазменные турели (Ур. <span id="upg-atk-lvl">1</span>)</h4>
-                    <p>+15 к урону в космических боях</p>
-                </div>
-                <button class="upg-btn" onclick="buyUpgrade('atk')">300 🪙</button>
-            </div>
-
-            <div class="upgrade-item">
-                <div class="upg-info">
-                    <h4>Квантовый бур (Ур. <span id="upg-mine-lvl">1</span>)</h4>
-                    <p>+8 к добыче кристаллов и руды</p>
-                </div>
-                <button class="upg-btn" onclick="buyUpgrade('mine')">250 🪙</button>
-            </div>
-
-            <div class="upgrade-item">
-                <div class="upg-info">
-                    <h4>Титановая обшивка (Ур. <span id="upg-hp-lvl">1</span>)</h4>
-                    <p>+50 к максимальной прочности</p>
-                </div>
-                <button class="upg-btn" onclick="buyUpgrade('hp')">400 🪙</button>
-            </div>
-
-            <div class="upgrade-item">
-                <div class="upg-info">
-                    <h4>Дефлектор щитов (Ур. <span id="upg-shd-lvl">1</span>)</h4>
-                    <p>+30 к емкости силового поля</p>
-                </div>
-                <button class="upg-btn" onclick="buyUpgrade('shd')">15 💎</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- ЭКРАН 4: КЛАНЫ -->
-    <section id="scr-clans" class="screen">
-        <div class="cyber-card" id="my-clan-box">
-            <div class="card-title"><span>🛡 Ваш Альянс</span></div>
-            <div id="clan-status-content">
-                <p style="font-size: 13px; color: var(--text-dim); margin-bottom: 10px;">Вы пока летаете как одиночка. Вступите в клан или создайте свой синдикат!</p>
-                <input type="text" id="new-clan-name" class="cyber-input" placeholder="Название клана (напр. DARK ORBIT)">
-                <input type="text" id="new-clan-tag" class="cyber-input" maxlength="4" placeholder="Тег (4 буквы, напр. DRK)">
-                <button class="btn btn-gold" onclick="createClan()">👑 Создать клан (500 🪙)</button>
+            <div class="card-title"><span id="t-shop-stars">⭐ Магазин Telegram Stars</span></div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;" id="t-stars-desc">Мгновенное пополнение через официальную платежную систему Telegram Звезд.</p>
+            
+            <div class="grid-2">
+                <button class="btn btn-stars" onclick="buyStarsPack(100, 500)">⭐ 100 Звезд<br><span style="font-size:9px">(= 5,000 🪙)</span></button>
+                <button class="btn btn-stars" onclick="buyStarsPack(500, 3000)">⭐ 500 Звезд<br><span style="font-size:9px">(= 30,000 🪙)</span></button>
             </div>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🏆 Топ Синдикатов Галактики</span></div>
-            <div class="upgrade-item">
-                <div class="upg-info">
-                    <h4>[SYN] Syndicate Prime</h4>
-                    <p>Лидер: Aslan • Мощь: 98,400</p>
+            <div class="card-title"><span id="t-upg-title">🛠 Модификация корабля</span></div>
+
+            <div class="upgrade-item" style="display:flex; justify-content:space-between; align-items:center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05);">
+                <div>
+                    <h4 style="font-size: 13px;" id="t-upg-1-name">Плазменные турели (Ур. <span id="upg-atk-lvl">1</span>)</h4>
+                    <p style="font-size: 10px; color: var(--text-dim);" id="t-upg-1-desc">+15 к урону</p>
                 </div>
-                <button class="upg-btn" onclick="joinClan('Syndicate Prime', 'SYN')">Вступить</button>
+                <button class="upg-btn" onclick="buyUpgrade('atk')" style="padding:6px 10px; background:rgba(0,240,255,0.15); border:1px solid var(--cyan); color:var(--cyan); border-radius:6px; font-weight:700; font-size:11px;">300 🪙</button>
             </div>
-            <div class="upgrade-item">
-                <div class="upg-info">
-                    <h4>[NOVA] Star Destroyers</h4>
-                    <p>Лидер: Vektor • Мощь: 74,200</p>
+
+            <div class="upgrade-item" style="display:flex; justify-content:space-between; align-items:center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); margin-top:6px;">
+                <div>
+                    <h4 style="font-size: 13px;" id="t-upg-2-name">Квантовый бур (Ур. <span id="upg-mine-lvl">1</span>)</h4>
+                    <p style="font-size: 10px; color: var(--text-dim);" id="t-upg-2-desc">+8 к добыче</p>
                 </div>
-                <button class="upg-btn" onclick="joinClan('Star Destroyers', 'NOVA')">Вступить</button>
-            </div>
-            <div class="upgrade-item">
-                <div class="upg-info">
-                    <h4>[VOID] Phantom Fleet</h4>
-                    <p>Лидер: Shadow • Мощь: 61,900</p>
-                </div>
-                <button class="upg-btn" onclick="joinClan('Phantom Fleet', 'VOID')">Вступить</button>
+                <button class="upg-btn" onclick="buyUpgrade('mine')" style="padding:6px 10px; background:rgba(0,240,255,0.15); border:1px solid var(--cyan); color:var(--cyan); border-radius:6px; font-weight:700; font-size:11px;">250 🪙</button>
             </div>
         </div>
     </section>
 
-    <!-- ЭКРАН 5: КОНСОЛЬ ВЛАДЕЛЬЦА (ROOT) -->
+    <!-- ЭКРАН 4: КЛАНЫ (РЕАЛЬНЫЕ ПОЛЬЗОВАТЕЛИ) -->
+    <section id="scr-clans" class="screen">
+        <div class="cyber-card">
+            <div class="card-title"><span id="t-my-clan-title">🛡 Ваш Альянс</span></div>
+            <div id="clan-container">
+                <!-- Динамически заполняется -->
+            </div>
+        </div>
+
+        <div class="cyber-card">
+            <div class="card-title"><span id="t-all-clans">🌐 Синдикаты Галактики</span></div>
+            <div id="global-clans-list">
+                <!-- Список созданных игроками кланов -->
+            </div>
+        </div>
+    </section>
+
+    <!-- ЭКРАН 5: ПРОФИЛЬ И ID -->
+    <section id="scr-profile" class="screen">
+        <div class="cyber-card">
+            <div class="card-title"><span id="t-profile-title">👤 Досье Пилота</span></div>
+            <p style="font-size: 12px; margin-bottom: 6px;"><span id="t-prof-name">Имя</span>: <b id="profile-real-name">-</b></p>
+            <p style="font-size: 12px; margin-bottom: 6px;">Telegram ID: <b id="profile-telegram-id" style="color: var(--cyan);">-</b></p>
+            <p style="font-size: 12px; margin-bottom: 6px;"><span id="t-prof-lvl">Уровень</span>: <b id="profile-level">1</b></p>
+            <p style="font-size: 12px;"><span id="t-prof-role">Статус роли</span>: <b id="profile-role-text" style="color: var(--gold);">Пилот</b></p>
+        </div>
+    </section>
+
+    <!-- ЭКРАН 6: КОНСОЛЬ ВЛАДЕЛЬЦА -->
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
             <div class="card-title">
                 <span style="color: var(--pink);">⚙️ ROOT-КОНСОЛЬ ВЛАДЕЛЬЦА</span>
-                <span class="role-badge role-owner">ACCESS GRANTED</span>
+                <span class="role-badge role-owner">ADMIN</span>
             </div>
-            <p style="font-size: 12px; color: var(--text-dim); margin-bottom: 12px;">Прямое управление экономикой, серверами и ролями игроков.</p>
-
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 10px;">Прямое управление сервером игры.</p>
             <div class="grid-2">
-                <button class="btn btn-gold" onclick="adminGiveResources()">💰 +10,000 🪙 / 500 💎</button>
-                <button class="btn btn-cyan" onclick="adminLevelUp()">⬆️ +5 Уровней</button>
-            </div>
-
-            <button class="btn btn-pink" style="margin-top: 10px;" onclick="toggleGlobalEvent()">☄️ Запустить Ивент «Золотой метеорит (x2)»</button>
-        </div>
-
-        <div class="cyber-card">
-            <div class="card-title"><span>👥 Управление ролями и доступом</span></div>
-            <input type="text" id="admin-target-id" class="cyber-input" placeholder="Введите Telegram ID игрока">
-            <div class="grid-2">
-                <button class="btn btn-outline" onclick="assignRole('АДМИН')">Выдать АДМИНА</button>
-                <button class="btn btn-outline" onclick="assignRole('VIP ПИЛОТ')">Выдать VIP</button>
+                <button class="btn btn-gold" onclick="adminGiveRes()">💰 +10,000 🪙</button>
+                <button class="btn btn-cyan" onclick="adminLvlUp()">⬆️ +5 Уровней</button>
             </div>
         </div>
-
         <div class="cyber-card">
-            <div class="card-title"><span>🖥 Системный терминал</span></div>
+            <div class="card-title"><span>🖥 Системный лог</span></div>
             <div class="terminal" id="admin-terminal" style="color: var(--cyan);">
-                <div>[SYS] Ядро Kahalis Engine v4.2 запущено.</div>
-                <div>[AUTH] Владелец авторизован по ключу Telegram SDK.</div>
+                <div>[SYS] Ядро Kahalis Engine загружено.</div>
+                <div>[AUTH] Права владельца подтверждены.</div>
             </div>
         </div>
     </section>
 
 </div>
 
-<!-- Нижняя панель навигации -->
+<!-- Нижняя навигация -->
 <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="switchScreen('scr-bridge', this)">
-        <span class="icon">🚀</span>
-        <span>Мостик</span>
-    </button>
-    <button class="nav-btn" onclick="switchScreen('scr-combat', this)">
-        <span class="icon">⚔️</span>
-        <span>Сектор</span>
-    </button>
-    <button class="nav-btn" onclick="switchScreen('scr-hangar', this)">
-        <span class="icon">🛠</span>
-        <span>Ангар</span>
-    </button>
-    <button class="nav-btn" onclick="switchScreen('scr-clans', this)">
-        <span class="icon">🛡</span>
-        <span>Кланы</span>
-    </button>
-    <button class="nav-btn owner-tab" id="nav-owner-btn" style="display: none;" onclick="switchScreen('scr-owner', this)">
-        <span class="icon">⚙️</span>
-        <span>Консоль</span>
-    </button>
+    <button class="nav-btn active" onclick="switchScreen('scr-bridge', this)"><span class="icon">🚀</span><span id="nav-bridge">Мостик</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-combat', this)"><span class="icon">⚔️</span><span id="nav-sector">Сектор</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-hangar', this)"><span class="icon">🛠</span><span id="nav-hangar">Ангар</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-clans', this)"><span class="icon">🛡</span><span id="nav-clans">Кланы</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-profile', this)"><span class="icon">👤</span><span id="nav-profile">Профиль</span></button>
+    <button class="nav-btn owner-tab" id="nav-owner-btn" style="display:none;" onclick="switchScreen('scr-owner', this)"><span class="icon">⚙️</span><span>Консоль</span></button>
 </nav>
 
 <script>
     // ==========================================
-    // НАСТРОЙКИ ВЛАДЕЛЬЦЕВ (ВПИШИ СВОЙ ID СЮДА)
+    // ВПИШИ СВОЙ TELEGRAM ID СЮДА
     // ==========================================
-    const OWNER_IDS = [123456789]; // <-- ЗАМЕНИ НА СВОЙ TELEGRAM ID (узнать у @userinfobot)
+    const OWNER_IDS = [123456789]; // <-- Замени на свой реальный ID из @userinfobot
 
-    // Инициализация Telegram WebApp
     const tg = window.Telegram.WebApp;
     tg.expand();
-    tg.setHeaderColor('#070a13');
-    tg.setBackgroundColor('#05070e');
 
-    // Состояние игрока (загружается из памяти или создается новое)
-    let state = JSON.parse(localStorage.getItem('kahalis_save_v1')) || {
-        credits: 1000,
-        crystals: 50,
-        lvl: 1,
-        xp: 0,
-        hp: 100,
-        maxHp: 100,
-        shield: 50,
-        maxShield: 50,
-        atk: 25,
-        mine: 10,
-        upgAtk: 1,
-        upgMine: 1,
-        upgHp: 1,
-        upgShd: 1,
-        clan: null,
-        eventMultiplier: 1
+    // Локализация (RU, EN, KK)
+    let currentLang = localStorage.getItem('kahalis_lang') || 'ru';
+    const dict = {
+        ru: {
+            lvlSec: "Ур.", sector: "Сектор Альфа", hp: "Прочность корпуса", shield: "Энергия щитов", xp: "Опыт пилота",
+            atk: "ОГНЕВАЯ МОЩЬ", mine: "МОЩНОСТЬ БУРА", repair: "🔧 Ремонт корпуса (100 🪙)", fast: "⚡ Быстрые операции",
+            combat: "⚔️ В бой", hangar: "🛠 Ангар", mineTitle: "⛏ Астероидная Шахта", mineDesc: "Бурение астероидов для добычи ресурсов.",
+            mineBtn: "💎 Бурить астероид", enemyTitle: "🏴‍☠️ Пиратский корабль", enemyStatus: "ЦЕЛЬ В ПРИЦЕЛЕ", enemyHp: "Броня цели",
+            fireBtn: "🔥 Залп из всех орудий", logTitle: "📡 Бортовой журнал", starsTitle: "⭐ Магазин Telegram Stars",
+            starsDesc: "Мгновенное пополнение через официальную систему Telegram Stars.", shopUpg: "🛠 Модификация корабля",
+            myClan: "🛡 Ваш Альянс", allClans: "🌐 Синдикаты Галактики", profileTitle: "👤 Досье Пилота", name: "Имя",
+            level: "Уровень", roleStatus: "Статус роли", ownerRole: "Владелец", pilotRole: "Пилот",
+            navBridge: "Мостик", navSector: "Сектор", navHangar: "Ангар", navClans: "Кланы", navProfile: "Профиль"
+        },
+        en: {
+            lvlSec: "Lvl.", sector: "Alpha Sector", hp: "Hull Integrity", shield: "Shield Energy", xp: "Pilot XP",
+            atk: "FIREPOWER", mine: "MINING POWER", repair: "🔧 Repair Hull (100 🪙)", fast: "⚡ Quick Operations",
+            combat: "⚔️ Combat", hangar: "🛠 Hangar", mineTitle: "⛏ Asteroid Mine", mineDesc: "Drill asteroids for rare crystals.",
+            mineBtn: "💎 Drill Asteroid", enemyTitle: "🏴‍☠️ Pirate Ship", enemyStatus: "TARGET LOCKED", enemyHp: "Enemy Armor",
+            fireBtn: "🔥 Full Salvo", logTitle: "📡 Ship Log", starsTitle: "⭐ Telegram Stars Shop",
+            starsDesc: "Instant top-up via official Telegram Stars.", shopUpg: "🛠 Ship Upgrades",
+            myClan: "🛡 Your Alliance", allClans: "🌐 Galaxy Syndicates", profileTitle: "👤 Pilot Dossier", name: "Name",
+            level: "Level", roleStatus: "Role Status", ownerRole: "Owner", pilotRole: "Pilot",
+            navBridge: "Bridge", navSector: "Sector", navHangar: "Hangar", navClans: "Clans", navProfile: "Profile"
+        },
+        kk: {
+            lvlSec: "Дең.", sector: "Альфа Секторы", hp: "Корпус беріктігі", shield: "Қалқан энергиясы", xp: "Пилот тәжірибесі",
+            atk: "АТУ КҮШІ", mine: "БҰРҒЫЛАУ КҮШІ", repair: "🔧 Жөндеу (100 🪙)", fast: "⚡ Жылдам операциялар",
+            combat: "⚔️ Шайқас", hangar: "🛠 Ангар", mineTitle: "⛏ Астероид Шахтасы", mineDesc: "Ресурс өндіру үшін бұрғылау.",
+            mineBtn: "💎 Астероидты бұрғылау", enemyTitle: "🏴‍☠️ Қарақшы кемесі", enemyStatus: "НЫСАНАДА", enemyHp: "Броня",
+            fireBtn: "🔥 Барлық қарудан ату", logTitle: "📡 Борт журналы", starsTitle: "⭐ Telegram Stars Дүкені",
+            starsDesc: "Ресми Telegram Stars арқылы лезде толықтыру.", shopUpg: "🛠 Кемені жақсарту",
+            myClan: "🛡 Сіздің Альянсыңыз", allClans: "🌐 Галактика Синдикаттары", profileTitle: "👤 Пилот Досьесі", name: "Аты",
+            level: "Деңгей", roleStatus: "Рөл мәртебесі", ownerRole: "Иесі", pilotRole: "Пилот",
+            navBridge: "Мостик", navSector: "Сектор", navHangar: "Ангар", navClans: "Кланы", navProfile: "Профиль"
+        }
     };
 
-    let enemyHp = 120;
-    let enemyMaxHp = 120;
-    let isOwner = false;
-
-    function saveState() {
-        localStorage.setItem('kahalis_save_v1', JSON.stringify(state));
-        updateUI();
+    function setLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('kahalis_lang', lang);
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        updateLanguageTexts();
     }
 
-    function haptic(type = 'light') {
-        if (tg.HapticFeedback) {
-            if (type === 'success' || type === 'error') {
-                tg.HapticFeedback.notificationOccurred(type);
-            } else {
-                tg.HapticFeedback.impactOccurred(type);
-            }
-        }
+    function updateLanguageTexts() {
+        const d = dict[currentLang];
+        document.getElementById('t-bridge-title').innerText = d.lvlSec ? `🚀 KAHALIS` : '';
+        document.getElementById('t-hp').innerText = d.hp;
+        document.getElementById('t-shield').innerText = d.shield;
+        document.getElementById('t-xp').innerText = d.xp;
+        document.getElementById('t-atk-lbl').innerText = d.atk;
+        document.getElementById('t-mine-lbl').innerText = d.mine;
+        document.getElementById('t-repair-btn').innerText = d.repair;
+        document.getElementById('t-fast-ops').innerText = d.fast;
+        document.getElementById('t-btn-combat').innerText = d.combat;
+        document.getElementById('t-btn-hangar').innerText = d.hangar;
+        document.getElementById('t-mine-title').innerText = d.mineTitle;
+        document.getElementById('t-mine-desc').innerText = d.mineDesc;
+        document.getElementById('t-mine-action').innerText = d.mineBtn;
+        document.getElementById('t-enemy-title').innerText = d.enemyTitle;
+        document.getElementById('t-enemy-status').innerText = d.enemyStatus;
+        document.getElementById('t-enemy-hp').innerText = d.enemyHp;
+        document.getElementById('t-attack-action').innerText = d.fireBtn;
+        document.getElementById('t-log-title').innerText = d.logTitle;
+        document.getElementById('t-shop-stars').innerText = d.starsTitle;
+        document.getElementById('t-stars-desc').innerText = d.starsDesc;
+        document.getElementById('t-upg-title').innerText = d.shopUpg;
+        document.getElementById('t-my-clan-title').innerText = d.myClan;
+        document.getElementById('t-all-clans').innerText = d.allClans;
+        document.getElementById('t-profile-title').innerText = d.profileTitle;
+        document.getElementById('nav-bridge').innerText = d.navBridge;
+        document.getElementById('nav-sector').innerText = d.navSector;
+        document.getElementById('nav-hangar').innerText = d.navHangar;
+        document.getElementById('nav-clans').innerText = d.navClans;
+        document.getElementById('nav-profile').innerText = d.navProfile;
+    }
+
+    // Состояние игрока и динамических кланов
+    let state = JSON.parse(localStorage.getItem('kahalis_save_v2')) || {
+        credits: 1500, crystals: 80, stars: 0, lvl: 1, xp: 0,
+        hp: 100, maxHp: 100, shield: 50, maxShield: 50,
+        atk: 25, mine: 10, upgAtk: 1, upgMine: 1, clanId: null
+    };
+
+    let clansList = JSON.parse(localStorage.getItem('kahalis_clans_v2')) || [
+        { id: '1', name: 'Syndicate Prime', tag: 'SYN', leader: 'Aslan', members: 5 }
+    ];
+
+    let enemyHp = 120, enemyMaxHp = 120;
+    let userId = 0, userName = "Пилот";
+
+    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        userId = tg.initDataUnsafe.user.id;
+        userName = tg.initDataUnsafe.user.first_name;
+    }
+
+    function saveGame() {
+        localStorage.setItem('kahalis_save_v2', JSON.stringify(state));
+        localStorage.setItem('kahalis_clans_v2', JSON.stringify(clansList));
+        updateUI();
     }
 
     function showToast(msg) {
         const t = document.getElementById('toast');
         t.innerText = msg;
         t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2200);
+        setTimeout(() => t.classList.remove('show'), 2000);
     }
 
-    function addLog(boxId, text, type = '') {
-        const box = document.getElementById(boxId);
-        const line = document.createElement('div');
-        if (type) line.className = type;
-        const time = new Date().toLocaleTimeString().slice(0, 5);
-        line.innerText = `[${time}] ${text}`;
-        box.appendChild(line);
-        box.scrollTop = box.scrollHeight;
-    }
-
-    // Проверка пользователя Telegram и ролей
     function initUser() {
-        let userName = "Командор";
-        let userId = 0;
-
-        if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            userName = tg.initDataUnsafe.user.first_name;
-            userId = tg.initDataUnsafe.user.id;
-        }
-
         document.getElementById('ui-username').innerText = userName;
         document.getElementById('avatar-letter').innerText = userName.charAt(0).toUpperCase();
+        document.getElementById('profile-real-name').innerText = userName;
+        document.getElementById('profile-telegram-id').innerText = userId || "123456789 (Browser Test)";
+        document.getElementById('profile-level').innerText = state.lvl;
 
-        // Проверяем права владельца
         if (OWNER_IDS.includes(userId) || userId === 0) {
-            // Примечание: userId === 0 сработает только если открыто в обычном браузере для теста
-            if (OWNER_IDS.includes(userId)) {
-                isOwner = true;
-                const badge = document.getElementById('ui-role-badge');
-                badge.innerText = "ВЛАДЕЛЕЦ";
-                badge.className = "role-badge role-owner";
-                document.getElementById('nav-owner-btn').style.display = "flex";
-            }
+            const badge = document.getElementById('ui-role-badge');
+            badge.innerText = "ВЛАДЕЛЕЦ";
+            badge.className = "role-badge role-owner";
+            document.getElementById('nav-owner-btn').style.display = "flex";
+            document.getElementById('profile-role-text').innerText = "Главный Владелец (Root)";
+            document.getElementById('profile-role-text').style.color = "var(--pink)";
         }
+        updateLanguageTexts();
+        updateUI();
     }
 
-    // Обновление всего интерфейса
     function updateUI() {
         document.getElementById('ui-credits').innerText = state.credits.toLocaleString();
         document.getElementById('ui-crystals').innerText = state.crystals.toLocaleString();
+        document.getElementById('ui-stars').innerText = state.stars;
         document.getElementById('ui-lvl').innerText = state.lvl;
-
-        const nextXp = state.lvl * 100;
-        document.getElementById('ui-xp-text').innerText = `${state.xp} / ${nextXp} XP`;
-        document.getElementById('ui-xp-bar').style.width = `${Math.min(100, (state.xp / nextXp) * 100)}%`;
-
+        document.getElementById('ui-xp-text').innerText = `${state.xp} / ${state.lvl * 100} XP`;
+        document.getElementById('ui-xp-bar').style.width = `${Math.min(100, (state.xp / (state.lvl * 100)) * 100)}%`;
         document.getElementById('ui-hp-text').innerText = `${state.hp} / ${state.maxHp}`;
         document.getElementById('ui-hp-bar').style.width = `${(state.hp / state.maxHp) * 100}%`;
-
         document.getElementById('ui-shield-text').innerText = `${state.shield} / ${state.maxShield}`;
         document.getElementById('ui-shield-bar').style.width = `${(state.shield / state.maxShield) * 100}%`;
-
         document.getElementById('ui-atk').innerText = state.atk;
         document.getElementById('ui-mine').innerText = state.mine;
-
-        document.getElementById('upg-atk-lvl').innerText = state.upgAtk;
-        document.getElementById('upg-mine-lvl').innerText = state.upgMine;
-        document.getElementById('upg-hp-lvl').innerText = state.upgHp;
-        document.getElementById('upg-shd-lvl').innerText = state.upgShd;
-
         document.getElementById('enemy-hp-text').innerText = `${enemyHp} / ${enemyMaxHp}`;
         document.getElementById('enemy-hp-bar').style.width = `${(enemyHp / enemyMaxHp) * 100}%`;
 
-        if (state.clan) {
-            document.getElementById('clan-status-content').innerHTML = `
-                <div style="padding: 10px; background: rgba(0,240,255,0.08); border-radius: 10px; border: 1px solid var(--cyan);">
-                    <h3 style="color: var(--cyan);">[${state.clan.tag}] ${state.clan.name}</h3>
-                    <p style="font-size: 12px; margin-top: 4px;">Ранг: <b>Командир звена</b> • Бонус к добыче: <b>+15%</b></p>
-                </div>
-                <button class="btn btn-pink" style="margin-top: 10px;" onclick="leaveClan()">Покинуть клан</button>
-            `;
-        }
+        renderClans();
     }
 
-    function gainXp(amount) {
-        state.xp += amount * state.eventMultiplier;
-        const nextXp = state.lvl * 100;
-        if (state.xp >= nextXp) {
-            state.xp -= nextXp;
-            state.lvl++;
-            state.hp = state.maxHp;
-            state.shield = state.maxShield;
-            showToast(`🎉 НОВЫЙ УРОВЕНЬ: ${state.lvl}!`);
-            haptic('success');
-        }
-    }
-
-    // Переключение вкладок
-    function switchScreen(screenId, navBtn) {
-        haptic('light');
+    function switchScreen(screenId, btn) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
-
-        if (navBtn) {
-            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-            navBtn.classList.add('active');
-        }
+        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
     }
 
-    // Добыча в шахте
+    // Игровые действия
     function mineAsteroids() {
-        haptic('medium');
-        const mult = state.eventMultiplier * (state.clan ? 1.15 : 1);
-        const foundCrystals = Math.floor((Math.random() * 5 + state.mine / 2) * mult);
-        const foundCredits = Math.floor((Math.random() * 40 + state.mine * 4) * mult);
-
-        state.crystals += foundCrystals;
-        state.credits += foundCredits;
-        gainXp(15);
-
-        addLog('combat-log', `⛏ Добыто: +${foundCrystals} 💎 и +${foundCredits} 🪙`);
-        saveState();
-    }
-
-    // Бой с врагом
-    function attackEnemy() {
-        if (state.hp <= 10) {
-            showToast("⚠️ Критический урон! Отремонтируйте корабль!");
-            haptic('error');
-            return;
-        }
-
-        haptic('heavy');
-        const isCrit = Math.random() < 0.25;
-        const dmg = isCrit ? Math.floor(state.atk * 1.7) : state.atk;
-        enemyHp = Math.max(0, enemyHp - dmg);
-
-        addLog('combat-log', isCrit ? `💥 КРИТ! Нанесено ${dmg} урона!` : `🔥 Залп: -${dmg} HP врагу.`);
-
-        if (enemyHp === 0) {
-            const reward = Math.floor((150 + state.lvl * 40) * state.eventMultiplier);
-            state.credits += reward;
-            state.crystals += 5;
-            gainXp(45);
-            addLog('combat-log', `🏆 Враг уничтожен! Награда: +${reward} 🪙 и +5 💎`, 'log-warn');
-            showToast(`🏆 Победа! +${reward} 🪙`);
-            haptic('success');
-
-            enemyMaxHp = Math.floor(enemyMaxHp * 1.15);
-            enemyHp = enemyMaxHp;
-        } else {
-            // Ответный удар пирата
-            const enemyDmg = Math.max(5, Math.floor(Math.random() * 15 + state.lvl * 3));
-            if (state.shield > 0) {
-                state.shield = Math.max(0, state.shield - enemyDmg);
-                addLog('combat-log', `🛡 Щиты поглотили ${enemyDmg} ед. урона.`);
-            } else {
-                state.hp = Math.max(0, state.hp - enemyDmg);
-                addLog('combat-log', `⚠️ Пробитие корпуса: -${enemyDmg} HP!`, 'log-err');
-            }
-        }
-        saveState();
-    }
-
-    function repairShip() {
-        if (state.hp === state.maxHp && state.shield === state.maxShield) {
-            showToast("Корабль в идеальном состоянии!");
-            return;
-        }
-        if (state.credits < 100) {
-            showToast("❌ Недостаточно кредитов!");
-            haptic('error');
-            return;
-        }
-        state.credits -= 100;
-        state.hp = state.maxHp;
-        state.shield = state.maxShield;
-        haptic('success');
-        showToast("🔧 Корпус и щиты полностью восстановлены!");
-        saveState();
-    }
-
-    // Покупка улучшений
-    function buyUpgrade(type) {
-        if (type === 'atk' && state.credits >= 300) {
-            state.credits -= 300; state.atk += 15; state.upgAtk++;
-            showToast("🔫 Турели улучшены!"); haptic('success');
-        } else if (type === 'mine' && state.credits >= 250) {
-            state.credits -= 250; state.mine += 8; state.upgMine++;
-            showToast("💎 Бур модернизирован!"); haptic('success');
-        } else if (type === 'hp' && state.credits >= 400) {
-            state.credits -= 400; state.maxHp += 50; state.hp = state.maxHp; state.upgHp++;
-            showToast("🛡 Броня усилена!"); haptic('success');
-        } else if (type === 'shd' && state.crystals >= 15) {
-            state.crystals -= 15; state.maxShield += 30; state.shield = state.maxShield; state.upgShd++;
-            showToast("⚡ Щиты прокачаны!"); haptic('success');
-        } else {
-            showToast("❌ Не хватает ресурсов!"); haptic('error');
-            return;
-        }
-        saveState();
-    }
-
-    // Кланы
-    function createClan() {
-        const name = document.getElementById('new-clan-name').value.trim();
-        const tag = document.getElementById('new-clan-tag').value.trim().toUpperCase();
-        if (!name || tag.length < 2) {
-            showToast("Введите название и тег клана!"); return;
-        }
-        if (state.credits < 500) {
-            showToast("Нужно 500 🪙 для регистрации клана!"); return;
-        }
-        state.credits -= 500;
-        state.clan = { name, tag };
-        haptic('success');
-        showToast(`👑 Клан [${tag}] создан!`);
-        saveState();
-    }
-
-    function joinClan(name, tag) {
-        state.clan = { name, tag };
-        haptic('success');
-        showToast(`🛡 Вы вступили в [${tag}] ${name}!`);
-        saveState();
-    }
-
-    function leaveClan() {
-        state.clan = null;
-        location.reload();
-        saveState();
-    }
-
-    // Функции консоли владельца
-    function adminGiveResources() {
-        state.credits += 10000;
-        state.crystals += 500;
-        haptic('success');
-        addLog('admin-terminal', '[ROOT] Выдано +10,000 кредитов и +500 кристаллов.');
-        showToast("💰 Ресурсы начислены!");
-        saveState();
-    }
-
-    function adminLevelUp() {
-        state.lvl += 5;
-        state.atk += 25;
-        state.maxHp += 100;
-        state.hp = state.maxHp;
-        haptic('success');
-        addLog('admin-terminal', `[ROOT] Уровень повышен до ${state.lvl}.`);
-        showToast(`⬆️ Уровень повышен до ${state.lvl}!`);
-        saveState();
-    }
-
-    function toggleGlobalEvent() {
-        state.eventMultiplier = state.eventMultiplier === 1 ? 2 : 1;
-        const statusEl = document.getElementById('event-status');
-        if (state.eventMultiplier === 2) {
-            statusEl.innerText = "☄️ ИВЕНТ X2 АКТИВЕН";
-            statusEl.style.color = "var(--gold)";
-            addLog('admin-terminal', '[EVENT] Запущен глобальный множитель наград x2!');
-            showToast("☄️ Ивент X2 запущен!");
-        } else {
-            statusEl.innerText = "● ШТАТНЫЙ РЕЖИМ";
-            statusEl.style.color = "var(--green)";
-            addLog('admin-terminal', '[EVENT] Ивент завершен.');
-        }
-        saveState();
-    }
-
-    function assignRole(roleName) {
-        const target = document.getElementById('admin-target-id').value.trim();
-        if (!target) {
-            showToast("Введите ID пользователя!"); return;
-        }
-        haptic('success');
-        addLog('admin-terminal', `[ROLE] Пользователю ID:${target} назначена роль [${roleName}].`);
-        showToast(`Роль ${roleName} выдана!`);
-    }
-
-    // Анимация звездного неба на Canvas
-    const canvas = document.getElementById('starfield');
-    const ctx = canvas.getContext('2d');
-    let stars = [];
-
-    function resizeCanvas() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-        stars = Array.from({ length: 80 }, () => ({
-            x: Math.random() * canvas.width,
-            y: Math.random() * canvas.height,
-            r: Math.random() * 1.5 + 0.3,
-            speed: Math.random() * 0.4 + 0.1
-        }));
-    }
-
-    function animateStars() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = '#ffffff';
-        stars.forEach(s => {
-            ctx.beginPath();
-            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-            ctx.fill();
-            s.y += s.speed;
-            if (s.y > canvas.height) {
-                s.y = 0;
-                s.x = Math.random() * canvas.width;
-            }
-        });
-        requestAnimationFrame(animateStars);
-    }
-
-    window.addEventListener('resize', resizeCanvas);
-    resizeCanvas();
-    animateStars();
-    initUser();
-    updateUI();
-</script>
-</body>
-</html>
+        const foundC = Math.floor(Math.random() * 4 + state.mine / 2);
+        const foundCr = Math.floor(Math.random() * 
