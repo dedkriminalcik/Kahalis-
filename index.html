@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V25 PERSISTENT</title>
+    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V26 MASTER</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -31,7 +31,14 @@
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #091428 0%, #010307 100%); animation: bgPulse 10s ease-in-out infinite alternate; }
         @keyframes bgPulse { 0% { filter: brightness(1); } 100% { filter: brightness(1.25); } }
 
-        /* УЛУЧШЕННЫЙ ЭКРАН ЗАГРУЗКИ ПО ЭСКИЗУ */
+        /* ОКНО ПРИВЕТСТВИЯ */
+        #scr-welcome {
+            position: fixed; inset: 0; background: rgba(1, 3, 7, 0.95); z-index: 1000000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; text-align: center;
+            backdrop-filter: blur(15px); transition: opacity 0.5s ease;
+        }
+
+        /* ЭКРАН ЗАГРУЗКИ ПО ЭСКИЗУ */
         #scr-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
             background: radial-gradient(circle at center, #150b28 0%, #010307 100%);
@@ -68,7 +75,6 @@
         .loader-title { font-size: 15px; font-weight: 800; letter-spacing: 2px; color: #fff; text-transform: uppercase; margin-bottom: 6px; }
         .loader-sub { font-size: 11px; color: var(--cyan); margin-bottom: 25px; letter-spacing: 1px; }
 
-        /* АРМИРОВАННАЯ (СЕГМЕНТИРОВАННАЯ) ПОЛОСКА ЗАГРУЗКИ */
         .armored-progress-track {
             width: 290px; height: 14px; background: rgba(0, 0, 0, 0.8);
             border: 1px solid var(--border-neon); border-radius: 6px; padding: 2px;
@@ -153,6 +159,11 @@
         .terminal { background: #000206; border: 1px solid #1c2841; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: var(--green); height: 130px; overflow-y: auto; line-height: 1.4; }
         .cyber-input { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-neon); padding: 10px; border-radius: 8px; color: #fff; font-size: 12px; margin-bottom: 8px; outline: none; }
 
+        /* ИГРОВОЕ ПОЛЕ БАШНИ */
+        .tower-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 8px; }
+        .tower-cell { background: rgba(0,240,255,0.05); border: 1px solid var(--border-neon); padding: 12px; border-radius: 8px; text-align: center; cursor: pointer; font-size: 11px; font-weight: 700; transition: 0.2s; }
+        .tower-cell:active { background: var(--cyan); color: #000; }
+
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; 
             background: rgba(2, 4, 10, 0.98);
@@ -178,8 +189,17 @@
 </head>
 <body id="app-body">
 
-<!-- ЭКРАН ЗАГРУЗКИ ПО ЭСКИЗУ -->
-<div id="scr-loader">
+<!-- МОДАЛЬНОЕ ОКНО ПРИВЕТСТВИЯ -->
+<div id="scr-welcome">
+    <div class="cyber-card" style="max-width:380px; width:100%; border-color:var(--cyan);">
+        <h2 style="color:var(--cyan); margin-bottom:10px; font-size:18px;">🌌 С ПРИБЫТИЕМ В KAHALIS</h2>
+        <p style="font-size:12px; color:var(--text-dim); margin-bottom:15px; line-height:1.5;">Вселенская экосистема инициализирована. Пилот, твоя галактика ждет тебя. Включай музыку, выбирай тактику и отправляйся к вершинам!</p>
+        <button class="btn btn-cyan" onclick="startApp()">🚀 ВОЙТИ В КОСМОС</button>
+    </div>
+</div>
+
+<!-- ЭКРАН ЗАГРУЗКИ -->
+<div id="scr-loader" style="display:none;">
     <div class="loader-frame"></div>
     <div class="ship-radar-container">
         <div class="radar-ring"></div>
@@ -197,12 +217,12 @@
     <div class="loader-percent" id="loader-percent-val">0%</div>
     <div class="loader-title">ПОДКЛЮЧЕНИЕ К ГАЛАКТИКЕ</div>
     <div class="loader-sub">Синхронизация флота • ping <span id="loader-ping">24</span> мс</div>
-
-    <!-- АРМИРОВАННАЯ (СЕГМЕНТИРОВАННАЯ) ШКАЛА -->
     <div class="armored-progress-track" id="armored-track"></div>
-    
     <div class="loader-tip" id="loader-tip-text">Совет: Вступайте в гильдию, вместе развиваться намного быстрее и безопаснее!</div>
 </div>
+
+<!-- МУЗЫКАЛЬНЫЙ ПЛЕЕР -->
+<audio id="bg-audio" loop src="https://www.bensound.com/bensound-music/bensound-scifi.mp3"></audio>
 
 <canvas id="starfield"></canvas>
 <div id="toast"></div>
@@ -273,7 +293,7 @@
         </div>
     </section>
 
-    <!-- 3. АНГАР -->
+    <!-- 3. АНГАР И КАЗИНО С ВЫБОРОМ СТАВКИ И БАШЕНКОЙ -->
     <section id="scr-hangar" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>⚙️ 50 Уровней Апгрейдов Крейсера</span></div>
@@ -298,27 +318,23 @@
             <button class="btn btn-outline" onclick="collectFarm()" style="margin-top:6px;">📥 Снять фарм с фермы</button>
         </div>
 
+        <!-- УНИКАЛЬНОЕ КАЗИНО С ВЫБОРОМ СТАВКИ И БАШЕНКОЙ С БОССАМИ -->
         <div class="cyber-card">
-            <div class="card-title"><span>📦 Черный Рынок (Кейсы с деталями)</span></div>
-            <div class="grid-2">
-                <button class="btn btn-gold" onclick="openBox('common')">📦 Обычный бокс<br><small>1,500 🪙</small></button>
-                <button class="btn btn-stars" onclick="openBox('epic')">🎁 Элитный кейс<br><small>50 💎</small></button>
+            <div class="card-title"><span>🎰 Игровой Зал (Выбор ставки)</span></div>
+            <input type="number" id="casino-bet" class="cyber-input" value="1000" placeholder="Сумма ставки (🪙)">
+            <div class="grid-3" style="margin-bottom:8px;">
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playCasinoGame('Слоты', 2.5)">🎰 Слоты (x2.5)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playCasinoGame('Мины', 3.0)">💣 Мины (x3.0)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playCasinoGame('Краш', 2.0)">🚀 Краш (x2.0)</button>
             </div>
+            <button class="btn btn-pink" onclick="startTowerGame()">🗼 Башня с Боссами (Интерактив)</button>
         </div>
 
-        <div class="cyber-card">
-            <div class="card-title"><span>🎰 Игровой Зал (Казино)</span></div>
-            <div class="grid-3">
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Слоты', 3, 2.5)">🎰 Слоты (x2.5)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Мины', 5, 3.0)">💣 Мины (x3.0)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Сейф', 2, 4.0)">🔑 Сейф (x4.0)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Краш', 4, 2.0)">🚀 Краш (x2.0)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Башня', 3, 3.5)">🗼 Башня (x3.5)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Блекджек', 2, 2.0)">♠️ Блекджек (x2)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Баскетбол', 2, 2.2)">🏀 Баскет (x2.2)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Пенальти', 2, 2.1)">⚽ Пенальти (x2.1)</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Дартс', 3, 2.8)">🎯 Дартс (x2.8)</button>
-            </div>
+        <!-- ИГРОВОЙ МОДУЛЬ «БАШНЯ С БОССАМИ» -->
+        <div class="cyber-card" id="tower-game-box" style="display:none; border-color:var(--pink);">
+            <div class="card-title"><span style="color:var(--pink);">🗼 БАШНЯ: ЭТАЖ <span id="tower-floor">1</span></span></div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;" id="tower-status">Выберите ячейку. Остерегайтесь ловушек и босса!</p>
+            <div class="tower-grid" id="tower-grid"></div>
         </div>
     </section>
 
@@ -339,7 +355,7 @@
         </div>
     </section>
 
-    <!-- 5. ПРОФИЛЬ И ДОНАТ -->
+    <!-- 5. ПРОФИЛЬ, МУЗЫКАЛЬНЫЙ ПЛЕЕР И СЕЙФ (УГАДАЙ ЧИСЛО 1-99) -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>👤 Досье Пилота</span></div>
@@ -347,6 +363,25 @@
             <p style="font-size:12px; margin-bottom:6px;">ID: <b id="profile-id" style="color:var(--cyan)">-</b></p>
             <p style="font-size:12px; margin-bottom:6px;">Уровень: <b id="profile-lvl">1</b></p>
             <p style="font-size:12px;">Роль: <b id="profile-role-text" style="color:var(--pink);">Владелец (@bobik11222)</b></p>
+        </div>
+
+        <!-- МУЗЫКАЛЬНЫЙ ПЛЕЕР СВОЕЙ МУЗЫКИ -->
+        <div class="cyber-card" style="border-color: var(--cyan);">
+            <div class="card-title"><span style="color:var(--cyan);">🎵 Фоновый Музыкальный Плеер</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Включите встроенную или вставьте ссылку на свою музыку (.mp3):</p>
+            <input type="text" id="custom-audio-url" class="cyber-input" placeholder="https://site.com/track.mp3">
+            <div class="grid-2">
+                <button class="btn btn-cyan" onclick="toggleAudio()">▶️ Вкл / Выкл Музыку</button>
+                <button class="btn btn-gold" onclick="setCustomAudio()">📥 Загрузить свой трек</button>
+            </div>
+        </div>
+
+        <!-- СЕЙФ / УГАДАЙ ЧИСЛО БЕЗ СТАВКИ ОТ 1 ДО 99 -->
+        <div class="cyber-card">
+            <div class="card-title"><span>🔑 Сейф: Угадай число (1 - 99)</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Отправь число без ставки и получи бонус при угадывании:</p>
+            <input type="number" id="safe-guess-input" class="cyber-input" min="1" max="99" placeholder="Введите число от 1 до 99">
+            <button class="btn btn-gold" onclick="playSafeGame()">🔓 Открыть сейф</button>
         </div>
 
         <div class="cyber-card">
@@ -357,22 +392,13 @@
 
         <div class="cyber-card">
             <div class="card-title"><span>⭐ Магазин Доната (От малого до великого)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Монеты и Алмазы с отправкой в ЛС @bobik11222:</p>
             <div class="grid-2">
                 <button class="btn btn-stars" onclick="buyDonate('coins', 25, 25000)">🪙 25k Монет<br><small>25 Stars</small></button>
-                <button class="btn btn-stars" onclick="buyDonate('coins', 50, 75000)">🪙 75k Монет<br><small>50 Stars</small></button>
-            </div>
-            <div class="grid-2" style="margin-top:6px;">
                 <button class="btn btn-stars" onclick="buyDonate('coins', 100, 200000)">🪙 200k Монет<br><small>100 Stars</small></button>
-                <button class="btn btn-stars" onclick="buyDonate('coins', 250, 1000000)">🪙 1M Монет<br><small>250 Stars</small></button>
-            </div>
-            <div class="grid-2" style="margin-top:10px;">
-                <button class="btn btn-stars" onclick="buyDonate('crystals', 25, 1000)">💎 1k Алмазов<br><small>25 Stars</small></button>
-                <button class="btn btn-stars" onclick="buyDonate('crystals', 50, 3000)">💎 3k Алмазов<br><small>50 Stars</small></button>
             </div>
             <div class="grid-2" style="margin-top:6px;">
+                <button class="btn btn-stars" onclick="buyDonate('crystals', 25, 1000)">💎 1k Алмазов<br><small>25 Stars</small></button>
                 <button class="btn btn-stars" onclick="buyDonate('crystals', 100, 8000)">💎 8k Алмазов<br><small>100 Stars</small></button>
-                <button class="btn btn-stars" onclick="buyDonate('crystals', 250, 25000)">💎 25k Алмазов<br><small>250 Stars</small></button>
             </div>
         </div>
 
@@ -384,11 +410,6 @@
                 <option value="matrix">Тема #3: Matrix Green</option>
                 <option value="gold">Тема #4: Royal Gold</option>
                 <option value="purple">Тема #5: Purple Nebula</option>
-                <option value="theme6">Тема #6: Quantum Red</option>
-                <option value="theme7">Тема #7: Solar Flare</option>
-                <option value="theme8">Тема #8: Dark Matter</option>
-                <option value="theme9">Тема #9: Deep Space</option>
-                <option value="theme10">Тема #10: Supernova</option>
             </select>
         </div>
     </section>
@@ -397,7 +418,6 @@
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
             <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ УПРАВЛЕНИЯ</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Точная выдача ресурсов и уровней через консоль:</p>
             <input type="text" id="target-user-id" class="cyber-input" placeholder="Telegram ID (пусто = ваш аккаунт)">
             <input type="number" id="custom-amount" class="cyber-input" placeholder="Количество (например: 50, 10000, 1)">
             <div class="grid-2">
@@ -434,16 +454,12 @@
     let tg = null;
     try { if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; tg.expand(); } } catch(e) {}
 
-    // УСТОЙЧИВАЯ СИСТЕМА СОХРАНЕНИЯ С МИГРАЦИЕЙ СО ВСЕХ СТАРЫХ ВЕРСИЙ
     let savedData = null;
-    const persistentKeys = ['kahalis_supreme_master_save', 'kahalis_supreme_v24', 'kahalis_supreme_v23', 'kahalis_supreme_v22', 'kahalis_supreme_v21', 'kahalis_supreme_v20'];
+    const persistentKeys = ['kahalis_supreme_master_save', 'kahalis_supreme_v25', 'kahalis_supreme_v24', 'kahalis_supreme_v23', 'kahalis_supreme_v22'];
     for (let k of persistentKeys) {
         let raw = localStorage.getItem(k);
         if (raw) {
-            try {
-                savedData = JSON.parse(raw);
-                break;
-            } catch(e) {}
+            try { savedData = JSON.parse(raw); break; } catch(e) {}
         }
     }
 
@@ -472,10 +488,7 @@
     ];
 
     function save() {
-        try { 
-            // Сохраняем в единый постоянный ключ, чтобы обновление кода никогда не стирало данные игроков
-            localStorage.setItem('kahalis_supreme_master_save', JSON.stringify(state)); 
-        } catch(e) {}
+        try { localStorage.setItem('kahalis_supreme_master_save', JSON.stringify(state)); } catch(e) {}
         updateUI();
     }
 
@@ -497,6 +510,50 @@
             log.innerHTML += `<div>> [${time}] ${text}</div>`;
             log.scrollTop = log.scrollHeight;
         } catch(e) {}
+    }
+
+    // МУЗЫКАЛЬНЫЙ ПЛЕЕР
+    let isAudioPlaying = false;
+    function toggleAudio() {
+        const audio = document.getElementById('bg-audio');
+        if (!audio) return;
+        if (isAudioPlaying) {
+            audio.pause();
+            isAudioPlaying = false;
+            showToast("🔇 Музыка выключена");
+        } else {
+            audio.play().then(() => {
+                isAudioPlaying = true;
+                showToast("🎵 Музыка включена");
+            }).catch(e => showToast("❌ Ошибка воспроизведения трека"));
+        }
+    }
+
+    function setCustomAudio() {
+        const urlInput = document.getElementById('custom-audio-url');
+        const audio = document.getElementById('bg-audio');
+        if (!urlInput || !audio) return;
+        let url = urlInput.value.trim();
+        if (!url) { showToast("Введите ссылку на .mp3!"); return; }
+        audio.src = url;
+        audio.play().then(() => {
+            isAudioPlaying = true;
+            showToast("🎶 Свой трек успешно загружен!");
+        }).catch(e => showToast("❌ Не удалось загрузить аудио по ссылке"));
+    }
+
+    // СТАРТ ПРИЛОЖЕНИЯ ПО КНОПКЕ ПРИВЕТСТВИЯ
+    function startApp() {
+        const welcome = document.getElementById('scr-welcome');
+        const loader = document.getElementById('scr-loader');
+        if (welcome) {
+            welcome.style.opacity = '0';
+            setTimeout(() => {
+                welcome.style.display = 'none';
+                if (loader) loader.style.display = 'flex';
+                initLoadingScreen();
+            }, 500);
+        }
     }
 
     const shipNames = [
@@ -583,11 +640,9 @@
 
     function init() {
         try {
-            initLoadingScreen();
             setTheme(state.theme || 'default');
             renderStores();
             updateUI();
-            addLog("KAHALIS SUPREME V25 запущен. Сохранения синхронизированы.");
         } catch(e) {}
     }
 
@@ -607,7 +662,6 @@
             setSafely('player-hp-text', `${state.playerHp} / 100`);
             setSafely('enemy-hp-text', `${state.enemyHp} / 300`);
             
-            // ИСПРАВЛЕНИЕ: Мгновенное обновление уровня, галактики и корабля в шапке
             setSafely('ui-lvl', state.lvl);
             setSafely('profile-lvl', state.lvl);
             setSafely('ui-galaxy-name', state.galaxy);
@@ -696,7 +750,6 @@
         state.parts -= partsCost;
         state.ship = name;
         showToast(`🛸 Куплен корабль: ${name}!`);
-        addLog(`Ангар: Сконструирован флагман ${name}`);
         save();
     }
 
@@ -706,7 +759,6 @@
         state.credits -= cost;
         state.galaxy = name;
         showToast(`🌌 Перелет в галактику ${name}!`);
-        addLog(`Навигация: Прыжок в сектор ${name}`);
         save();
     }
 
@@ -718,108 +770,145 @@
             state.lvl += 1;
             state.enemyHp = 300;
             showToast("🏆 Сектор захвачен! +2,500 🪙, +3 детали, +1 ур.");
-            addLog("Бой: Вражеская армада разбита, получена добыча и уровень.");
         } else {
             state.playerHp = Math.max(0, state.playerHp - 20);
-            showToast("💥 Враг контратакует! Твой корпус поврежден (-20 HP)");
-            addLog("Бой: Отражена контратака противника. Защита крейсера под ударом.");
-            if(state.playerHp <= 0) {
-                state.playerHp = 100;
-                showToast("⚠️ Корабль разбит! Авто-ремонт корпуса за аварийный счет.");
-                addLog("Авария: Крейсер уничтожен, выполнено экстренное восстановление.");
-            }
+            showToast("💥 Враг контратакует! (-20 HP)");
+            if(state.playerHp <= 0) { state.playerHp = 100; showToast("⚠️ Корабль разбит! Авто-ремонт."); }
         }
         save();
     }
 
     function repairShip() {
-        if(state.playerHp >= 100) { showToast("🛡 Корпус уже полностью цел (100/100)!"); return; }
-        if(state.credits < 1000) { showToast("Нужно 1,000 🪙 для ремонта!"); return; }
+        if(state.playerHp >= 100) { showToast("🛡 Корпус цел!"); return; }
+        if(state.credits < 1000) { showToast("Нужно 1,000 🪙!"); return; }
         state.credits -= 1000;
         state.playerHp = 100;
-        showToast("🔧 Корпус крейсера полностью отремонтирован!");
-        addLog("Ремонт: Целостность корпуса восстановлена до 100%.");
+        showToast("🔧 Ремонт завершен!");
         save();
     }
 
     function upgradeShipSystem() {
-        if(state.upgradeLvl >= 50) { showToast("Достигнут максимальный 50 уровень систем!"); return; }
+        if(state.upgradeLvl >= 50) { showToast("Максимальный уровень!"); return; }
         let cost = (state.upgradeLvl + 1) * 5000;
         if(state.credits < cost) { showToast(`Нужно ${cost.toLocaleString()} 🪙!`); return; }
         state.credits -= cost;
         state.upgradeLvl++;
         showToast(`⚙️ Системы улучшены до ур. ${state.upgradeLvl}!`);
-        addLog(`Апгрейд: Орудия и щиты прокачаны до ${state.upgradeLvl}`);
         save();
     }
 
     function mineAsteroid() {
         let gain = 3234;
         state.credits += gain;
-        showToast(`💎 +${gain.toLocaleString()} Монет за клик!`);
-        addLog(`Шахта: Добыто +${gain} 🪙.`);
+        showToast(`💎 +${gain.toLocaleString()} Монет!`);
         save();
     }
 
     function buyGPU() {
         let price = 10000;
-        if(state.credits < price) { showToast("Нужно 10,000 🪙!"); return; }
+        if(state.credits < price) { showToast("Нужно 10k 🪙!"); return; }
         state.credits -= price;
         state.gpus++;
-        showToast("⚡ Видеокарта добавлена на ферму!");
-        addLog(`Ферма: Установлена GPU №${state.gpus}`);
+        showToast("⚡ GPU куплена!");
         save();
     }
 
     function payInertiaCooling() {
         let coolingCost = 2000 + (state.gpus * 500);
-        if(state.credits < coolingCost) { showToast(`Нужно ${coolingCost.toLocaleString()} 🪙 для охлаждения!`); return; }
+        if(state.credits < coolingCost) { showToast("Мало монет!"); return; }
         state.credits -= coolingCost;
         state.inertia = 0;
-        showToast("❄️ Ферма охлаждена! Инерция сброшена до 0%.");
-        addLog("Ферма: Проведено техобслуживание охлаждения.");
+        showToast("❄️ Охлаждено!");
         save();
     }
 
     function collectFarm() {
-        if (state.inertia >= 100) {
-            showToast("⚠️ Ферма перегрета (100% инерции)! Требуется охлаждение!");
-            return;
-        }
+        if (state.inertia >= 100) { showToast("⚠️ Ферма перегрета!"); return; }
         let earned = state.gpus * 2000;
         state.credits += earned;
         state.inertia = Math.min(100, state.inertia + 12);
-        showToast(`📥 Снято с фермы: +${earned.toLocaleString()} 🪙`);
-        addLog(`Ферма: Снят пассивный доход (+${earned} 🪙).`);
+        showToast(`📥 Снято +${earned} 🪙`);
         save();
     }
 
-    function openBox(type) {
-        if(type === 'common') {
-            if(state.credits < 1500) { showToast("Нужно 1,500 🪙!"); return; }
-            state.credits -= 1500; state.parts += 2;
-            showToast("📦 В кейсе найдено: +2 детали!");
+    // КАЗИНО С ВЫБОРОМ СТАВКИ
+    function playCasinoGame(name, multiplier) {
+        const betInput = document.getElementById('casino-bet');
+        let bet = parseInt(betInput.value) || 1000;
+        if (state.credits < bet) { showToast("Не хватает монет для ставки!"); return; }
+        state.credits -= bet;
+        let win = Math.random() > 0.4;
+        if (win) {
+            let prize = Math.floor(bet * multiplier);
+            state.credits += prize;
+            showToast(`🎉 [${name}] Победа! +${prize.toLocaleString()} 🪙`);
         } else {
-            if(state.crystals < 50) { showToast("Нужно 50 💎!"); return; }
-            state.crystals -= 50; state.parts += 6;
-            showToast("🎁 В элитном боксе: +6 деталей!");
+            showToast(`❌ [${name}] Проигрыш (-${bet} 🪙)`);
         }
         save();
     }
 
-    function playUniqueGame(name, riskFactor, multiplier) {
-        let bet = 1000;
-        if(state.credits < bet) { showToast("Нужно 1,000 🪙 для ставки!"); return; }
+    // ИТЕРАЦИЯ ИГРЫ «БАШНЯ С БОССАМИ»
+    let towerState = { floor: 1, bet: 1000 };
+    function startTowerGame() {
+        const betInput = document.getElementById('casino-bet');
+        let bet = parseInt(betInput.value) || 1000;
+        if (state.credits < bet) { showToast("Не хватает монет для ставки в башне!"); return; }
         state.credits -= bet;
-        let win = Math.random() > (0.35 * riskFactor / 2);
-        if(win) {
-            let prize = Math.floor(bet * multiplier);
-            state.credits += prize;
-            showToast(`🎉 [${name}] Победа! +${prize.toLocaleString()} 🪙 (x${multiplier})`);
-            addLog(`Казино (${name}): Успех! Выйграно +${prize} монет.`);
+        towerState = { floor: 1, bet: bet };
+        
+        const box = document.getElementById('tower-game-box');
+        if (box) box.style.display = 'block';
+        renderTowerFloor();
+        showToast("🗼 Штурм башни начался!");
+        save();
+    }
+
+    function renderTowerFloor() {
+        document.getElementById('tower-floor').innerText = towerState.floor;
+        const grid = document.getElementById('tower-grid');
+        let html = '';
+        let bossFloor = (towerState.floor % 5 === 0);
+        document.getElementById('tower-status').innerText = bossFloor ? "⚠️ ЭТАЖ БОССА! Риск высок, награда огромна!" : "Выберите безопасную плитку (1 из 3)";
+        
+        for(let i=0; i<3; i++) {
+            html += `<div class="tower-cell" onclick="chooseTowerCell(${i})">Плитка #${i+1}</div>`;
+        }
+        grid.innerHTML = html;
+    }
+
+    function chooseTowerCell(idx) {
+        let bossFloor = (towerState.floor % 5 === 0);
+        let trapChance = bossFloor ? 0.6 : 0.3;
+        let isTrap = Math.random() < trapChance;
+
+        if (isTrap) {
+            showToast(`💥 Ловушка! Вы проиграли ставку (${towerState.bet} 🪙)`);
+            document.getElementById('tower-game-box').style.display = 'none';
         } else {
-            showToast(`❌ [${name}] Поражение! Ставка сгорела (-${bet} 🪙)`);
-            addLog(`Казино (${name}): Неудача, ставка сгорела.`);
+            let mult = bossFloor ? 4.5 : 1.8;
+            let reward = Math.floor(towerState.bet * mult);
+            state.credits += reward;
+            towerState.floor++;
+            showToast(`⭐ Этаж пройден! Награда: +${reward} 🪙`);
+            renderTowerFloor();
+        }
+        save();
+    }
+
+    // СЕЙФ / УГАДАЙ ЧИСЛО ОТ 1 ДО 99 БЕЗ СТАВКИ
+    function playSafeGame() {
+        const input = document.getElementById('safe-guess-input');
+        let guess = parseInt(input.value);
+        if (isNaN(guess) || guess < 1 || guess > 99) { showToast("Введите число от 1 до 99!"); return; }
+        
+        let secret = Math.floor(Math.random() * 99) + 1;
+        if (guess === secret) {
+            state.crystals += 100;
+            state.credits += 10000;
+            showToast("💎 БИНГО! Сейф открыт! +100 алмазов и +10k монет!");
+        } else {
+            showToast(`❌ Неверно! Сейф был заперт на числе ${secret}. Попробуй еще раз!`);
         }
         save();
     }
@@ -828,23 +917,19 @@
         if(type === 'buy') {
             if(state.credits < 5000) { showToast("Нужно 5k 🪙"); return; }
             state.credits -= 5000; state.crystals += 100;
-            showToast("Куплено 100 💎 на рынке трейдов");
-            addLog("Трейды: Обмен монет на алмазы под защитой модераторов.");
+            showToast("Куплено 100 💎");
         } else {
             if(state.crystals < 100) { showToast("Мало 💎"); return; }
             state.crystals -= 100; state.credits += 4000;
-            showToast("Продано 100 💎 на рынке трейдов");
-            addLog("Трейды: Алмазы успешно обменены на кредиты.");
+            showToast("Продано 100 💎");
         }
         save();
     }
 
     function tradeParts() {
-        if(state.parts < 5) { showToast("Нужно минимум 5 деталей!"); return; }
-        state.parts -= 5;
-        state.credits += 3000;
-        showToast("Успешно обменено 5 деталей на 3,000 🪙!");
-        addLog("Биржа: Сделка по продаже деталей закрыта.");
+        if(state.parts < 5) { showToast("Нужно 5 деталей!"); return; }
+        state.parts -= 5; state.credits += 3000;
+        showToast("Детали обменяны на 3k 🪙!");
         save();
     }
 
@@ -854,23 +939,18 @@
         let code = promoInput.value.trim().toUpperCase();
         if(code === "BOBIK2026" || code === "KAHALIS") {
             state.credits += 50000; state.crystals += 500;
-            showToast("🎁 Промокод активирован! +50k 🪙 и +500 💎");
-            addLog(`Промокод: Применен бонус ${code}`);
+            showToast("🎁 Промокод активирован!");
             save();
-        } else {
-            showToast("❌ Неверный или использованный промокод!");
-        }
+        } else { showToast("❌ Неверный промокод!"); }
     }
 
     function buyDonate(type, stars, amount) {
         if (tg && tg.openTelegramLink) {
             let label = type === 'coins' ? `${amount} Монет` : `${amount} Алмазов`;
             tg.openTelegramLink(`https://t.me/bobik11222?text=Оплата%20${stars}%20Stars%20за%20${label}%20для%20аккаунта%20${userId}`);
-            addLog(`Донат: Сформирован запрос на ${stars} Stars в ЛС @bobik11222`);
         } else {
-            if(type === 'coins') state.credits += amount;
-            else state.crystals += amount;
-            showToast("⭐ Донат успешно зачислен!");
+            if(type === 'coins') state.credits += amount; else state.crystals += amount;
+            showToast("⭐ Донат зачислен!");
             save();
         }
     }
@@ -880,7 +960,6 @@
         const body = document.getElementById('app-body');
         if (body) body.className = themeName === 'default' ? '' : `theme-${themeName}`;
         save();
-        showToast("🎨 Тема успешно изменена!");
     }
 
     function setCustomTheme(themeName) { setTheme(themeName); }
@@ -888,32 +967,28 @@
     function adminGiveCustomCoins() {
         let amount = parseInt(document.getElementById('custom-amount').value) || 10000;
         state.credits += amount;
-        showToast(`Root: Выдано ${amount.toLocaleString()} 🪙!`);
-        addLog(`[ROOT] Консоль начислила ${amount} монет.`);
+        showToast(`Root: +${amount} 🪙`);
         save();
     }
 
     function adminGiveCustomCrystals() {
         let amount = parseInt(document.getElementById('custom-amount').value) || 500;
         state.crystals += amount;
-        showToast(`Root: Выдано ${amount.toLocaleString()} 💎!`);
-        addLog(`[ROOT] Консоль начислила ${amount} алмазов.`);
+        showToast(`Root: +${amount} 💎`);
         save();
     }
 
     function adminGiveCustomParts() {
         let amount = parseInt(document.getElementById('custom-amount').value) || 10;
         state.parts += amount;
-        showToast(`Root: Выдано ${amount} 📦 деталей!`);
-        addLog(`[ROOT] Консоль начислила ${amount} деталей.`);
+        showToast(`Root: +${amount} деталей`);
         save();
     }
 
     function adminGiveCustomLvl() {
         let amount = parseInt(document.getElementById('custom-amount').value) || 1;
         state.lvl += amount;
-        showToast(`Root: Уровень повышен на +${amount}! (Текущий: ${state.lvl})`);
-        addLog(`[ROOT] Консоль повысила уровень на +${amount}.`);
+        showToast(`Root: Уровень +${amount}`);
         save();
     }
 
@@ -921,10 +996,9 @@
         const staffInput = document.getElementById('staff-user-id');
         if (!staffInput) return;
         let targetId = staffInput.value.trim();
-        if(!targetId) { showToast("Введите Telegram ID!"); return; }
+        if(!targetId) { showToast("Введите ID!"); return; }
         state.staffRoles[targetId] = roleType;
-        showToast(`🛡 ID ${targetId} назначен ролью: ${roleType.toUpperCase()}`);
-        addLog(`[SECURITY] Выдана роль ${roleType} игроку ${targetId}`);
+        showToast(`🛡 Роль выдана!`);
         save();
     }
 
