@@ -2,65 +2,65 @@ import asyncio
 import logging
 import os
 from aiogram import Bot, Dispatcher, F
-from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from dotenv import load_dotenv
 
-# Загружаем переменные окружения
 load_dotenv()
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("8709941951:AAH7PwqO__uc59BCYKWzary6I_8CX4Pt3Uk")
 
 logging.basicConfig(level=logging.INFO)
 
-# Динамическая генерация кнопок
-def get_dynamic_keyboard(level: int):
-    buttons = [
-        [InlineKeyboardButton(text="👤 Профиль", callback_data="profile"),
-         InlineKeyboardButton(text="⛏ Работать", callback_data="work")]
-    ]
-    
-    # Если уровень выше 5, добавляется секретный сектор
-    if level >= 5:
-        buttons.append([InlineKeyboardButton(text="🌌 Секретный Сектор ✨", callback_data="secret_galaxy")])
-        
-    buttons.append([InlineKeyboardButton(text="🔄 Обновить меню", callback_data="refresh_menu")])
-    return InlineKeyboardMarkup(inline_keyboard=buttons)
+# Создаем постоянные кнопки снизу (ReplyKeyboardMarkup), как на твоем втором скриншоте
+def get_bottom_keyboard():
+    return ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="🛠 Работа"), KeyboardButton(text="⛏ Шахта"), KeyboardButton(text="🎣 Рыбалка")],
+            [KeyboardButton(text="🏡 Ранчо"), KeyboardButton(text="📦 Ящики"), KeyboardButton(text="💴 Бизнес")],
+            [KeyboardButton(text="◀️ Меню")]
+        ],
+        resize_keyboard=True  # Делает кнопки аккуратными и компактными
+    )
 
 async def main():
     if not TOKEN:
-        print("❌ Ошибка: BOT_TOKEN не найден в переменных окружения Railway!")
+        print("❌ Ошибка: BOT_TOKEN не найден!")
         return
 
     bot = Bot(token=TOKEN)
     dp = Dispatcher()
 
-    # Обработчик команды /start
+    # Обработчик команды /start — сразу запускает бота без всяких подписок
     @dp.message(F.text == "/start")
     async def cmd_start(message: Message):
-        player_level = 3  # Для примера
         text = (
-            f"🛸 **Космический терминал активен!**\n"
-            f"Ваш текущий уровень: {player_level}\n\n"
-            "Выберите действие на панели управления:"
+            f"🛸 Привет, **{message.from_user.first_name}**!\n\n"
+            "Добро пожаловать в космическую империю! Все системы запущены. "
+            "Используй кнопки внизу экрана для управления:"
         )
-        await message.answer(text, reply_markup=get_dynamic_keyboard(player_level), parse_mode="Markdown")
+        await message.answer(text, reply_markup=get_bottom_keyboard(), parse_mode="Markdown")
 
-    # Обработчик кнопки обновления меню
-    @dp.callback_query(F.data == "refresh_menu")
-    async def refresh_menu(call: CallbackQuery):
-        await call.message.edit_text(
-            "🔄 Меню успешно обновлено актуальными данными из базы!",
-            reply_markup=get_dynamic_keyboard(level=5),
-            parse_mode="Markdown"
-        )
-        await call.answer("Данные синхронизированы!")
+    # Обработчики нажатий на нижние кнопки
+    @dp.message(F.text == "🛠 Работа")
+    async def work_handler(message: Message):
+        await message.answer("🪙 Вы отправились на смену в Общий Сектор и заработали +300 кредитов!", reply_markup=get_bottom_keyboard())
 
-    # Обработчик профиля
-    @dp.callback_query(F.data == "profile")
-    async def profile_cb(call: CallbackQuery):
-        await call.answer("Загрузка профиля...")
-        await call.message.answer("👤 Ваш профиль пилота успешно открыт.")
+    @dp.message(F.text == "⛏ Шахта")
+    async def mine_handler(message: Message):
+        await message.answer("💎 Вы спустились в астероидную шахту и добыли редкие ресурсы!", reply_markup=get_bottom_keyboard())
 
-    print("🚀 Бот успешно запущен и слушает Telegram API!")
+    @dp.message(F.text == "🎣 Рыбалка")
+    async def fish_handler(message: Message):
+        await message.answer("🌌 Закинули квантовый гарпун в открытый космос и поймали космического улова!", reply_markup=get_bottom_keyboard())
+
+    @dp.message(F.text == "📦 Ящики")
+    async def boxes_handler(message: Message):
+        await message.answer("📦 Вы открыли грузовой контейнер и нашли ценный лут!", reply_markup=get_bottom_keyboard())
+
+    @dp.message(F.text.in_(["🏡 Ранчо", "💴 Бизнес", "◀️ Меню"]))
+    async def general_menu_handler(message: Message):
+        await message.answer(f"📁 Раздел «{message.text}» открыт и готов к работе!", reply_markup=get_bottom_keyboard())
+
+    print("🚀 Бот успешно запущен без проверок подписок!")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
