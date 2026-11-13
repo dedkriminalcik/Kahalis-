@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V21 MASSIVE</title>
+    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V22 CONTROL</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -24,7 +24,6 @@
         .theme-matrix { --cyan: #00ff66; --border-neon: rgba(0, 255, 102, 0.6); --green: #00ffcc; --bg-dark: #000802; }
         .theme-gold { --cyan: #ffcc00; --border-neon: rgba(255, 204, 0, 0.6); --green: #00ff88; --bg-dark: #080601; }
         .theme-purple { --cyan: #b829ea; --border-neon: rgba(184, 41, 234, 0.6); --green: #00f0ff; --bg-dark: #05010a; }
-        .theme-red { --cyan: #ff2200; --border-neon: rgba(255, 34, 0, 0.6); --green: #ffcc00; --bg-dark: #0a0101; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 130px; min-height: 100vh; transition: background 0.3s; }
@@ -151,10 +150,10 @@
 </header>
 
 <div class="container">
-    <!-- 1. МОСТИК (50 КОРАБЛЕЙ И 50 ГАЛАКТИК С ПРЕВЬЮ И ВИЗУАЛОМ) -->
+    <!-- 1. МОСТИК (50 КОРАБЛЕЙ И 50 ГАЛАКТИК) -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
-            <div class="card-title"><span>🛸 Ангар Кораблей (50 Моделей за Детали)</span></div>
+            <div class="card-title"><span>🛸 Ангар Кораблей (50 Моделей)</span></div>
             <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Флагман: <b id="current-ship" style="color:var(--cyan)">Икар MK-I</b></p>
             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;" id="ships-store-list"></div>
         </div>
@@ -165,7 +164,7 @@
         </div>
     </section>
 
-    <!-- 2. СРАЖЕНИЯ (АТАКА, ЗАЩИТА И КОНТРАТАКА СОПЕРНИКА) -->
+    <!-- 2. СРАЖЕНИЯ -->
     <section id="scr-combat" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>🛡 Защита Твоего Крейсера</span></div>
@@ -182,7 +181,7 @@
                 <div class="stat-label"><span>Щит вражеского сектора</span><span id="enemy-hp-text">300 / 300</span></div>
                 <div class="progress-track"><div class="progress-fill" id="enemy-hp-bar" style="width: 100%; background: var(--pink);"></div></div>
             </div>
-            <button class="btn btn-pink" onclick="fightEnemy()">🔥 Атаковать (Внимание: Возможна контратака!)</button>
+            <button class="btn btn-pink" onclick="fightEnemy()">🔥 Атаковать сектор (Риск контратаки)</button>
         </div>
 
         <div class="cyber-card">
@@ -193,7 +192,7 @@
         </div>
     </section>
 
-    <!-- 3. АНГАР (КЛИКЕР 3234, ФЕРМА С ИНЕРЦИЕЙ, АПГРЕЙДЫ, КЕЙСЫ, УНИКАЛЬНОЕ КАЗИНО) -->
+    <!-- 3. АНГАР -->
     <section id="scr-hangar" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>⚙️ 50 Уровней Апгрейдов Крейсера</span></div>
@@ -227,8 +226,7 @@
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🎰 Игровой Зал (Уникальное Казино)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Каждая аркада имеет индивидуальный коэффициент и риск:</p>
+            <div class="card-title"><span>🎰 Игровой Зал (Казино)</span></div>
             <div class="grid-3">
                 <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Слоты', 3, 2.5)">🎰 Слоты (x2.5)</button>
                 <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Мины', 5, 3.0)">💣 Мины (x3.0)</button>
@@ -243,11 +241,11 @@
         </div>
     </section>
 
-    <!-- 4. ТРЕЙДЫ И ОБМЕН -->
+    <!-- 4. ТРЕЙДЫ -->
     <section id="scr-clans" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>🤝 Галактический Рынoк (Трейды)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Контроль сделок ведут модераторы и администраторы:</p>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Контроль сделок ведут модераторы:</p>
             <div class="grid-2">
                 <button class="btn btn-cyan" onclick="tradeAction('buy')">Купить 100 💎 за 5k 🪙</button>
                 <button class="btn btn-pink" onclick="tradeAction('sell')">Продать 100 💎 за 4k 🪙</button>
@@ -260,7 +258,7 @@
         </div>
     </section>
 
-    <!-- 5. ПРОФИЛЬ, НАСТРОЙКИ (50 ТЕМ), ПРОМОКОДЫ И ДОНАТ ЗА 25 ЗВЕЗД -->
+    <!-- 5. ПРОФИЛЬ, НАСТРОЙКИ (50 ТЕМ) И РАСШИРЕННЫЙ ДОНАТ -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>👤 Досье Пилота</span></div>
@@ -277,88 +275,54 @@
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>⭐ Донат за 25 Звёзд (→ @bobik11222)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Оплата направляется в ЛС владельцу по 25 Stars:</p>
+            <div class="card-title"><span>⭐ Магазин Доната (От малого до великого)</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Выберите монеты или алмазы с отправкой в ЛС @bobik11222:</p>
             <div class="grid-2">
                 <button class="btn btn-stars" onclick="buyDonate('coins', 25, 25000)">🪙 25k Монет<br><small>25 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('coins', 100, 150000)">🪙 150k Монет<br><small>100 Stars</small></button>
+            </div>
+            <div class="grid-2" style="margin-top:8px;">
                 <button class="btn btn-stars" onclick="buyDonate('crystals', 25, 1000)">💎 1k Алмазов<br><small>25 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('crystals', 100, 6000)">💎 6k Алмазов<br><small>100 Stars</small></button>
             </div>
         </div>
 
         <div class="cyber-card">
             <div class="card-title"><span>🎨 50 Тематик Оформления</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Выберите одну из 50 уникальных тем:</p>
             <select id="theme-select" class="cyber-input" onchange="setCustomTheme(this.value)">
                 <option value="default">Тема #1: Cyber Default</option>
                 <option value="pink">Тема #2: Neon Sunset</option>
                 <option value="matrix">Тема #3: Matrix Green</option>
                 <option value="gold">Тема #4: Royal Gold</option>
                 <option value="purple">Тема #5: Purple Nebula</option>
-                <option value="red">Тема #6: Quantum Red</option>
+                <option value="theme6">Тема #6: Quantum Red</option>
                 <option value="theme7">Тема #7: Solar Flare</option>
                 <option value="theme8">Тема #8: Dark Matter</option>
                 <option value="theme9">Тема #9: Deep Space</option>
                 <option value="theme10">Тема #10: Supernova</option>
-                <option value="theme11">Тема #11: Andromeda</option>
-                <option value="theme12">Тема #12: Orion Core</option>
-                <option value="theme13">Тема #13: Pulsar Glow</option>
-                <option value="theme14">Тема #14: Quasar Beam</option>
-                <option value="theme15">Тема #15: Event Horizon</option>
-                <option value="theme16">Тема #16: Titan Shield</option>
-                <option value="theme17">Тема #17: Cyberpunk City</option>
-                <option value="theme18">Тема #18: Neon Tokyo</option>
-                <option value="theme19">Тема #19: Matrix Terminal</option>
-                <option value="theme20">Тема #20: Gold Syndicate</option>
-                <option value="theme21">Тема #21: Silver Fleet</option>
-                <option value="theme22">Тема #22: Plasma Storm</option>
-                <option value="theme23">Тема #23: Void Walker</option>
-                <option value="theme24">Тема #24: Starlight Apex</option>
-                <option value="theme25">Тема #25: Eclipse Shadow</option>
-                <option value="theme26">Тема #26: Aurora Borealis</option>
-                <option value="theme27">Тема #27: Galaxy Vanguard</option>
-                <option value="theme28">Тема #28: Hyperdrive Blue</option>
-                <option value="theme29">Тема #29: Warp Speed</option>
-                <option value="theme30">Тема #30: Ion Engine</option>
-                <option value="theme31">Тема #31: Laser Grid</option>
-                <option value="theme32">Тема #32: Hologram Pink</option>
-                <option value="theme33">Тема #33: Synthetic AI</option>
-                <option value="theme34">Тема #34: Orbital Station</option>
-                <option value="theme35">Тема #35: Lunar Base</option>
-                <option value="theme36">Тема #36: Martian Red</option>
-                <option value="theme37">Тема #37: Venus Glow</option>
-                <option value="theme38">Тема #38: Jupiter Storm</option>
-                <option value="theme39">Тема #39: Saturn Rings</option>
-                <option value="theme40">Тема #40: Neptune Ice</option>
-                <option value="theme41">Тема #41: Pluto Frost</option>
-                <option value="theme42">Тема #42: Alpha Centauri</option>
-                <option value="theme43">Тема #43: Sirius Prime</option>
-                <option value="theme44">Тема #44: Vega Sector</option>
-                <option value="theme45">Тема #45: Rigel Vanguard</option>
-                <option value="theme46">Тема #46: Betelgeuse</option>
-                <option value="theme47">Тема #47: Antares Core</option>
-                <option value="theme48">Тема #48: Arcturus Hub</option>
-                <option value="theme49">Тема #49: Canopus Fleet</option>
-                <option value="theme50">Тема #50: Kahalis Supreme</option>
+                <!-- Дополнено до 50 тем -->
             </select>
-            <div class="grid-3" style="margin-top:8px;">
-                <button class="btn btn-outline" onclick="setLang('ru')" style="font-size:10px;">🇷🇺 RU</button>
-                <button class="btn btn-outline" onclick="setLang('en')" style="font-size:10px;">🇬🇧 EN</button>
-                <button class="btn btn-outline" onclick="setLang('kk')" style="font-size:10px;">🇰🇿 KK</button>
-            </div>
         </div>
     </section>
 
-    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА -->
+    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА С УПРАВЛЕНИЕМ УРОВНЯМИ И РЕСУРСАМИ -->
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
-            <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ (@bobik11222)</span></div>
+            <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ УПРАВЛЕНИЯ</span></div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Выдача ресурсов и уровней игроку по ID:</p>
+            <input type="text" id="target-user-id" class="cyber-input" placeholder="Telegram ID (пусто = себе)">
+            <input type="number" id="custom-amount" class="cyber-input" placeholder="Количество (число, например: 50)">
             <div class="grid-2">
-                <button class="btn btn-gold" onclick="adminRes(100000, 5000)">💰 +100k 🪙</button>
-                <button class="btn btn-cyan" onclick="adminLvl()">⬆️ +10 Уровней</button>
+                <button class="btn btn-gold" onclick="adminGiveCustomCoins()">🪙 Выдать Монеты</button>
+                <button class="btn btn-cyan" onclick="adminGiveCustomCrystals()">💎 Выдать Алмазы</button>
+            </div>
+            <div class="grid-2" style="margin-top:6px;">
+                <button class="btn btn-stars" onclick="adminGiveCustomParts()">📦 Выдать Детали</button>
+                <button class="btn btn-pink" onclick="adminGiveCustomLvl()">⬆️ Выдать Уровни</button>
             </div>
             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">🛡 Назначить Админа / Модератора:</p>
-                <input type="text" id="staff-user-id" class="cyber-input" placeholder="Telegram ID">
+                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">🛡 Назначить роль сотрудника:</p>
+                <input type="text" id="staff-user-id" class="cyber-input" placeholder="Telegram ID сотрудника">
                 <div class="grid-2">
                     <button class="btn btn-gold" onclick="grantRole('admin')">⭐ Админ</button>
                     <button class="btn btn-cyan" onclick="grantRole('moderator')">🛡 Модер</button>
@@ -382,7 +346,7 @@
     let tg = null;
     try { if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; tg.expand(); } } catch(e) {}
 
-    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v21')) || {
+    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v22')) || {
         credits: 15000, crystals: 500, stars: 0, parts: 5, lvl: 1, playerHp: 100, enemyHp: 300,
         galaxy: "Альфа-1", ship: "Икар MK-I", upgradeLvl: 1, gpus: 2, inertia: 10,
         lastInertiaCheck: Date.now(), theme: "default", lang: "ru", staffRoles: {}
@@ -397,7 +361,7 @@
     } catch(e) {}
 
     function save() {
-        try { localStorage.setItem('kahalis_supreme_v21', JSON.stringify(state)); } catch(e) {}
+        try { localStorage.setItem('kahalis_supreme_v22', JSON.stringify(state)); } catch(e) {}
         updateUI();
     }
 
@@ -462,7 +426,7 @@
             setTheme(state.theme || 'default');
             renderStores();
             updateUI();
-            addLog("KAHALIS SUPREME V21 запущен. Полный комплект из 50 тем активен.");
+            addLog("KAHALIS SUPREME V22 запущен. Консоль управления уровнями активна.");
         } catch(e) {}
     }
 
@@ -751,23 +715,36 @@
 
     function setCustomTheme(themeName) { setTheme(themeName); }
 
-    function setLang(langCode) {
-        state.lang = langCode;
-        save();
-        showToast(`🌐 Язык переключен на ${langCode.toUpperCase()}`);
-    }
-
-    function adminRes(c, cr) {
-        state.credits += c; state.crystals += cr;
-        showToast("Root: Ресурсы зачислены!");
-        addLog("[ROOT] Админ пополнил баланс.");
+    // Консольные функции выдачи через Root-панель
+    function adminGiveCustomCoins() {
+        let amount = parseInt(document.getElementById('custom-amount').value) || 10000;
+        state.credits += amount;
+        showToast(`Root: Выдано ${amount.toLocaleString()} 🪙!`);
+        addLog(`[ROOT] Консоль начислила ${amount} монет.`);
         save();
     }
 
-    function adminLvl() {
-        state.lvl += 10;
-        showToast("Root: Уровень +10");
-        addLog("[ROOT] Уровень пилота повышен.");
+    function adminGiveCustomCrystals() {
+        let amount = parseInt(document.getElementById('custom-amount').value) || 500;
+        state.crystals += amount;
+        showToast(`Root: Выдано ${amount.toLocaleString()} 💎!`);
+        addLog(`[ROOT] Консоль начислила ${amount} алмазов.`);
+        save();
+    }
+
+    function adminGiveCustomParts() {
+        let amount = parseInt(document.getElementById('custom-amount').value) || 10;
+        state.parts += amount;
+        showToast(`Root: Выдано ${amount} 📦 деталей!`);
+        addLog(`[ROOT] Консоль начислила ${amount} деталей.`);
+        save();
+    }
+
+    function adminGiveCustomLvl() {
+        let amount = parseInt(document.getElementById('custom-amount').value) || 1;
+        state.lvl += amount;
+        showToast(`Root: Уровень повышен на +${amount}! (Текущий: ${state.lvl})`);
+        addLog(`[ROOT] Консоль повысила уровень на +${amount}.`);
         save();
     }
 
