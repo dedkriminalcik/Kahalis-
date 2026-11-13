@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // ULTIMATE SPACE RPG</title>
+    <title>KAHALIS // INFINITE GALACTIC RPG SUPREME</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg-dark: #02040a;
-            --panel-bg: rgba(8, 13, 26, 0.96);
+            --bg-dark: #010308;
+            --panel-bg: rgba(6, 10, 20, 0.96);
             --border-neon: rgba(0, 240, 255, 0.4);
             --cyan: #00f0ff;
             --pink: #ff0055;
@@ -18,34 +18,36 @@
             --stars: #ffaa00;
             --text-main: #f0f6fc;
             --text-dim: #8b949e;
+            --rarity-epic: #b829ea;
+            --rarity-legendary: #ffaa00;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 95px; min-height: 100vh; }
-        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #0a1730 0%, #02040a 100%); }
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 100px; min-height: 100vh; }
+        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #081226 0%, #010308 100%); }
 
         .hud-header {
-            position: sticky; top: 0; z-index: 50; background: rgba(3, 6, 14, 0.96);
-            backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-neon);
+            position: sticky; top: 0; z-index: 50; background: rgba(2, 4, 10, 0.98);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-neon);
             padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 4px 35px rgba(0, 0, 0, 0.9);
         }
         .pilot-meta { display: flex; align-items: center; gap: 10px; }
         .avatar-ring {
-            width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--purple));
+            width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--purple));
             display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #000;
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.6);
+            box-shadow: 0 0 18px rgba(0, 240, 255, 0.7);
         }
         .pilot-name { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; }
         .role-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 800; }
-        .role-owner { background: rgba(255, 0, 85, 0.25); color: var(--pink); border: 1px solid var(--pink); box-shadow: 0 0 12px rgba(255,0,85,0.5); }
+        .role-owner { background: rgba(255, 0, 85, 0.3); color: var(--pink); border: 1px solid var(--pink); box-shadow: 0 0 12px rgba(255,0,85,0.6); }
         .role-pilot { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid var(--cyan); }
         .pilot-sub { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
 
         .resources-bar { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
         .res-pill {
             background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 5px;
+            padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 5px;
         }
         .res-credits { color: var(--gold); } .res-crystals { color: var(--cyan); } .res-stars { color: var(--stars); }
 
@@ -56,8 +58,8 @@
 
         .cyber-card {
             background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 14px;
-            padding: 14px; margin-bottom: 12px; backdrop-filter: blur(10px); position: relative; overflow: hidden;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.6);
+            padding: 14px; margin-bottom: 12px; backdrop-filter: blur(12px); position: relative; overflow: hidden;
+            box-shadow: 0 8px 35px rgba(0,0,0,0.7);
         }
         .cyber-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
         .card-title { font-size: 15px; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; color: #fff; }
@@ -72,23 +74,23 @@
             text-transform: uppercase; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
         }
         .btn:active { transform: scale(0.97); }
-        .btn-cyan { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; }
-        .btn-pink { background: linear-gradient(135deg, #ff0055, #900025); color: #fff; }
-        .btn-gold { background: linear-gradient(135deg, #ffcc00, #cc7700); color: #000; }
-        .btn-stars { background: linear-gradient(135deg, #ffaa00, #ff5500); color: #000; }
+        .btn-cyan { background: linear-gradient(135deg, #00f0ff, #0077ff); color: #000; box-shadow: 0 4px 15px rgba(0,240,255,0.3); }
+        .btn-pink { background: linear-gradient(135deg, #ff0055, #900025); color: #fff; box-shadow: 0 4px 15px rgba(255,0,85,0.3); }
+        .btn-gold { background: linear-gradient(135deg, #ffcc00, #cc7700); color: #000; box-shadow: 0 4px 15px rgba(255,204,0,0.3); }
+        .btn-stars { background: linear-gradient(135deg, #ffaa00, #ff5500); color: #000; box-shadow: 0 4px 15px rgba(255,170,0,0.3); }
         .btn-outline { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-neon); color: var(--text-main); }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-        .mini-stat { background: rgba(0, 0, 0, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); padding: 8px; border-radius: 8px; text-align: center; }
+        .mini-stat { background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.05); padding: 8px; border-radius: 8px; text-align: center; }
         .mini-stat .val { font-size: 16px; font-weight: 800; color: var(--cyan); margin-top: 2px; }
         .mini-stat .lbl { font-size: 10px; color: var(--text-dim); }
 
-        .terminal { background: #010205; border: 1px solid #1c2841; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: var(--green); height: 130px; overflow-y: auto; line-height: 1.35; }
-        .cyber-input { width: 100%; background: rgba(0, 0, 0, 0.5); border: 1px solid var(--border-neon); padding: 10px; border-radius: 8px; color: #fff; font-size: 12px; margin-bottom: 8px; outline: none; }
+        .terminal { background: #000206; border: 1px solid #1c2841; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: var(--green); height: 140px; overflow-y: auto; line-height: 1.4; }
+        .cyber-input { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-neon); padding: 10px; border-radius: 8px; color: #fff; font-size: 12px; margin-bottom: 8px; outline: none; }
 
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(3, 6, 14, 0.96);
-            backdrop-filter: blur(16px); border-top: 1px solid var(--border-neon); display: flex; justify-content: space-around; padding: 6px 2px 10px; z-index: 100;
+            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(2, 4, 10, 0.98);
+            backdrop-filter: blur(20px); border-top: 1px solid var(--border-neon); display: flex; justify-content: space-around; padding: 6px 2px 10px; z-index: 100;
         }
         .nav-btn { background: none; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; font-size: 9px; font-weight: 600; gap: 3px; cursor: pointer; flex: 1; }
         .nav-btn .icon { font-size: 18px; } .nav-btn.active { color: var(--cyan); } .nav-btn.owner-tab { color: var(--pink); }
@@ -97,7 +99,7 @@
         .lang-btn { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: var(--text-dim); padding: 4px 10px; border-radius: 6px; font-size: 10px; cursor: pointer; font-weight: 700; }
         .lang-btn.active { background: var(--cyan); color: #000; border-color: var(--cyan); }
 
-        #toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(8, 13, 26, 0.95); border: 1px solid var(--cyan); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 11px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 200; }
+        #toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(6, 10, 20, 0.98); border: 1px solid var(--cyan); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 200; box-shadow: 0 4px 20px rgba(0,240,255,0.4); }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -111,10 +113,10 @@
         <div class="avatar-ring" id="avatar-letter">Q</div>
         <div>
             <div class="pilot-name">
-                <span id="ui-username">Пилот</span>
+                <span id="ui-username">Qui détestez-vous</span>
                 <span class="role-badge role-pilot" id="ui-role-badge">ПИЛОТ</span>
             </div>
-            <div class="pilot-sub">Ур. <span id="ui-lvl">1</span> • Сектор Альфа</div>
+            <div class="pilot-sub"><span id="lbl-lvl">Ур.</span> <span id="ui-lvl">1</span> • <span id="lbl-sector">Сектор Альфа</span></div>
         </div>
     </div>
     <div class="resources-bar">
@@ -134,7 +136,7 @@
     <!-- МОСТИК -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
-            <div class="card-title"><span>🚀 Крейсер KAHALIS</span><span id="ship-status-badge" style="font-size:10px; color:var(--green)">● ОНЛАЙН</span></div>
+            <div class="card-title"><span id="t-bridge">🚀 Крейсер KAHALIS SUPREME</span><span id="ship-status-badge" style="font-size:10px; color:var(--green)">● ОНЛАЙН</span></div>
             <div class="stat-row">
                 <div class="stat-label"><span id="t-hp">Прочность корпуса</span><span id="ui-hp-text">100 / 100</span></div>
                 <div class="progress-track"><div class="progress-fill" id="ui-hp-bar" style="width: 100%; background: var(--green);"></div></div>
@@ -148,58 +150,58 @@
                 <div class="progress-track"><div class="progress-fill" id="ui-xp-bar" style="width: 0%; background: var(--purple);"></div></div>
             </div>
             <div class="grid-2" style="margin-top: 10px;">
-                <div class="mini-stat"><div class="lbl">АТАКА</div><div class="val" id="ui-atk">25</div></div>
-                <div class="mini-stat"><div class="lbl">БУР</div><div class="val" id="ui-mine">10</div></div>
+                <div class="mini-stat"><div class="lbl" id="t-atk-lbl">АТАКА</div><div class="val" id="ui-atk">25</div></div>
+                <div class="mini-stat"><div class="lbl" id="t-mine-lbl">БУР</div><div class="val" id="ui-mine">10</div></div>
             </div>
             <button class="btn btn-outline" onclick="repairShip()" id="t-repair">🔧 Ремонт корпуса (100 🪙)</button>
         </div>
     </section>
 
-    <!-- СЕКТОР (БЛОКИРУЕТСЯ ПРИ 0 HP) -->
+    <!-- СЕКТОР (БОИ И ШАХТА) -->
     <section id="scr-combat" class="screen">
         <div class="cyber-card" id="combat-card-1">
-            <div class="card-title"><span>⛏ Астероидная Шахта</span></div>
-            <button class="btn btn-cyan" onclick="mineAsteroids()">💎 Бурить астероид</button>
+            <div class="card-title"><span id="t-mine-t">⛏ Астероидная Шахта</span></div>
+            <button class="btn btn-cyan" onclick="mineAsteroids()" id="t-mine-btn">💎 Бурить астероид</button>
         </div>
         <div class="cyber-card" style="border-color: rgba(255, 0, 85, 0.4);" id="combat-card-2">
-            <div class="card-title"><span>🏴‍☠️ Пиратский корабль</span></div>
+            <div class="card-title"><span id="t-enemy-t">🏴‍☠️ Пиратский корабль</span></div>
             <div class="stat-row">
                 <div class="stat-label"><span>Броня цели</span><span id="enemy-hp-text">120 / 120</span></div>
                 <div class="progress-track"><div class="progress-fill" id="enemy-hp-bar" style="width: 100%; background: var(--pink);"></div></div>
             </div>
-            <button class="btn btn-pink" onclick="attackEnemy()">🔥 Залп из орудий</button>
+            <button class="btn btn-pink" onclick="attackEnemy()" id="t-fire-btn">🔥 Залп из орудий</button>
         </div>
         <div class="cyber-card">
-            <div class="card-title"><span>📡 Бортовой журнал</span></div>
+            <div class="card-title"><span id="t-log-t">📡 Бортовой журнал</span></div>
             <div class="terminal" id="combat-log"><div>> Инициализация боевых систем...</div></div>
         </div>
     </section>
 
-    <!-- АНГАР И РЕАЛЬНЫЕ TELEGRAM STARS -->
+    <!-- АНГАР И TELEGRAM STARS -->
     <section id="scr-hangar" class="screen">
         <div class="cyber-card">
-            <div class="card-title"><span>⭐ Официальный Telegram Stars Донат</span></div>
-            <p style="font-size:11px; color:var(--text-dim); margin-bottom:8px;">Оплата через нативное диалоговое окно Telegram API.</p>
+            <div class="card-title"><span id="t-stars-t">⭐ Официальный Telegram Stars Донат</span></div>
+            <p style="font-size:11px; color:var(--text-dim); margin-bottom:8px;" id="t-stars-desc">Оплата через нативное диалоговое окно Telegram Stars API.</p>
             <div class="grid-2">
                 <button class="btn btn-stars" onclick="payRealStars(100, 5000)">⭐ 100 Stars<br><small>= 5,000 🪙</small></button>
                 <button class="btn btn-stars" onclick="payRealStars(500, 30000)">⭐ 500 Stars<br><small>= 30,000 🪙</small></button>
             </div>
         </div>
         <div class="cyber-card">
-            <div class="card-title"><span>🛠 Улучшение систем корабля</span></div>
-            <button class="btn btn-cyan" onclick="buyUpgrade('atk')">Улучшить турели (300 🪙)</button>
-            <button class="btn btn-cyan" onclick="buyUpgrade('mine')" style="margin-top:6px;">Улучшить бур (250 🪙)</button>
+            <div class="card-title"><span id="t-upg-t">🛠 Улучшение систем корабля</span></div>
+            <button class="btn btn-cyan" onclick="buyUpgrade('atk')" id="t-upg-atk">Улучшить турели (300 🪙)</button>
+            <button class="btn btn-cyan" onclick="buyUpgrade('mine')" style="margin-top:6px;" id="t-upg-mine">Улучшить бур (250 🪙)</button>
         </div>
     </section>
 
     <!-- КЛАНЫ -->
     <section id="scr-clans" class="screen">
         <div class="cyber-card">
-            <div class="card-title"><span>🛡 Ваш Альянс</span></div>
+            <div class="card-title"><span id="t-clan-t">🛡 Ваш Альянс</span></div>
             <div id="clan-container"></div>
         </div>
         <div class="cyber-card">
-            <div class="card-title"><span>🌐 Галактические Синдикаты</span></div>
+            <div class="card-title"><span id="t-allclans-t">🌐 Галактические Синдикаты</span></div>
             <div id="global-clans-list"></div>
         </div>
     </section>
@@ -207,11 +209,15 @@
     <!-- ПРОФИЛЬ -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
-            <div class="card-title"><span>👤 Досье Пилота</span></div>
-            <p style="font-size:12px; margin-bottom:6px;">Имя: <b id="profile-real-name">-</b></p>
+            <div class="card-title"><span id="t-prof-t">👤 Досье Пилота</span></div>
+            <p style="font-size:12px; margin-bottom:6px;"><span id="t-name-lbl">Имя</span>: <b id="profile-real-name">-</b></p>
             <p style="font-size:12px; margin-bottom:6px;">Telegram ID: <b id="profile-telegram-id" style="color:var(--cyan);">-</b></p>
-            <p style="font-size:12px; margin-bottom:6px;">Уровень: <b id="profile-level">1</b></p>
-            <p style="font-size:12px;">Статус: <b id="profile-role-text" style="color:var(--gold);">Пилот</b></p>
+            <p style="font-size:12px; margin-bottom:6px;"><span id="t-lvl-lbl">Уровень</span>: <b id="profile-level">1</b></p>
+            <p style="font-size:12px;"><span id="t-status-lbl">Статус</span>: <b id="profile-role-text" style="color:var(--gold);">Пилот</b></p>
+        </div>
+        <div class="cyber-card">
+            <div class="card-title"><span id="t-inv-t">🎒 Инвентарь артефактов</span></div>
+            <div id="inventory-list" style="font-size: 11px; color: var(--text-dim);">Пусто</div>
         </div>
     </section>
 
@@ -220,12 +226,12 @@
         <div class="cyber-card" style="border-color: var(--pink);">
             <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ ВЛАДЕЛЬЦА</span></div>
             <div class="grid-2">
-                <button class="btn btn-gold" onclick="adminRes(10000, 500)">💰 +10k 🪙 / 500 💎</button>
-                <button class="btn btn-cyan" onclick="adminLvl()">⬆️ +5 Уровней</button>
+                <button class="btn btn-gold" onclick="adminRes(100000, 5000)">💰 +100k 🪙 / 5k 💎</button>
+                <button class="btn btn-cyan" onclick="adminLvl()">⬆️ +10 Уровней</button>
             </div>
-            <button class="btn btn-pink" style="margin-top:8px;" onclick="adminGiveGodItem()">⚡ Выдать Модуль MK-X (+150 Атаки)</button>
+            <button class="btn btn-pink" style="margin-top:8px;" onclick="adminGiveGodItem()">⚡ Выдать Модуль MK-X (+500 Атаки)</button>
             <div style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px;">
-                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">⚖️ Управление банами игроков:</p>
+                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">⚖️ Управление банами и игроками:</p>
                 <input type="text" id="target-user-id" class="cyber-input" placeholder="Telegram ID игрока">
                 <div class="grid-2">
                     <button class="btn btn-pink" onclick="adminBanUser()">⛔ Забанить</button>
@@ -234,39 +240,105 @@
             </div>
         </div>
         <div class="cyber-card">
-            <div class="card-title"><span>🖥 Системный лог</span></div>
+            <div class="card-title"><span>🖥 Системный лог сервера</span></div>
             <div class="terminal" id="admin-terminal">
-                <div>[SYS] Root-доступ подтвержден. Все системы под контролем владельца.</div>
+                <div>[SYS] Root-доступ подтвержден для ID: 6188701923.</div>
             </div>
         </div>
     </section>
 </div>
 
 <nav class="bottom-nav">
-    <button class="nav-btn active" onclick="switchScreen('scr-bridge', this)"><span class="icon">🚀</span><span>Мостик</span></button>
-    <button class="nav-btn" onclick="switchScreen('scr-combat', this)"><span class="icon">⚔️</span><span>Сектор</span></button>
-    <button class="nav-btn" onclick="switchScreen('scr-hangar', this)"><span class="icon">🛠</span><span>Ангар</span></button>
-    <button class="nav-btn" onclick="switchScreen('scr-clans', this)"><span class="icon">🛡</span><span>Кланы</span></button>
-    <button class="nav-btn" onclick="switchScreen('scr-profile', this)"><span class="icon">👤</span><span>Профиль</span></button>
+    <button class="nav-btn active" onclick="switchScreen('scr-bridge', this)"><span class="icon">🚀</span><span id="nav-1">Мостик</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-combat', this)"><span class="icon">⚔️</span><span id="nav-2">Сектор</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-hangar', this)"><span class="icon">🛠</span><span id="nav-3">Ангар</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-clans', this)"><span class="icon">🛡</span><span id="nav-4">Кланы</span></button>
+    <button class="nav-btn" onclick="switchScreen('scr-profile', this)"><span class="icon">👤</span><span id="nav-5">Профиль</span></button>
     <button class="nav-btn owner-tab" id="nav-owner-btn" style="display:none;" onclick="switchScreen('scr-owner', this)"><span class="icon">⚙️</span><span>Консоль</span></button>
 </nav>
 
 <script>
-    // Твой точный ID жестко прописан со строковым сравнением
-    const OWNER_IDS = ["6188701923", 6188701923]; 
+    const OWNER_IDS = ["6188701923", 6188701923];
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    let state = JSON.parse(localStorage.getItem('kahalis_save_v8')) || {
-        credits: 1500, crystals: 80, stars: 0, lvl: 1, xp: 0, hp: 100, maxHp: 100, shield: 50, maxShield: 50, atk: 25, mine: 10, clanId: null
+    let currentLang = localStorage.getItem('kahalis_lang') || 'ru';
+    const dict = {
+        ru: {
+            hp: "Прочность корпуса", shield: "Энергия щитов", xp: "Опыт пилота", repair: "🔧 Ремонт корпуса (100 🪙)",
+            mineBtn: "💎 Бурить астероид", fireBtn: "🔥 Залп из орудий", starsT: "⭐ Официальный Telegram Stars Донат",
+            starsDesc: "Оплата через нативное диалоговое окно Telegram Stars API.", upgT: "🛠 Улучшение систем корабля",
+            upgAtk: "Улучшить турели (300 🪙)", upgMine: "Улучшить бур (250 🪙)", clanT: "🛡 Ваш Альянс",
+            allClansT: "🌐 Галактические Синдикаты", profT: "👤 Досье Пилота", nameLbl: "Имя", lvlLbl: "Уровень",
+            statusLbl: "Статус", invT: "🎒 Инвентарь артефактов", nav1: "Мостик", nav2: "Сектор", nav3: "Ангар",
+            nav4: "Кланы", nav5: "Профиль", sectorLbl: "Сектор Альфа"
+        },
+        en: {
+            hp: "Hull Integrity", shield: "Shield Energy", xp: "Pilot XP", repair: "🔧 Repair Hull (100 🪙)",
+            mineBtn: "💎 Drill Asteroid", fireBtn: "🔥 Full Salvo", starsT: "⭐ Official Telegram Stars Donation",
+            starsDesc: "Payment via native Telegram Stars API popup.", upgT: "🛠 Ship System Upgrades",
+            upgAtk: "Upgrade Turrets (300 🪙)", upgMine: "Upgrade Drill (250 🪙)", clanT: "🛡 Your Alliance",
+            allClansT: "🌐 Galaxy Syndicates", profT: "👤 Pilot Dossier", nameLbl: "Name", lvlLbl: "Level",
+            statusLbl: "Status", invT: "🎒 Artifact Inventory", nav1: "Bridge", nav2: "Sector", nav3: "Hangar",
+            nav4: "Clans", nav5: "Profile", sectorLbl: "Alpha Sector"
+        },
+        kk: {
+            hp: "Корпус беріктігі", shield: "Қалқан энергиясы", xp: "Пилот тәжірибесі", repair: "🔧 Жөндеу (100 🪙)",
+            mineBtn: "💎 Бұрғылау", fireBtn: "🔥 Барлық қарудан ату", starsT: "⭐ Telegram Stars Дүкені",
+            starsDesc: "Ресми Telegram Stars интерфейсі арқылы төлеу.", upgT: "🛠 Кемені жақсарту",
+            upgAtk: "Мұнараларды жақсарту (300 🪙)", upgMine: "Бұрғыны жақсарту (250 🪙)", clanT: "🛡 Сіздің Альянсыңыз",
+            allClansT: "🌐 Галактика Синдикаттары", profT: "👤 Пилот Досьесі", nameLbl: "Аты", lvlLbl: "Деңгей",
+            statusLbl: "Мәртебесі", invT: "🎒 Артефактілер инвентары", nav1: "Мостик", nav2: "Сектор",
+            nav3: "Ангар", nav4: "Кланы", nav5: "Профиль", sectorLbl: "Альфа Секторы"
+        }
     };
 
-    let clansList = JSON.parse(localStorage.getItem('kahalis_clans_v8')) || [
-        { id: '1', name: 'Syndicate Prime', tag: 'SYN', leader: 'Aslan', members: 5 }
+    function setLang(lang) {
+        currentLang = lang;
+        localStorage.setItem('kahalis_lang', lang);
+        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        updateTexts();
+    }
+
+    function updateTexts() {
+        const d = dict[currentLang];
+        document.getElementById('t-hp').innerText = d.hp;
+        document.getElementById('t-shield').innerText = d.shield;
+        document.getElementById('t-xp').innerText = d.xp;
+        document.getElementById('t-repair').innerText = d.repair;
+        document.getElementById('t-mine-btn').innerText = d.mineBtn;
+        document.getElementById('t-fire-btn').innerText = d.fireBtn;
+        document.getElementById('t-stars-t').innerText = d.starsT;
+        document.getElementById('t-stars-desc').innerText = d.starsDesc;
+        document.getElementById('t-upg-t').innerText = d.upgT;
+        document.getElementById('t-upg-atk').innerText = d.upgAtk;
+        document.getElementById('t-upg-mine').innerText = d.upgMine;
+        document.getElementById('t-clan-t').innerText = d.clanT;
+        document.getElementById('t-allclans-t').innerText = d.allClansT;
+        document.getElementById('t-prof-t').innerText = d.profT;
+        document.getElementById('t-name-lbl').innerText = d.nameLbl;
+        document.getElementById('t-lvl-lbl').innerText = d.lvlLbl;
+        document.getElementById('t-status-lbl').innerText = d.statusLbl;
+        document.getElementById('t-inv-t').innerText = d.invT;
+        document.getElementById('lbl-sector').innerText = d.sectorLbl;
+        document.getElementById('nav-1').innerText = d.nav1;
+        document.getElementById('nav-2').innerText = d.nav2;
+        document.getElementById('nav-3').innerText = d.nav3;
+        document.getElementById('nav-4').innerText = d.nav4;
+        document.getElementById('nav-5').innerText = d.nav5;
+    }
+
+    let state = JSON.parse(localStorage.getItem('kahalis_save_v9')) || {
+        credits: 5000, crystals: 250, stars: 0, lvl: 2, xp: 45, hp: 100, maxHp: 100, shield: 50, maxShield: 50, atk: 45, mine: 18, clanId: null, inventory: ['Квантовый Модуль MK-I']
+    };
+
+    let clansList = JSON.parse(localStorage.getItem('kahalis_clans_v9')) || [
+        { id: '1', name: 'Syndicate Prime', tag: 'SYN', leader: 'Qui détestez-vous', members: 12 }
     ];
 
-    let bannedUsers = JSON.parse(localStorage.getItem('kahalis_banned_v8')) || [];
-    let enemyHp = 120, enemyMaxHp = 120;
+    let bannedUsers = JSON.parse(localStorage.getItem('kahalis_banned_v9')) || [];
+    let enemyHp = 150, enemyMaxHp = 150;
     let userId = "6188701923", userName = "Qui détestez-vous";
 
     if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
@@ -280,9 +352,9 @@
     }
 
     function save() {
-        localStorage.setItem('kahalis_save_v8', JSON.stringify(state));
-        localStorage.setItem('kahalis_clans_v8', JSON.stringify(clansList));
-        localStorage.setItem('kahalis_banned_v8', JSON.stringify(bannedUsers));
+        localStorage.setItem('kahalis_save_v9', JSON.stringify(state));
+        localStorage.setItem('kahalis_clans_v9', JSON.stringify(clansList));
+        localStorage.setItem('kahalis_banned_v9', JSON.stringify(bannedUsers));
         updateUI();
     }
 
@@ -300,7 +372,6 @@
         document.getElementById('profile-telegram-id').innerText = userId;
         document.getElementById('profile-level').innerText = state.lvl;
 
-        // Жесткая проверка владельца через String совпадение
         const isOwner = OWNER_IDS.some(id => String(id) === userId);
         if (isOwner) {
             document.getElementById('ui-role-badge').innerText = "ВЛАДЕЛЕЦ";
@@ -309,6 +380,7 @@
             document.getElementById('profile-role-text').innerText = "Главный Владелец (Root)";
             document.getElementById('profile-role-text').style.color = "var(--pink)";
         }
+        updateTexts();
         updateUI();
     }
 
@@ -328,7 +400,14 @@
         document.getElementById('enemy-hp-text').innerText = `${enemyHp} / ${enemyMaxHp}`;
         document.getElementById('enemy-hp-bar').style.width = `${(enemyHp / enemyMaxHp) * 100}%`;
 
-        // Жесткая блокировка боев при 0 HP
+        // Инвентарь
+        const invBox = document.getElementById('inventory-list');
+        if (state.inventory && state.inventory.length > 0) {
+            invBox.innerHTML = state.inventory.map(item => `<div style="padding:4px 8px; background:rgba(0,240,255,0.1); border:1px solid var(--cyan); border-radius:6px; margin-bottom:4px; color:var(--cyan); font-weight:bold;">⚡ ${item}</div>`).join('');
+        } else {
+            invBox.innerHTML = "Пусто";
+        }
+
         const card1 = document.getElementById('combat-card-1');
         const card2 = document.getElementById('combat-card-2');
         const badge = document.getElementById('ship-status-badge');
@@ -355,8 +434,8 @@
 
     function mineAsteroids() {
         if (state.hp <= 0) { showToast("❌ Корабль уничтожен! Требуется ремонт в Ангаре!"); return; }
-        state.crystals += 2; state.credits += 20; state.xp += 15;
-        if(state.xp >= state.lvl * 100) { state.xp = 0; state.lvl++; showToast("🎉 Новый уровень!"); }
+        state.crystals += 4; state.credits += 40; state.xp += 20;
+        if(state.xp >= state.lvl * 100) { state.xp = 0; state.lvl++; showToast("🎉 Новый уровень пилота!"); }
         save();
     }
 
@@ -364,9 +443,9 @@
         if (state.hp <= 0) { showToast("❌ Корабль уничтожен! Требуется ремонт в Ангаре!"); return; }
         enemyHp = Math.max(0, enemyHp - state.atk);
         if (enemyHp === 0) { 
-            state.credits += 200; enemyHp = enemyMaxHp; showToast("🏆 Победа!"); 
+            state.credits += 400; state.crystals += 10; enemyHp = enemyMaxHp; showToast("🏆 Победа над пиратом! +400 🪙"); 
         } else { 
-            state.hp = Math.max(0, state.hp - 20);
+            state.hp = Math.max(0, state.hp - 18);
             if (state.hp === 0) { showToast("💥 КОРПУС РАЗРУШЕН! БОИ ЗАБЛОКИРОВАНЫ!"); }
         }
         save();
@@ -380,19 +459,28 @@
     }
 
     function buyUpgrade(type) {
-        if(type === 'atk' && state.credits >= 300) { state.credits -= 300; state.atk += 15; showToast("🔫 Турели улучшены!"); }
-        else if(type === 'mine' && state.credits >= 250) { state.credits -= 250; state.mine += 8; showToast("💎 Бур улучшен!"); }
+        if(type === 'atk' && state.credits >= 300) { state.credits -= 300; state.atk += 20; showToast("🔫 Турели улучшены!"); }
+        else if(type === 'mine' && state.credits >= 250) { state.credits -= 250; state.mine += 10; showToast("💎 Бур улучшен!"); }
         else { showToast("❌ Не хватает средств!"); }
         save();
     }
 
-    // РЕАЛЬНЫЙ TELEGRAM STARS ИНВОЙС ЧЕРЕЗ BOT LINK ИЛИ API
+    // РЕАЛЬНЫЙ TELEGRAM STARS ИНВОЙС ЧЕРЕЗ tg.openInvoice API
     function payRealStars(starsCount, creditsReward) {
         if (tg.openInvoice) {
-            // Запрос на открытие встроенного счета звезд
-            tg.openTelegramLink(`https://t.me/share/url?url=https://t.me/`); 
-            showToast("⭐ Откройте официальный чат с ботом для оплаты инвойса Stars!");
+            // Вызов официального диалогового окна Telegram Stars
+            tg.openInvoice(`https://t.me/invoice/stars_${starsCount}`, (status) => {
+                if (status === 'paid') {
+                    state.stars += starsCount;
+                    state.credits += creditsReward;
+                    showToast(`⭐ Успешно! Зачислено +${creditsReward} 🪙!`);
+                    save();
+                } else {
+                    showToast("⚠️ Оплата звездами отменена.");
+                }
+            });
         } else {
+            // Отладка в браузере
             state.stars += starsCount;
             state.credits += creditsReward;
             showToast(`⭐ Тест: зачислено +${creditsReward} 🪙!`);
@@ -400,27 +488,28 @@
         }
     }
 
-    // ФУНКЦИИ КОНСОЛИ ВЛАДЕЛЬЦА
+    // КОНСОЛЬ ВЛАДЕЛЬЦА
     function adminRes(c, cr) {
         state.credits += c; state.crystals += cr;
-        showToast("💰 Ресурсы начислены!"); save();
+        showToast("💰 Ресурсы начислены через Root!"); save();
     }
 
     function adminLvl() {
-        state.lvl += 5; state.atk += 30;
-        showToast("⬆️ Уровень повышен!"); save();
+        state.lvl += 10; state.atk += 80;
+        showToast("⬆️ Уровень повышен на +10!"); save();
     }
 
     function adminGiveGodItem() {
-        state.atk += 150; state.maxHp += 500; state.hp = state.maxHp;
-        showToast("⚡ Выдан Модуль MK-X!"); save();
+        state.atk += 500; state.maxHp += 2000; state.hp = state.maxHp;
+        if(!state.inventory.includes('Квантовый Модуль MK-X')) state.inventory.push('Квантовый Модуль MK-X');
+        showToast("⚡ Выдан легендарный модуль MK-X (+500 Атаки)!"); save();
     }
 
     function adminBanUser() {
         const id = document.getElementById('target-user-id').value.trim();
         if(!id) { showToast("Введите ID!"); return; }
         bannedUsers.push(id);
-        showToast(`⛔ Игрок ${id} забанен!`); save();
+        showToast(`⛔ Игрок ${id} забанен в системе!`); save();
     }
 
     function adminUnbanUser() {
@@ -437,28 +526,29 @@
         if(my) {
             box.innerHTML = `<div style="background:rgba(0,240,255,0.08); border:1px solid var(--cyan); padding:10px; border-radius:8px;">
                 <h4 style="color:var(--cyan)">[${my.tag}] ${my.name}</h4>
-                <button class="btn btn-pink" onclick="state.clanId=null; save();">Покинуть клан</button>
+                <p style="font-size:11px; margin-top:3px;">Лидер: ${my.leader} • Участников: ${my.members}</p>
+                <button class="btn btn-pink" style="margin-top:8px;" onclick="state.clanId=null; save();">Покинуть клан</button>
             </div>`;
         } else {
-            box.innerHTML = `<input type="text" id="cl-n" class="cyber-input" placeholder="Название">
-            <input type="text" id="cl-t" class="cyber-input" maxlength="4" placeholder="Тег">
-            <button class="btn btn-gold" onclick="createClan()">Создать клан (500 🪙)</button>`;
+            box.innerHTML = `<input type="text" id="cl-n" class="cyber-input" placeholder="Название клана">
+            <input type="text" id="cl-t" class="cyber-input" maxlength="4" placeholder="Тег (4 буквы)">
+            <button class="btn btn-gold" onclick="createClan()">👑 Создать клан (500 🪙)</button>`;
         }
 
         list.innerHTML = clansList.map(c => `<div style="display:flex; justify-content:space-between; align-items:center; padding:6px 0; border-bottom:1px solid rgba(255,255,255,0.05)">
             <span>[${c.tag}] ${c.name} (${c.members})</span>
-            ${state.clanId !== c.id ? `<button onclick="state.clanId='${c.id}'; c.members++; save();" style="padding:4px 8px; background:var(--cyan); border:none; border-radius:4px; font-weight:700;">Вступить</button>` : ''}
+            ${state.clanId !== c.id ? `<button onclick="state.clanId='${c.id}'; c.members++; save();" style="padding:4px 8px; background:var(--cyan); border:none; border-radius:4px; font-weight:700; cursor:pointer;">Вступить</button>` : ''}
         </div>`).join('');
     }
 
     function createClan() {
         const name = document.getElementById('cl-n').value.trim();
         const tag = document.getElementById('cl-t').value.trim().toUpperCase();
-        if(!name || tag.length < 2 || state.credits < 500) { showToast("Ошибка!"); return; }
+        if(!name || tag.length < 2 || state.credits < 500) { showToast("Ошибка создания клана!"); return; }
         state.credits -= 500;
         let nc = { id: Date.now().toString(), name, tag, leader: userName, members: 1 };
         clansList.push(nc); state.clanId = nc.id;
-        showToast("Клан создан!"); save();
+        showToast("👑 Клан успешно создан!"); save();
     }
 
     init();
