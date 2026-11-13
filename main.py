@@ -6,15 +6,17 @@ from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKe
 from dotenv import load_dotenv
 
 load_dotenv()
-TOKEN = os.getenv("8709941951:AAE_RN2C43TgbcOw4k16bGctfdKGvNmI2uc")
 
-# Впиши сюда свой Telegram ID (цифрами), чтобы получить роль Владельца
-OWNER_ID = 123456789  # Замени на свой реальный ID!
+# Токен автоматически подтягивается из защищенных переменных Railway
+TOKEN = os.getenv("BOT_TOKEN")
+
+# ⚠️ Впиши сюда свой реальный Telegram ID цифрами (узнать можно у @userinfobot), чтобы получить доступ к консоли владельца
+OWNER_ID = 123456789  
 
 logging.basicConfig(level=logging.INFO)
 
-# Ссылка на твой Mini App (замени на свою ссылку GitHub Pages или хостинга)
-WEBAPP_URL = "https://t.me/your_webapp_link" 
+# Ссылка на твой Mini App (замени на свою ссылку GitHub Pages или оставь заглушку)
+WEBAPP_URL = "https://github.com" 
 
 # Главное меню пилота
 def get_main_menu(is_owner: bool = False):
@@ -23,13 +25,11 @@ def get_main_menu(is_owner: bool = False):
         [InlineKeyboardButton(text="🛠 Работа", callback_data="menu_work"),
          InlineKeyboardButton(text="👤 Профиль", callback_data="menu_profile")]
     ]
-    # Если пользователь — владелец, добавляем секретную кнопку консоли
     if is_owner:
         keyboard.insert(0, [InlineKeyboardButton(text="⚙️ Консоль владельца", callback_data="owner_console")])
         
     return InlineKeyboardMarkup(inline_keyboard=keyboard)
 
-# Меню заданий
 def get_work_menu():
     return InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="⛏ Шахта", callback_data="task_mine"),
@@ -44,7 +44,7 @@ def get_back_to_work():
 
 async def main():
     if not TOKEN:
-        print("❌ Ошибка: BOT_TOKEN не найден!")
+        print("❌ Ошибка: BOT_TOKEN не найден в переменных окружения!")
         return
 
     bot = Bot(token=TOKEN)
@@ -52,9 +52,7 @@ async def main():
 
     @dp.message(F.text == "/start")
     async def cmd_start(message: Message):
-        # Проверяем, является ли пользователь владельцем
         is_owner = (message.from_user.id == OWNER_ID)
-        
         await message.answer(
             "🌌 **Космический терминал управления:**\n"
             "Добро пожаловать в сектор! Выберите действие или откройте Mini App:",
@@ -62,7 +60,6 @@ async def main():
             parse_mode="Markdown"
         )
 
-    # Консоль владельца (админка)
     @dp.callback_query(F.data == "owner_console")
     async def owner_console(call: CallbackQuery):
         if call.from_user.id != OWNER_ID:
@@ -72,11 +69,10 @@ async def main():
         await call.message.edit_text(
             "⚙️ **Панель управления владельца (Консоль):**\n\n"
             "• Статус ядра: Активно\n"
-            "• Ошибок в базе: 0\n"
-            "• Управление ролями и экономикой доступно ниже:",
+            "• База данных: Подключена\n"
+            "• Управление экономикой и ролями:",
             reply_markup=InlineKeyboardMarkup(inline_keyboard=[
-                [InlineKeyboardButton(text="📊 Статистика серверов", callback_data="stat_servers")],
-                [InlineKeyboardButton(text="📢 Рассылка игрокам", callback_data="owner_broadcast")],
+                [InlineKeyboardButton(text="📊 Статистика", callback_data="stat_servers")],
                 [InlineKeyboardButton(text="◀️ Назад", callback_data="menu_main")]
             ]),
             parse_mode="Markdown"
@@ -131,7 +127,7 @@ async def main():
         )
         await call.answer()
 
-    print("🚀 Бот успешно запущен со всеми ролями и Mini App!")
+    print("🚀 Бот успешно запущен!")
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
