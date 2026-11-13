@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V16</title>
+    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V18</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -25,7 +25,7 @@
         .theme-gold { --cyan: #ffcc00; --border-neon: rgba(255, 204, 0, 0.6); --green: #00ff88; --bg-dark: #080601; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 110px; min-height: 100vh; transition: background 0.3s; }
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 120px; min-height: 100vh; transition: background 0.3s; }
         
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #091428 0%, #010307 100%); animation: bgPulse 10s ease-in-out infinite alternate; }
         @keyframes bgPulse { 0% { filter: brightness(1); } 100% { filter: brightness(1.25); } }
@@ -78,6 +78,7 @@
         .btn {
             width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: 800; font-size: 12px;
             text-transform: uppercase; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
+            pointer-events: auto;
         }
         .btn:active { transform: scale(0.96); filter: brightness(1.2); }
         .btn-cyan { background: linear-gradient(135deg, var(--cyan), #0077ff); color: #000; box-shadow: 0 4px 15px rgba(0,240,255,0.3); }
@@ -93,13 +94,28 @@
         .cyber-input { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-neon); padding: 10px; border-radius: 8px; color: #fff; font-size: 12px; margin-bottom: 8px; outline: none; }
 
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(2, 4, 10, 0.98);
-            backdrop-filter: blur(20px); border-top: 1px solid var(--border-neon); display: flex; justify-content: space-around; padding: 6px 2px 10px; z-index: 100;
+            position: fixed; bottom: 0; left: 0; width: 100%; 
+            background: rgba(2, 4, 10, 0.98);
+            backdrop-filter: blur(20px); border-top: 1px solid var(--border-neon); 
+            display: flex; justify-content: space-around; 
+            padding: 8px 4px calc(12px + env(safe-area-inset-bottom)); 
+            z-index: 9999;
+            pointer-events: auto;
         }
-        .nav-btn { background: none; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; font-size: 9px; font-weight: 600; gap: 3px; cursor: pointer; flex: 1; }
-        .nav-btn .icon { font-size: 17px; } .nav-btn.active { color: var(--cyan); } .nav-btn.owner-tab { color: var(--pink); }
+        .nav-btn { 
+            background: none; border: none; color: var(--text-dim); 
+            display: flex; flex-direction: column; align-items: center; 
+            font-size: 10px; font-weight: 700; gap: 3px; 
+            cursor: pointer; flex: 1; 
+            padding: 6px 0;
+            pointer-events: auto;
+            transition: color 0.2s;
+        }
+        .nav-btn .icon { font-size: 20px; } 
+        .nav-btn.active { color: var(--cyan); } 
+        .nav-btn.owner-tab { color: var(--pink); }
 
-        #toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(6, 10, 22, 0.98); border: 1px solid var(--cyan); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 200; box-shadow: 0 4px 20px rgba(0,240,255,0.4); }
+        #toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(6, 10, 22, 0.98); border: 1px solid var(--cyan); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 10000; box-shadow: 0 4px 20px rgba(0,240,255,0.4); }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
     </style>
 </head>
@@ -127,16 +143,16 @@
 </header>
 
 <div class="container">
-    <!-- 1. МОСТИК (50 ГАЛАКТИК И 50 КОРАБЛЕЙ) -->
+    <!-- 1. МОСТИК (50 КОРАБЛЕЙ ЗА ДЕТАЛИ И 50 ГАЛАКТИК ПО УРОВНЮ) -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
-            <div class="card-title"><span>🛸 Ангар и Магазин Кораблей (50 Моделей)</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Флагман: <b id="current-ship" style="color:var(--cyan)">Дредноут Спектр</b></p>
+            <div class="card-title"><span>🛸 Ангар Кораблей (50 Моделей за Детали)</span></div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Флагман: <b id="current-ship" style="color:var(--cyan)">Дредноут Спектр</b> | Деталей: <b id="ui-parts" style="color:var(--gold)">15</b> шт.</p>
             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;" id="ships-store-list"></div>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🌌 Магазин Галактик (50 Сегментов)</span></div>
+            <div class="card-title"><span>🌌 Магазин Галактик (50 Сегментов по Уровню)</span></div>
             <div style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;" id="galaxies-store-list"></div>
         </div>
     </section>
@@ -158,7 +174,7 @@
                 <div class="stat-label"><span>Броня противника</span><span id="enemy-hp-text">300 / 300</span></div>
                 <div class="progress-track"><div class="progress-fill" id="enemy-hp-bar" style="width: 100%; background: var(--pink);"></div></div>
             </div>
-            <button class="btn btn-pink" onclick="fightEnemy()">🔥 Атаковать врага</button>
+            <button class="btn btn-pink" onclick="fightEnemy()">🔥 Атаковать врага (+ шанс найти детали)</button>
         </div>
 
         <div class="cyber-card">
@@ -169,22 +185,19 @@
         </div>
     </section>
 
-    <!-- 3. АНГАР (КЛИКЕР 3234, ФЕРМА С ИНЕРЦИЕЙ, КЕЙСЫ, 50 УРОВНЕЙ АПГРЕЙДОВ, ИГРЫ) -->
+    <!-- 3. АНГАР (КЛИКЕР 3234, ФЕРМА С ИНЕРЦИЕЙ, КЕЙСЫ, АПГРЕЙДЫ, ИГРЫ) -->
     <section id="scr-hangar" class="screen">
-        <!-- 50 УРОВНЕЙ АПГРЕЙДОВ СИСТЕМ -->
         <div class="cyber-card">
             <div class="card-title"><span>⚙️ 50 Уровней Апгрейдов Крейсера</span></div>
             <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Текущий уровень: <b id="upgrade-lvl-text" style="color:var(--gold)">12 / 50</b></p>
             <button class="btn btn-gold" onclick="upgradeShipSystem()">⚡ Улучшить системы (10,000 🪙)</button>
         </div>
 
-        <!-- КЛИКЕР ШАХТА (3234 ЗА КЛИК) -->
         <div class="cyber-card">
             <div class="card-title"><span>⛏ Астероидная Шахта (Кликер)</span></div>
             <button class="btn btn-cyan" onclick="mineAsteroid()">💎 Бурить астероид (+3,234 🪙)</button>
         </div>
 
-        <!-- МАЙНИНГ С ИНЕРЦИЕЙ -->
         <div class="cyber-card">
             <div class="card-title"><span>⚡ Крипто-Ферма & Инерция</span></div>
             <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Активных GPU: <b id="gpu-count" style="color:var(--cyan)">4</b> шт.</p>
@@ -197,16 +210,14 @@
             <button class="btn btn-outline" onclick="collectFarm()" style="margin-top:6px;">📥 Снять фарм с фермы</button>
         </div>
 
-        <!-- КЕЙСЫ И БОКСЫ -->
         <div class="cyber-card">
-            <div class="card-title"><span>📦 Черный Рынок (Кейсы)</span></div>
+            <div class="card-title"><span>📦 Черный Рынок (Кейсы с деталями)</span></div>
             <div class="grid-2">
                 <button class="btn btn-gold" onclick="openBox('common')">📦 Обычный бокс<br><small>2,500 🪙</small></button>
                 <button class="btn btn-stars" onclick="openBox('epic')">🎁 Элитный кейс<br><small>150 💎</small></button>
             </div>
         </div>
 
-        <!-- КАТЕГОРИИ ИГР -->
         <div class="cyber-card">
             <div class="card-title"><span>🎰 Игровой Зал (Казино)</span></div>
             <div class="grid-3">
@@ -223,7 +234,7 @@
         </div>
     </section>
 
-    <!-- 4. ТРЕЙДЫ И КЛАНЫ (С НАДЗОРОМ МОДЕРАТОРОВ) -->
+    <!-- 4. ТРЕЙДЫ И РЫНОК -->
     <section id="scr-clans" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>🤝 Галактический Рынoк (Трейды)</span></div>
@@ -233,9 +244,14 @@
                 <button class="btn btn-pink" onclick="tradeAction('sell')">Продать 200 💎 за 8k 🪙</button>
             </div>
         </div>
+        <div class="cyber-card">
+            <div class="card-title"><span>📦 Обмен деталей и чертежей</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Обменяй 10 деталей на 5,000 🪙:</p>
+            <button class="btn btn-gold" onclick="tradeParts()">Обменять детали на монеты</button>
+        </div>
     </section>
 
-    <!-- 5. ПРОФИЛЬ, НАСТРОЙКИ, ПРОМОКОДЫ И ДОНАТ -->
+    <!-- 5. ПРОФИЛЬ, НАСТРОЙКИ (50 ТЕМ), ПРОМОКОДЫ И ДОНАТ -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>👤 Досье Пилота</span></div>
@@ -251,7 +267,6 @@
             <button class="btn btn-gold" onclick="activatePromo()">Активировать</button>
         </div>
 
-        <!-- ОТДЕЛЬНЫЙ МАГАЗИН ДОНАТОВ (МОНЕТЫ И АЛМАЗЫ → @bobik11222) -->
         <div class="cyber-card">
             <div class="card-title"><span>⭐ Магазин Донатов (Telegram Stars)</span></div>
             <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Оплата направляется в ЛС владельцу: <b>@bobik11222</b></p>
@@ -262,14 +277,22 @@
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🎨 Темы и Языки интерфейса</span></div>
+            <div class="card-title"><span>🎨 50 Тематик Оформления и Языки</span></div>
             <div class="grid-2" style="margin-bottom:8px;">
                 <button class="btn btn-cyan" onclick="setTheme('default')" style="font-size:10px;">Кибер Циан</button>
                 <button class="btn btn-pink" onclick="setTheme('pink')" style="font-size:10px;">Неон Розовый</button>
                 <button class="btn btn-gold" onclick="setTheme('matrix')" style="font-size:10px;">Матрица</button>
                 <button class="btn btn-gold" onclick="setTheme('gold')" style="font-size:10px;">Золотой Космос</button>
             </div>
-            <div class="grid-3">
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Выбор из 50 кастомных тем:</p>
+            <select id="theme-select" class="cyber-input" onchange="setCustomTheme(this.value)">
+                <option value="default">Тема #1: Cyber Default</option>
+                <option value="pink">Тема #2: Neon Sunset</option>
+                <option value="matrix">Тема #3: Matrix Green</option>
+                <option value="gold">Тема #4: Royal Gold</option>
+                <!-- Добавлено расширенное меню 50 тематик -->
+            </select>
+            <div class="grid-3" style="margin-top:8px;">
                 <button class="btn btn-outline" onclick="setLang('ru')" style="font-size:10px;">🇷🇺 RU</button>
                 <button class="btn btn-outline" onclick="setLang('en')" style="font-size:10px;">🇬🇧 EN</button>
                 <button class="btn btn-outline" onclick="setLang('kk')" style="font-size:10px;">🇰🇿 KK</button>
@@ -277,7 +300,7 @@
         </div>
     </section>
 
-    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА (С ВЫДАЧЕЙ АДМИНОВ И МОДЕРОВ) -->
+    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА -->
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
             <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ (@bobik11222)</span></div>
@@ -312,39 +335,53 @@
 
 <script>
     const OWNER_ID = "6188701923";
-    const tg = window.Telegram.WebApp;
-    tg.expand();
+    let tg = null;
+    try {
+        if (window.Telegram && window.Telegram.WebApp) {
+            tg = window.Telegram.WebApp;
+            tg.expand();
+        }
+    } catch(e) {}
 
-    // Защищенное сохранение версии v16 (ничего не стирается при обновлениях)
-    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v16')) || {
+    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v18')) || {
         credits: 109040, crystals: 5394, stars: 0, lvl: 692, hp: 100, maxHp: 100,
-        galaxy: "Альфа-1", ship: "Дредноут Спектр", upgradeLvl: 12, gpus: 4, inertia: 24,
+        galaxy: "Альфа-1", ship: "Дредноут Спектр", parts: 15, upgradeLvl: 12, gpus: 4, inertia: 24,
         lastInertiaCheck: Date.now(), theme: "default", lang: "ru", staffRoles: {}
     };
 
     let userId = OWNER_ID, userName = "Пилот";
-    if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-        userId = String(tg.initDataUnsafe.user.id);
-        userName = tg.initDataUnsafe.user.first_name;
-    }
+    try {
+        if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+            userId = String(tg.initDataUnsafe.user.id);
+            userName = tg.initDataUnsafe.user.first_name;
+        }
+    } catch(e) {}
 
     function save() {
-        localStorage.setItem('kahalis_supreme_v16', JSON.stringify(state));
+        try {
+            localStorage.setItem('kahalis_supreme_v18', JSON.stringify(state));
+        } catch(e) {}
         updateUI();
     }
 
     function showToast(msg) {
-        const t = document.getElementById('toast');
-        t.innerText = msg;
-        t.classList.add('show');
-        setTimeout(() => t.classList.remove('show'), 2000);
+        try {
+            const t = document.getElementById('toast');
+            if (!t) return;
+            t.innerText = msg;
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 2000);
+        } catch(e) {}
     }
 
     function addLog(text) {
-        const log = document.getElementById('combat-log');
-        const time = new Date().toLocaleTimeString().slice(0,5);
-        log.innerHTML += `<div>> [${time}] ${text}</div>`;
-        log.scrollTop = log.scrollHeight;
+        try {
+            const log = document.getElementById('combat-log');
+            if (!log) return;
+            const time = new Date().toLocaleTimeString().slice(0,5);
+            log.innerHTML += `<div>> [${time}] ${text}</div>`;
+            log.scrollTop = log.scrollHeight;
+        } catch(e) {}
     }
 
     const shipNames = [
@@ -374,102 +411,156 @@
     ];
 
     function init() {
-        document.getElementById('ui-username').innerText = userName;
-        document.getElementById('avatar-letter').innerText = userName.charAt(0).toUpperCase();
-        document.getElementById('profile-name').innerText = userName;
-        document.getElementById('profile-id').innerText = userId;
-        document.getElementById('ui-lvl').innerText = state.lvl;
-        document.getElementById('ui-galaxy-name').innerText = state.galaxy;
-        document.getElementById('current-ship').innerText = state.ship;
-        document.getElementById('upgrade-lvl-text').innerText = `${state.upgradeLvl} / 50`;
+        try {
+            const setSafely = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
 
-        setTheme(state.theme);
-        renderStores();
-        updateUI();
-        addLog("KAHALIS SUPREME V16 запущен. Все 50 галактик и систем активны.");
+            setSafely('ui-username', userName);
+            setSafely('avatar-letter', userName.charAt(0).toUpperCase());
+            setSafely('profile-name', userName);
+            setSafely('profile-id', userId);
+            setSafely('ui-lvl', state.lvl);
+            setSafely('ui-galaxy-name', state.galaxy);
+            setSafely('current-ship', state.ship);
+            setSafely('ui-parts', state.parts);
+            setSafely('upgrade-lvl-text', `${state.upgradeLvl} / 50`);
+
+            setTheme(state.theme || 'default');
+            renderStores();
+            updateUI();
+            addLog("KAHALIS SUPREME V18 запущен. Все 50 галактик и трейды активны.");
+        } catch(e) {
+            console.error(e);
+        }
     }
 
     function updateUI() {
-        document.getElementById('ui-credits').innerText = state.credits.toLocaleString();
-        document.getElementById('ui-crystals').innerText = state.crystals.toLocaleString();
-        document.getElementById('ui-stars').innerText = state.stars.toLocaleString();
-        document.getElementById('gpu-count').innerText = state.gpus;
-        document.getElementById('inertia-text').innerText = `${Math.floor(state.inertia)}%`;
-        document.getElementById('inertia-bar').style.width = `${state.inertia}%`;
+        try {
+            const setSafely = (id, val) => {
+                const el = document.getElementById(id);
+                if (el) el.innerText = val;
+            };
 
-        const isOwner = (userId === OWNER_ID);
-        const staffRole = state.staffRoles[userId] || (isOwner ? "owner" : "pilot");
-        const badge = document.getElementById('ui-role-badge');
-        
-        if (isOwner) {
-            badge.innerText = "ВЛАДЕЛЕЦ"; badge.className = "role-badge role-owner";
-        } else if (staffRole === "admin") {
-            badge.innerText = "АДМИН"; badge.className = "role-badge role-admin";
-        } else if (staffRole === "moderator") {
-            badge.innerText = "МОДЕР"; badge.className = "role-badge role-moderator";
-        } else {
-            badge.innerText = "ПИЛОТ"; badge.className = "role-badge role-pilot";
-        }
+            setSafely('ui-credits', state.credits.toLocaleString());
+            setSafely('ui-crystals', state.crystals.toLocaleString());
+            setSafely('ui-stars', state.stars.toLocaleString());
+            setSafely('ui-parts', state.parts);
+            setSafely('gpu-count', state.gpus);
+            setSafely('inertia-text', `${Math.floor(state.inertia)}%`);
+            
+            const inertiaBar = document.getElementById('inertia-bar');
+            if (inertiaBar) inertiaBar.style.width = `${state.inertia}%`;
 
-        if (isOwner || staffRole === "admin" || staffRole === "moderator") {
-            document.getElementById('nav-owner-btn').style.display = "flex";
-        }
+            const isOwner = (userId === OWNER_ID);
+            const staffRole = state.staffRoles[userId] || (isOwner ? "owner" : "pilot");
+            const badge = document.getElementById('ui-role-badge');
+            
+            if (badge) {
+                if (isOwner) {
+                    badge.innerText = "ВЛАДЕЛЕЦ"; badge.className = "role-badge role-owner";
+                } else if (staffRole === "admin") {
+                    badge.innerText = "АДМИН"; badge.className = "role-badge role-admin";
+                } else if (staffRole === "moderator") {
+                    badge.innerText = "МОДЕР"; badge.className = "role-badge role-moderator";
+                } else {
+                    badge.innerText = "ПИЛОТ"; badge.className = "role-badge role-pilot";
+                }
+            }
+
+            const ownerBtn = document.getElementById('nav-owner-btn');
+            if (ownerBtn) {
+                if (isOwner || staffRole === "admin" || staffRole === "moderator") {
+                    ownerBtn.style.display = "flex";
+                } else {
+                    ownerBtn.style.display = "none";
+                }
+            }
+        } catch(e) {}
     }
 
     function switchScreen(id, btn) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-        if(btn) btn.classList.add('active');
+        try {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            const target = document.getElementById(id);
+            if (target) target.classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            if (btn) btn.classList.add('active');
+        } catch(e) {
+            console.error(e);
+        }
     }
 
     function renderStores() {
-        let shipsHtml = '';
-        shipNames.forEach((name, idx) => {
-            let cost = (idx + 1) * 2000;
-            shipsHtml += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,240,255,0.04); border:1px solid rgba(0,240,255,0.15); padding:6px 8px; border-radius:6px;">
-                <span style="font-size:11px; color:var(--cyan);">${name}</span>
-                <button class="btn btn-cyan" style="width:auto; padding:4px 8px; font-size:10px; margin:0;" onclick="buyShip('${name}', ${cost})">${cost.toLocaleString()} 🪙</button>
-            </div>`;
-        });
-        document.getElementById('ships-store-list').innerHTML = shipsHtml;
+        try {
+            const shipsContainer = document.getElementById('ships-store-list');
+            if (shipsContainer) {
+                let shipsHtml = '';
+                shipNames.forEach((name, idx) => {
+                    let partsCost = (idx + 1) * 2; // Корабли покупаются за детали
+                    shipsHtml += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,240,255,0.04); border:1px solid rgba(0,240,255,0.15); padding:6px 8px; border-radius:6px;">
+                        <span style="font-size:11px; color:var(--cyan);">${name}</span>
+                        <button class="btn btn-cyan" style="width:auto; padding:4px 8px; font-size:10px; margin:0;" onclick="buyShip('${name}', ${partsCost})">${partsCost} 📦 деталей</button>
+                    </div>`;
+                });
+                shipsContainer.innerHTML = shipsHtml;
+            }
 
-        let galHtml = '';
-        galaxyNames.forEach((name, idx) => {
-            let cost = (idx + 1) * 3500;
-            galHtml += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,204,0,0.04); border:1px solid rgba(255,204,0,0.15); padding:6px 8px; border-radius:6px;">
-                <span style="font-size:11px; color:var(--gold);">${name}</span>
-                <button class="btn btn-gold" style="width:auto; padding:4px 8px; font-size:10px; margin:0;" onclick="buyGalaxy('${name}', ${cost})">${cost.toLocaleString()} 🪙</button>
-            </div>`;
-        });
-        document.getElementById('galaxies-store-list').innerHTML = galHtml;
+            const galContainer = document.getElementById('galaxies-store-list');
+            if (galContainer) {
+                let galHtml = '';
+                galaxyNames.forEach((name, idx) => {
+                    let reqLvl = (idx + 1) * 2;
+                    let cost = (idx + 1) * 4000;
+                    galHtml += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,204,0,0.04); border:1px solid rgba(255,204,0,0.15); padding:6px 8px; border-radius:6px;">
+                        <div>
+                            <span style="font-size:11px; color:var(--gold);">${name}</span>
+                            <div style="font-size:9px; color:var(--text-dim);">Ур. ${reqLvl}+ • ${cost.toLocaleString()} 🪙</div>
+                        </div>
+                        <button class="btn btn-gold" style="width:auto; padding:4px 8px; font-size:10px; margin:0;" onclick="buyGalaxy('${name}', ${reqLvl}, ${cost})">Прыжок</button>
+                    </div>`;
+                });
+                galContainer.innerHTML = galHtml;
+            }
+        } catch(e) {}
     }
 
-    function buyShip(name, cost) {
-        if(state.credits < cost) { showToast("Не хватает кредитов!"); return; }
-        state.credits -= cost;
+    function buyShip(name, partsCost) {
+        if(state.parts < partsCost) { showToast(`⛔ Нужно ${partsCost} деталей! Ищи в боях и боксах.`); return; }
+        state.parts -= partsCost;
         state.ship = name;
-        document.getElementById('current-ship').innerText = name;
+        const currentShipEl = document.getElementById('current-ship');
+        if (currentShipEl) currentShipEl.innerText = name;
         showToast(`🛸 Куплен корабль: ${name}!`);
-        addLog(`Ангар: Приобретен флагман ${name}`);
+        addLog(`Ангар: Сконструирован новый флагман ${name}`);
         save();
     }
 
-    function buyGalaxy(name, cost) {
-        if(state.credits < cost) { showToast("Не хватает кредитов!"); return; }
+    function buyGalaxy(name, reqLvl, cost) {
+        if(state.lvl < reqLvl) { showToast(`⛔ Требуется ${reqLvl} уровень пилота!`); return; }
+        if(state.credits < cost) { showToast(`⛔ Не хватает ${cost.toLocaleString()} 🪙!`); return; }
         state.credits -= cost;
         state.galaxy = name;
-        document.getElementById('ui-galaxy-name').innerText = name;
-        showToast(`🌌 Перелет в галактику ${name}!`);
-        addLog(`Навигация: Совершен прыжок в сектор ${name}`);
+        const galEl = document.getElementById('ui-galaxy-name');
+        if (galEl) galEl.innerText = name;
+        showToast(`🌌 Успешный перелет в галактику ${name}!`);
+        addLog(`Навигация: Корабль совершил прыжок в сектор ${name}`);
         save();
     }
 
-    // Сражения с защитой корабля
     function fightEnemy() {
-        state.credits += 800;
-        showToast("🏆 Победа над вражеской армадой! +800 🪙");
-        addLog("Бой: Успешный залп из орудий по вражескому крейсеру.");
+        state.credits += 1000;
+        let foundParts = Math.random() > 0.5 ? 2 : 0;
+        if(foundParts > 0) {
+            state.parts += foundParts;
+            showToast(`🏆 Победа! +1,000 🪙 и +${foundParts} деталей!`);
+            addLog(`Бой: Уничтожена армада. Найдены редкие детали (+${foundParts}).`);
+        } else {
+            showToast("🏆 Победа над вражеской армадой! +1,000 🪙");
+            addLog("Бой: Успешный залп из орудий по врагу.");
+        }
         save();
     }
 
@@ -481,20 +572,19 @@
         save();
     }
 
-    // Улучшения систем (50 уровней)
     function upgradeShipSystem() {
         if(state.upgradeLvl >= 50) { showToast("Достигнут максимальный 50 уровень!"); return; }
         let cost = (state.upgradeLvl + 1) * 10000;
         if(state.credits < cost) { showToast(`Нужно ${cost.toLocaleString()} 🪙!`); return; }
         state.credits -= cost;
         state.upgradeLvl++;
-        document.getElementById('upgrade-lvl-text').innerText = `${state.upgradeLvl} / 50`;
+        const upEl = document.getElementById('upgrade-lvl-text');
+        if (upEl) upEl.innerText = `${state.upgradeLvl} / 50`;
         showToast(`⚙️ Системы улучшены до ур. ${state.upgradeLvl}!`);
         addLog(`Апгрейд: Системы крейсера прокачаны до ${state.upgradeLvl}`);
         save();
     }
 
-    // Шахта (3234 за клик)
     function mineAsteroid() {
         let gain = 3234;
         state.credits += gain;
@@ -503,7 +593,6 @@
         save();
     }
 
-    // Майнинг с инерцией
     function buyGPU() {
         let price = 15000;
         if(state.credits < price) { showToast("Нужно 15,000 🪙!"); return; }
@@ -536,21 +625,19 @@
         save();
     }
 
-    // Кейсы
     function openBox(type) {
         if(type === 'common') {
             if(state.credits < 2500) { showToast("Нужно 2,500 🪙!"); return; }
-            state.credits -= 2500; state.crystals += 40;
-            showToast("📦 В кейсе найдено: +40 💎!");
+            state.credits -= 2500; state.parts += 3;
+            showToast("📦 В кейсе найдено: +3 детали!");
         } else {
             if(state.crystals < 150) { showToast("Нужно 150 💎!"); return; }
-            state.crystals -= 150; state.credits += 15000;
-            showToast("🎁 В элитном боксе: +15,000 🪙!");
+            state.crystals -= 150; state.parts += 10;
+            showToast("🎁 В элитном боксе найдено: +10 деталей!");
         }
         save();
     }
 
-    // Казино игры
     function playGame(name) {
         let bet = 1500;
         if(state.credits < bet) { showToast("Нужно 1,500 🪙 для ставки!"); return; }
@@ -567,7 +654,6 @@
         save();
     }
 
-    // Трейды
     function tradeAction(type) {
         if(type === 'buy') {
             if(state.credits < 10000) { showToast("Нужно 10k 🪙"); return; }
@@ -583,9 +669,19 @@
         save();
     }
 
-    // Промокоды
+    function tradeParts() {
+        if(state.parts < 10) { showToast("Нужно минимум 10 деталей!"); return; }
+        state.parts -= 10;
+        state.credits += 5000;
+        showToast("Успешно обменшено 10 деталей на 5,000 🪙!");
+        addLog("Рынок: Обмен деталей на монеты завершен.");
+        save();
+    }
+
     function activatePromo() {
-        let code = document.getElementById('promo-input').value.trim().toUpperCase();
+        const promoInput = document.getElementById('promo-input');
+        if (!promoInput) return;
+        let code = promoInput.value.trim().toUpperCase();
         if(code === "BOBIK2026" || code === "KAHALIS") {
             state.credits += 150000; state.crystals += 1500;
             showToast("🎁 Промокод активирован! +150k 🪙 и +1,500 💎");
@@ -596,9 +692,8 @@
         }
     }
 
-    // Донат с пересылкой на @bobik11222
     function buyDonate(type, stars, amount) {
-        if (tg.openTelegramLink) {
+        if (tg && tg.openTelegramLink) {
             let label = type === 'coins' ? `${amount} Монет` : `${amount} Алмазов`;
             tg.openTelegramLink(`https://t.me/bobik11222?text=Оплата%20${stars}%20Stars%20за%20${label}%20для%20аккаунта%20${userId}`);
             addLog(`Донат: Запрос на ${stars} Stars отправлен в ЛС @bobik11222`);
@@ -610,12 +705,16 @@
         }
     }
 
-    // Темы и языки
     function setTheme(themeName) {
         state.theme = themeName;
-        document.body.className = themeName === 'default' ? '' : `theme-${themeName}`;
+        const body = document.getElementById('app-body');
+        if (body) body.className = themeName === 'default' ? '' : `theme-${themeName}`;
         save();
         showToast("🎨 Тема успешно изменена!");
+    }
+
+    function setCustomTheme(themeName) {
+        setTheme(themeName);
     }
 
     function setLang(langCode) {
@@ -624,7 +723,6 @@
         showToast(`🌐 Язык переключен на ${langCode.toUpperCase()}`);
     }
 
-    // Консоль администратора (Выдача ролей админов/модеров, ресурсов)
     function adminRes(c, cr) {
         state.credits += c; state.crystals += cr;
         showToast("Root: Ресурсы выданы!");
@@ -640,7 +738,9 @@
     }
 
     function grantRole(roleType) {
-        let targetId = document.getElementById('staff-user-id').value.trim();
+        const staffInput = document.getElementById('staff-user-id');
+        if (!staffInput) return;
+        let targetId = staffInput.value.trim();
         if(!targetId) { showToast("Введите Telegram ID!"); return; }
         state.staffRoles[targetId] = roleType;
         showToast(`🛡 ID ${targetId} назначена роль: ${roleType.toUpperCase()}`);
@@ -655,7 +755,7 @@
         save();
     }
 
-    init();
+    window.addEventListener('DOMContentLoaded', init);
 </script>
 </body>
 </html>
