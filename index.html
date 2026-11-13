@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V23 MEGA MASSIVE</title>
+    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V24 LOADING</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -31,6 +31,64 @@
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #091428 0%, #010307 100%); animation: bgPulse 10s ease-in-out infinite alternate; }
         @keyframes bgPulse { 0% { filter: brightness(1); } 100% { filter: brightness(1.25); } }
 
+        /* ЭКРАН ЗАГРУЗКИ ПО ЭСКИЗУ */
+        #scr-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: radial-gradient(circle at center, #130a24 0%, #010307 100%);
+            z-index: 99999; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 20px; transition: opacity 0.5s ease;
+        }
+        .loader-frame {
+            position: absolute; inset: 15px; border: 1px solid rgba(0, 240, 255, 0.3); pointer-events: none;
+            box-shadow: inset 0 0 30px rgba(0,240,255,0.05);
+        }
+        /* Уголки рамки по эскизу */
+        .loader-frame::before, .loader-frame::after {
+            content: ''; position: absolute; width: 25px; height: 25px; border-color: var(--cyan); border-style: solid;
+        }
+        .loader-frame::before { top: 0; left: 0; border-width: 2px 0 0 2px; }
+        .loader-frame::after { top: 0; right: 0; border-width: 2px 2px 0 0; }
+
+        .ship-radar-container {
+            position: relative; width: 180px; height: 180px; display: flex; align-items: center; justify-content: center;
+            margin-bottom: 25px; animation: floatRadar 4s ease-in-out infinite alternate;
+        }
+        @keyframes floatRadar { 0% { transform: translateY(0px); } 100% { transform: translateY(-8px); } }
+
+        .radar-ring {
+            position: absolute; inset: 0; border-radius: 50%;
+            border: 2px dashed rgba(255, 0, 153, 0.5);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(184, 41, 234, 0.3);
+            animation: spinRing 12s linear infinite;
+        }
+        @keyframes spinRing { 100% { transform: rotate(360deg); } }
+
+        .ship-icon-svg { width: 75px; height: 75px; filter: drop-shadow(0 0 10px var(--cyan)); z-index: 2; }
+        
+        .loader-percent { font-size: 32px; font-weight: 900; color: #fff; letter-spacing: 2px; margin-bottom: 4px; text-shadow: 0 0 15px var(--cyan); }
+        .loader-title { font-size: 15px; font-weight: 800; letter-spacing: 2px; color: #fff; text-transform: uppercase; margin-bottom: 8px; }
+        .loader-sub { font-size: 11px; color: var(--cyan); margin-bottom: 25px; letter-spacing: 1px; }
+
+        /* АРМИРОВАННАЯ (СЕГМЕНТИРОВАННАЯ) ПОЛОСКА ЗАГРУЗКИ */
+        .armored-progress-track {
+            width: 280px; height: 12px; background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--border-neon); border-radius: 4px; padding: 2px;
+            display: flex; gap: 3px; box-shadow: 0 0 15px rgba(0,240,255,0.2); margin-bottom: 15px;
+        }
+        .armored-segment {
+            flex: 1; height: 100%; background: rgba(255, 255, 255, 0.08); border-radius: 1px; transition: background 0.2s;
+        }
+        .armored-segment.filled {
+            background: linear-gradient(90deg, var(--cyan), var(--purple));
+            box-shadow: 0 0 8px var(--cyan);
+        }
+
+        .loader-tip {
+            font-size: 11px; color: var(--gold); text-align: center; max-width: 320px; min-height: 30px;
+            line-height: 1.4; opacity: 0.9; text-shadow: 0 0 5px rgba(255,204,0,0.4);
+        }
+
+        /* ОСНОВНОЙ HUD И ИНТЕРФЕЙС */
         .hud-header {
             position: sticky; top: 0; z-index: 50; background: rgba(2, 4, 10, 0.95);
             backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-neon);
@@ -101,17 +159,14 @@
             backdrop-filter: blur(20px); border-top: 1px solid var(--border-neon); 
             display: flex; justify-content: space-around; 
             padding: 8px 4px calc(12px + env(safe-area-inset-bottom)); 
-            z-index: 9999;
-            pointer-events: auto;
+            z-index: 9999; pointer-events: auto;
         }
         .nav-btn { 
             background: none; border: none; color: var(--text-dim); 
             display: flex; flex-direction: column; align-items: center; 
             font-size: 10px; font-weight: 700; gap: 3px; 
-            cursor: pointer; flex: 1; 
-            padding: 6px 0;
-            pointer-events: auto;
-            transition: color 0.2s;
+            cursor: pointer; flex: 1; padding: 6px 0;
+            pointer-events: auto; transition: color 0.2s;
         }
         .nav-btn .icon { font-size: 19px; } 
         .nav-btn.active { color: var(--cyan); } 
@@ -122,6 +177,32 @@
     </style>
 </head>
 <body id="app-body">
+
+<!-- ЭКРАН ЗАГРУЗКИ ПО ЭСКИЗУ -->
+<div id="scr-loader">
+    <div class="loader-frame"></div>
+    <div class="ship-radar-container">
+        <div class="radar-ring"></div>
+        <svg class="ship-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L2 22L12 18L22 22L12 2Z" fill="url(#ship-grad)" stroke="#00f0ff" stroke-width="1"/>
+            <defs>
+                <linearGradient id="ship-grad" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#00f0ff"/>
+                    <stop offset="1" stop-color="#b829ea"/>
+                </linearGradient>
+            </defs>
+        </svg>
+    </div>
+    
+    <div class="loader-percent" id="loader-percent-val">0%</div>
+    <div class="loader-title">ПОДКЛЮЧЕНИЕ К ГАЛАКТИКЕ</div>
+    <div class="loader-sub">Синхронизация флота • ping <span id="loader-ping">24</span> мс</div>
+
+    <!-- АРМИРОВАННАЯ (СЕГМЕНТИРОВАННАЯ) ШКАЛА -->
+    <div class="armored-progress-track" id="armored-track"></div>
+    
+    <div class="loader-tip" id="loader-tip-text">Совет: Вступайте в гильдию, вместе развиваться намного быстрее и безопаснее!</div>
+</div>
 
 <canvas id="starfield"></canvas>
 <div id="toast"></div>
@@ -258,7 +339,7 @@
         </div>
     </section>
 
-    <!-- 5. ПРОФИЛЬ И ДОНАТ ОТ МАЛОГО ДО ВЕЛИКОГО -->
+    <!-- 5. ПРОФИЛЬ И ДОНАТ -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>👤 Досье Пилота</span></div>
@@ -312,7 +393,7 @@
         </div>
     </section>
 
-    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА С РАЗДЕЛЬНОЙ ВЫДАЧЕЙ УРОВНЕЙ И РЕСУРСОВ -->
+    <!-- 6. ROOT КОНСОЛЬ ВЛАДЕЛЬЦА -->
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
             <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ УПРАВЛЕНИЯ</span></div>
@@ -353,7 +434,7 @@
     let tg = null;
     try { if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; tg.expand(); } } catch(e) {}
 
-    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v23')) || {
+    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v24')) || {
         credits: 15000, crystals: 500, stars: 0, parts: 5, lvl: 1, playerHp: 100, enemyHp: 300,
         galaxy: "Альфа-1", ship: "Икар MK-I", upgradeLvl: 1, gpus: 2, inertia: 10,
         lastInertiaCheck: Date.now(), theme: "default", lang: "ru", staffRoles: {}
@@ -367,8 +448,19 @@
         }
     } catch(e) {}
 
+    // Массив советов для загрузки для быстрого развития
+    const gameTips = [
+        "Совет: Вступайте в гильдию, вместе развиваться намного быстрее и безопаснее!",
+        "Совет: Регулярно охлаждайте крипто-ферму, чтобы избежать перегрева и потери дохода.",
+        "Совет: Прокачивайте системы крейсера в ангаре — каждый уровень дает преимущество в боях.",
+        "Совет: Астероидная шахта позволяет быстро фармить монеты кликами по экрану.",
+        "Совет: Участвуйте в мини-играх казино с умом — выбирайте оптимальные множители риска.",
+        "Совет: Меняйте детали на черном рынке и бирже для покупки редких кораблей-флагманов.",
+        "Совет: Атакуйте чужие галактики осторожно — враги могут провести сильную контратаку!"
+    ];
+
     function save() {
-        try { localStorage.setItem('kahalis_supreme_v23', JSON.stringify(state)); } catch(e) {}
+        try { localStorage.setItem('kahalis_supreme_v24', JSON.stringify(state)); } catch(e) {}
         updateUI();
     }
 
@@ -418,8 +510,67 @@
         "Муха Сфера", "Насос Сектор", "Октант Юг", "Парус Космос", "Южный Крест"
     ];
 
+    // ИНИЦИАЛИЗАЦИЯ И ЭМУЛЯЦИЯ АРМИРОВАННОЙ ЗАГРУЗКИ
+    function initLoadingScreen() {
+        const totalSegments = 20;
+        const track = document.getElementById('armored-track');
+        if (!track) return;
+
+        // Создаем сегменты армированной полоски
+        let html = '';
+        for(let i = 0; i < totalSegments; i++) {
+            html += `<div class="armored-segment" id="seg-${i}"></div>`;
+        }
+        track.innerHTML = html;
+
+        let currentPercent = 0;
+        let tipIndex = 0;
+
+        // Меняем советы каждые 600мс
+        const tipTimer = setInterval(() => {
+            tipIndex = (tipIndex + 1) % gameTips.length;
+            const tipEl = document.getElementById('loader-tip-text');
+            if (tipEl) tipEl.innerText = gameTips[tipIndex];
+        }, 800);
+
+        // Плавный процесс заполнения
+        const loadInterval = setInterval(() => {
+            currentPercent += Math.floor(Math.random() * 4) + 2; // прибавка от 2 до 5%
+            if (currentPercent >= 100) {
+                currentPercent = 100;
+                clearInterval(loadInterval);
+                clearInterval(tipTimer);
+
+                // Плавное скрытие экрана загрузки
+                setTimeout(() => {
+                    const loader = document.getElementById('scr-loader');
+                    if (loader) {
+                        loader.style.opacity = '0';
+                        setTimeout(() => loader.style.display = 'none', 500);
+                    }
+                }, 400);
+            }
+
+            // Обновляем проценты и пинг
+            document.getElementById('loader-percent-val').innerText = `${currentPercent}%`;
+            document.getElementById('loader-ping').innerText = Math.floor(Math.random() * 10) + 18;
+
+            // Зажигаем сегменты армированной полоски
+            let filledCount = Math.floor((currentPercent / 100) * totalSegments);
+            for(let i = 0; i < totalSegments; i++) {
+                const seg = document.getElementById(`seg-${i}`);
+                if (seg) {
+                    if (i < filledCount) seg.classList.add('filled');
+                    else seg.classList.remove('filled');
+                }
+            }
+        }, 90);
+    }
+
     function init() {
         try {
+            initLoadingScreen();
+
             const setSafely = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
             setSafely('ui-username', userName);
             setSafely('avatar-letter', userName.charAt(0).toUpperCase());
@@ -433,7 +584,7 @@
             setTheme(state.theme || 'default');
             renderStores();
             updateUI();
-            addLog("KAHALIS SUPREME V23 запущен. Управление уровнями и ресурсами активно.");
+            addLog("KAHALIS SUPREME V24 запущен. Синхронизация с галактикой завершена.");
         } catch(e) {}
     }
 
@@ -722,7 +873,6 @@
 
     function setCustomTheme(themeName) { setTheme(themeName); }
 
-    // Консольные функции выдачи через Root-панель (полностью исправленные и гибкие)
     function adminGiveCustomCoins() {
         let amount = parseInt(document.getElementById('custom-amount').value) || 10000;
         state.credits += amount;
