@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V15</title>
+    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V16</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -315,8 +315,8 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Защищенное сохранение версии v15 (ничего не стирается при обновлениях)
-    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v15')) || {
+    // Защищенное сохранение версии v16 (ничего не стирается при обновлениях)
+    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v16')) || {
         credits: 109040, crystals: 5394, stars: 0, lvl: 692, hp: 100, maxHp: 100,
         galaxy: "Альфа-1", ship: "Дредноут Спектр", upgradeLvl: 12, gpus: 4, inertia: 24,
         lastInertiaCheck: Date.now(), theme: "default", lang: "ru", staffRoles: {}
@@ -329,7 +329,7 @@
     }
 
     function save() {
-        localStorage.setItem('kahalis_supreme_v15', JSON.stringify(state));
+        localStorage.setItem('kahalis_supreme_v16', JSON.stringify(state));
         updateUI();
     }
 
@@ -386,7 +386,7 @@
         setTheme(state.theme);
         renderStores();
         updateUI();
-        addLog("KAHALIS SUPREME V15 запущен. Все 50 галактик и систем активны.");
+        addLog("KAHALIS SUPREME V16 запущен. Все 50 галактик и систем активны.");
     }
 
     function updateUI() {
@@ -468,4 +468,194 @@
     // Сражения с защитой корабля
     function fightEnemy() {
         state.credits += 800;
-        showToast("🏆 Победа над вражеской армадой! +800 
+        showToast("🏆 Победа над вражеской армадой! +800 🪙");
+        addLog("Бой: Успешный залп из орудий по вражескому крейсеру.");
+        save();
+    }
+
+    function repairShip() {
+        if(state.credits < 1000) { showToast("Нужно 1,000 🪙 для ремонта!"); return; }
+        state.credits -= 1000;
+        showToast("🔧 Корпус крейсера полностью отремонтирован!");
+        addLog("Ремонт: Целостность корпуса восстановлена.");
+        save();
+    }
+
+    // Улучшения систем (50 уровней)
+    function upgradeShipSystem() {
+        if(state.upgradeLvl >= 50) { showToast("Достигнут максимальный 50 уровень!"); return; }
+        let cost = (state.upgradeLvl + 1) * 10000;
+        if(state.credits < cost) { showToast(`Нужно ${cost.toLocaleString()} 🪙!`); return; }
+        state.credits -= cost;
+        state.upgradeLvl++;
+        document.getElementById('upgrade-lvl-text').innerText = `${state.upgradeLvl} / 50`;
+        showToast(`⚙️ Системы улучшены до ур. ${state.upgradeLvl}!`);
+        addLog(`Апгрейд: Системы крейсера прокачаны до ${state.upgradeLvl}`);
+        save();
+    }
+
+    // Шахта (3234 за клик)
+    function mineAsteroid() {
+        let gain = 3234;
+        state.credits += gain;
+        showToast(`💎 +${gain.toLocaleString()} Монет за клик!`);
+        addLog(`Шахта: Добыто +${gain} 🪙 от клика.`);
+        save();
+    }
+
+    // Майнинг с инерцией
+    function buyGPU() {
+        let price = 15000;
+        if(state.credits < price) { showToast("Нужно 15,000 🪙!"); return; }
+        state.credits -= price;
+        state.gpus++;
+        showToast("⚡ Видеокарта добавлена на ферму!");
+        addLog(`Ферма: Установлена GPU. Всего: ${state.gpus}`);
+        save();
+    }
+
+    function payInertiaCooling() {
+        if(state.credits < 2000) { showToast("Нужно 2,000 🪙!"); return; }
+        state.credits -= 2000;
+        state.inertia = 0;
+        showToast("❄️ Инерция фермы сброшена до 0%!");
+        addLog("Ферма: Оплачено техобслуживание и охлаждение.");
+        save();
+    }
+
+    function collectFarm() {
+        if (state.inertia >= 100) {
+            showToast("⚠️ Ферма перегрета (100% инерции)! Требуется оплата охлаждения!");
+            return;
+        }
+        let earned = state.gpus * 3000;
+        state.credits += earned;
+        state.inertia = Math.min(100, state.inertia + 15);
+        showToast(`📥 Снято с фермы: +${earned.toLocaleString()} 🪙`);
+        addLog(`Ферма: Снят доход (+${earned} 🪙). Инерция: ${state.inertia}%`);
+        save();
+    }
+
+    // Кейсы
+    function openBox(type) {
+        if(type === 'common') {
+            if(state.credits < 2500) { showToast("Нужно 2,500 🪙!"); return; }
+            state.credits -= 2500; state.crystals += 40;
+            showToast("📦 В кейсе найдено: +40 💎!");
+        } else {
+            if(state.crystals < 150) { showToast("Нужно 150 💎!"); return; }
+            state.crystals -= 150; state.credits += 15000;
+            showToast("🎁 В элитном боксе: +15,000 🪙!");
+        }
+        save();
+    }
+
+    // Казино игры
+    function playGame(name) {
+        let bet = 1500;
+        if(state.credits < bet) { showToast("Нужно 1,500 🪙 для ставки!"); return; }
+        state.credits -= bet;
+        if(Math.random() > 0.4) {
+            let prize = bet * 2.2;
+            state.credits += prize;
+            showToast(`🎰 Выигрыш в ${name}: +${prize} 🪙`);
+            addLog(`Аркады (${name}): Успешная ставка!`);
+        } else {
+            showToast(`🎰 Проигрыш в ${name}: -${bet} 🪙`);
+            addLog(`Аркады (${name}): Ставка сгорела.`);
+        }
+        save();
+    }
+
+    // Трейды
+    function tradeAction(type) {
+        if(type === 'buy') {
+            if(state.credits < 10000) { showToast("Нужно 10k 🪙"); return; }
+            state.credits -= 10000; state.crystals += 200;
+            showToast("Куплено 200 💎 на рынке трейдов");
+            addLog("Трейды: Сделка проведена под надзором модераторов.");
+        } else {
+            if(state.crystals < 200) { showToast("Мало 💎"); return; }
+            state.crystals -= 200; state.credits += 8000;
+            showToast("Продано 200 💎 на рынке трейдов");
+            addLog("Трейды: Кристаллы успешно обменены на монеты.");
+        }
+        save();
+    }
+
+    // Промокоды
+    function activatePromo() {
+        let code = document.getElementById('promo-input').value.trim().toUpperCase();
+        if(code === "BOBIK2026" || code === "KAHALIS") {
+            state.credits += 150000; state.crystals += 1500;
+            showToast("🎁 Промокод активирован! +150k 🪙 и +1,500 💎");
+            addLog(`Промокод: Активирован бонус ${code}`);
+            save();
+        } else {
+            showToast("❌ Неверный промокод!");
+        }
+    }
+
+    // Донат с пересылкой на @bobik11222
+    function buyDonate(type, stars, amount) {
+        if (tg.openTelegramLink) {
+            let label = type === 'coins' ? `${amount} Монет` : `${amount} Алмазов`;
+            tg.openTelegramLink(`https://t.me/bobik11222?text=Оплата%20${stars}%20Stars%20за%20${label}%20для%20аккаунта%20${userId}`);
+            addLog(`Донат: Запрос на ${stars} Stars отправлен в ЛС @bobik11222`);
+        } else {
+            if(type === 'coins') state.credits += amount;
+            else state.crystals += amount;
+            showToast("⭐ Успешно начислено!");
+            save();
+        }
+    }
+
+    // Темы и языки
+    function setTheme(themeName) {
+        state.theme = themeName;
+        document.body.className = themeName === 'default' ? '' : `theme-${themeName}`;
+        save();
+        showToast("🎨 Тема успешно изменена!");
+    }
+
+    function setLang(langCode) {
+        state.lang = langCode;
+        save();
+        showToast(`🌐 Язык переключен на ${langCode.toUpperCase()}`);
+    }
+
+    // Консоль администратора (Выдача ролей админов/модеров, ресурсов)
+    function adminRes(c, cr) {
+        state.credits += c; state.crystals += cr;
+        showToast("Root: Ресурсы выданы!");
+        addLog("[ROOT] Администратор пополнил баланс.");
+        save();
+    }
+
+    function adminLvl() {
+        state.lvl += 100;
+        showToast("Root: Уровень +100");
+        addLog("[ROOT] Уровень повышен.");
+        save();
+    }
+
+    function grantRole(roleType) {
+        let targetId = document.getElementById('staff-user-id').value.trim();
+        if(!targetId) { showToast("Введите Telegram ID!"); return; }
+        state.staffRoles[targetId] = roleType;
+        showToast(`🛡 ID ${targetId} назначена роль: ${roleType.toUpperCase()}`);
+        addLog(`[SECURITY] Выдана роль ${roleType} игроку ${targetId}`);
+        save();
+    }
+
+    function adminGiveDonate() {
+        state.credits += 150000; state.crystals += 5000;
+        showToast("💎 Премиум-пакет выдан через консоль!");
+        addLog("[DONATE] Консоль выдала донат-пакет ресурсов.");
+        save();
+    }
+
+    init();
+</script>
+</body>
+</html>
