@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME MULTIVERSE ECOSYSTEM</title>
+    <title>KAHALIS // SUPREME ANIMATED MULTIVERSE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg-dark: #010307;
             --panel-bg: rgba(6, 10, 22, 0.96);
-            --border-neon: rgba(0, 240, 255, 0.4);
+            --border-neon: rgba(0, 240, 255, 0.5);
             --cyan: #00f0ff;
             --pink: #ff0055;
             --gold: #ffcc00;
@@ -20,16 +20,19 @@
             --text-dim: #8b949e;
         }
 
-        .theme-pink { --cyan: #ff0055; --border-neon: rgba(255, 0, 85, 0.5); --green: #ffcc00; }
-        .theme-matrix { --cyan: #00ff66; --border-neon: rgba(0, 255, 102, 0.5); --green: #00ffcc; --bg-dark: #000802; }
-        .theme-gold { --cyan: #ffcc00; --border-neon: rgba(255, 204, 0, 0.5); --green: #00ff88; --bg-dark: #080601; }
+        .theme-pink { --cyan: #ff0055; --border-neon: rgba(255, 0, 85, 0.6); --green: #ffcc00; }
+        .theme-matrix { --cyan: #00ff66; --border-neon: rgba(0, 255, 102, 0.6); --green: #00ffcc; --bg-dark: #000802; }
+        .theme-gold { --cyan: #ffcc00; --border-neon: rgba(255, 204, 0, 0.6); --green: #00ff88; --bg-dark: #080601; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
         body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 110px; min-height: 100vh; transition: background 0.3s; }
-        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #091428 0%, #010307 100%); }
+        
+        /* Анимированный звездный фон */
+        #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #091428 0%, #010307 100%); animation: bgPulse 10s ease-in-out infinite alternate; }
+        @keyframes bgPulse { 0% { filter: brightness(1); } 100% { filter: brightness(1.2); } }
 
         .hud-header {
-            position: sticky; top: 0; z-index: 50; background: rgba(2, 4, 10, 0.98);
+            position: sticky; top: 0; z-index: 50; background: rgba(2, 4, 10, 0.92);
             backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-neon);
             padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 4px 35px rgba(0, 0, 0, 0.9);
@@ -38,58 +41,57 @@
         .avatar-ring {
             width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--purple));
             display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #000;
-            box-shadow: 0 0 18px var(--cyan);
+            box-shadow: 0 0 18px var(--cyan); animation: ringGlow 3s ease-in-out infinite alternate;
         }
+        @keyframes ringGlow { 0% { box-shadow: 0 0 10px var(--cyan); } 100% { box-shadow: 0 0 22px var(--purple); } }
+
         .pilot-name { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; }
         .role-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 800; }
-        .role-owner { background: rgba(255, 0, 85, 0.3); color: var(--pink); border: 1px solid var(--pink); box-shadow: 0 0 12px rgba(255,0,85,0.6); }
-        .role-admin { background: rgba(255, 204, 0, 0.3); color: var(--gold); border: 1px solid var(--gold); }
-        .role-mod { background: rgba(0, 255, 136, 0.3); color: var(--green); border: 1px solid var(--green); }
-        .role-pilot { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid var(--cyan); }
-        .pilot-sub { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+        .role-owner { background: rgba(255, 0, 85, 0.3); color: var(--pink); border: 1px solid var(--pink); animation: borderFlash 2s infinite; }
+        @keyframes borderFlash { 0%, 100% { border-color: var(--pink); } 50% { border-color: var(--gold); } }
 
         .resources-bar { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
         .res-pill {
-            background: rgba(255, 255, 255, 0.04); border: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
             padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 5px;
         }
         .res-credits { color: var(--gold); } .res-crystals { color: var(--cyan); } .res-stars { color: var(--stars); }
 
         .container { padding: 14px; max-width: 480px; margin: 0 auto; }
-        .screen { display: none; animation: fadeIn 0.2s ease-out; }
+        .screen { display: none; animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
         .screen.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px) scale(0.99); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
         .cyber-card {
             background: var(--panel-bg); border: 1px solid var(--border-neon); border-radius: 14px;
-            padding: 14px; margin-bottom: 12px; backdrop-filter: blur(12px); position: relative; overflow: hidden;
-            box-shadow: 0 8px 35px rgba(0,0,0,0.7);
+            padding: 14px; margin-bottom: 12px; backdrop-filter: blur(14px); position: relative; overflow: hidden;
+            box-shadow: 0 8px 35px rgba(0,0,0,0.8); transition: transform 0.2s;
         }
-        .cyber-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); }
+        .cyber-card:hover { border-color: var(--cyan); }
+        .cyber-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--cyan), transparent); animation: scanLine 4s linear infinite; }
+        @keyframes scanLine { 0% { transform: translateX(-100%); } 100% { transform: translateX(100%); } }
+
         .card-title { font-size: 15px; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; color: #fff; }
 
         .stat-row { margin-bottom: 8px; }
         .stat-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; color: var(--text-dim); }
-        .progress-track { height: 7px; background: rgba(255, 255, 255, 0.06); border-radius: 4px; overflow: hidden; }
+        .progress-track { height: 8px; background: rgba(255, 255, 255, 0.08); border-radius: 4px; overflow: hidden; }
         .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; background: var(--cyan); }
 
         .btn {
-            width: 100%; padding: 11px; border: none; border-radius: 10px; font-weight: 800; font-size: 12px;
-            text-transform: uppercase; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
+            width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: 800; font-size: 12px;
+            text-transform: uppercase; cursor: pointer; transition: all 0.18s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
         }
-        .btn:active { transform: scale(0.97); }
-        .btn-cyan { background: linear-gradient(135deg, var(--cyan), #0077ff); color: #000; box-shadow: 0 4px 15px rgba(0,240,255,0.3); }
-        .btn-pink { background: linear-gradient(135deg, #ff0055, #900025); color: #fff; box-shadow: 0 4px 15px rgba(255,0,85,0.3); }
-        .btn-gold { background: linear-gradient(135deg, #ffcc00, #cc7700); color: #000; box-shadow: 0 4px 15px rgba(255,204,0,0.3); }
-        .btn-stars { background: linear-gradient(135deg, #ffaa00, #ff5500); color: #000; box-shadow: 0 4px 15px rgba(255,170,0,0.3); }
+        .btn:active { transform: scale(0.96); filter: brightness(1.2); }
+        .btn-cyan { background: linear-gradient(135deg, var(--cyan), #0077ff); color: #000; box-shadow: 0 4px 18px rgba(0,240,255,0.35); }
+        .btn-pink { background: linear-gradient(135deg, #ff0055, #900025); color: #fff; box-shadow: 0 4px 18px rgba(255,0,85,0.35); }
+        .btn-gold { background: linear-gradient(135deg, #ffcc00, #cc7700); color: #000; box-shadow: 0 4px 18px rgba(255,204,0,0.35); }
+        .btn-stars { background: linear-gradient(135deg, #ffaa00, #ff5500); color: #000; box-shadow: 0 4px 18px rgba(255,170,0,0.35); }
         .btn-outline { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-neon); color: var(--text-main); }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
-        .mini-stat { background: rgba(0, 0, 0, 0.45); border: 1px solid rgba(255, 255, 255, 0.05); padding: 8px; border-radius: 8px; text-align: center; }
-        .mini-stat .val { font-size: 16px; font-weight: 800; color: var(--cyan); margin-top: 2px; }
-        .mini-stat .lbl { font-size: 10px; color: var(--text-dim); }
-
+        
         .terminal { background: #000206; border: 1px solid #1c2841; border-radius: 8px; padding: 10px; font-family: monospace; font-size: 11px; color: var(--green); height: 140px; overflow-y: auto; line-height: 1.4; }
         .cyber-input { width: 100%; background: rgba(0, 0, 0, 0.6); border: 1px solid var(--border-neon); padding: 10px; border-radius: 8px; color: #fff; font-size: 12px; margin-bottom: 8px; outline: none; }
 
@@ -97,8 +99,8 @@
             position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(2, 4, 10, 0.98);
             backdrop-filter: blur(20px); border-top: 1px solid var(--border-neon); display: flex; justify-content: space-around; padding: 6px 2px 10px; z-index: 100;
         }
-        .nav-btn { background: none; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; font-size: 9px; font-weight: 600; gap: 3px; cursor: pointer; flex: 1; }
-        .nav-btn .icon { font-size: 18px; } .nav-btn.active { color: var(--cyan); } .nav-btn.owner-tab { color: var(--pink); }
+        .nav-btn { background: none; border: none; color: var(--text-dim); display: flex; flex-direction: column; align-items: center; font-size: 9px; font-weight: 600; gap: 3px; cursor: pointer; flex: 1; transition: color 0.2s; }
+        .nav-btn .icon { font-size: 18px; transition: transform 0.2s; } .nav-btn.active { color: var(--cyan); } .nav-btn.active .icon { transform: scale(1.15); }
 
         #toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(6, 10, 22, 0.98); border: 1px solid var(--cyan); color: #fff; padding: 8px 18px; border-radius: 20px; font-size: 11px; font-weight: 700; opacity: 0; pointer-events: none; transition: all 0.3s; z-index: 200; box-shadow: 0 4px 20px rgba(0,240,255,0.4); }
         #toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
@@ -128,55 +130,54 @@
 </header>
 
 <div class="container">
-    <!-- НАВИГАЦИЯ ПО 50 ГАЛАКТИКАМ И 50 КОРАБЛЯМ -->
+    <!-- МОСТИК (50 ГАЛАКТИК И КОРОБКИ С КОРАБЛЯМИ) -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
-            <div class="card-title"><span>🚀 Галактический Атлас (50 Сегментов)</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Выберите галактику для гиперпрыжка (требуется уровень и корабль):</p>
-            <div id="galaxies-list" style="max-height: 220px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
+            <div class="card-title"><span>🎁 Космические Коробки (Кейсы)</span></div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Открывай боксы и получай редкие корабли и детали:</p>
+            <div class="grid-2">
+                <button class="btn btn-gold" onclick="openBox('credits')">📦 Обычный бокс<br><small>1,000 🪙</small></button>
+                <button class="btn btn-stars" onclick="openBox('crystals')">💎 Элитный кейс<br><small>50 💎</small></button>
+            </div>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🛸 Ангар Кораблей (50 Моделей)</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 8px;">Текущий флагман: <b id="current-ship-name" style="color:var(--cyan)">Дредноут MK-X</b></p>
-            <button class="btn btn-cyan" onclick="openShipsModal()">Выбрать / Купить корабль</button>
-        </div>
-
-        <div class="cyber-card">
-            <div class="card-title"><span>⚙️ 50 Уровней Улучшений Систем</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Уровень турелей и брони: <b id="upgrade-lvl-text" style="color:var(--gold)">12 / 50</b></p>
-            <button class="btn btn-gold" onclick="upgradeShipSystem()">Прокачать системы крейсера (10,000 🪙)</button>
+            <div class="card-title"><span>🚀 Межгалактический Атлас (50 Сегментов)</span></div>
+            <div id="galaxies-list" style="max-height: 200px; overflow-y: auto; display: flex; flex-direction: column; gap: 6px;"></div>
         </div>
     </section>
 
-    <!-- СЕКТОР (ШАХТА, БОИ И ЖУРНАЛ) -->
+    <!-- СЕКТОР (УЛУЧШЕНИЯ, ШАХТА И БОИ) -->
     <section id="scr-combat" class="screen">
+        <div class="cyber-card">
+            <div class="card-title"><span>🛠 50 Уровней Улучшений Крейсера</span></div>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Текущий уровень систем: <b id="upgrade-lvl-text" style="color:var(--gold)">12 / 50</b></p>
+            <button class="btn btn-gold" onclick="upgradeShipSystem()">⚡ Улучшить орудия и щиты (10,000 🪙)</button>
+        </div>
+
         <div class="cyber-card" id="combat-card-1">
             <div class="card-title"><span>⛏ Астероидная Шахта</span></div>
-            <button class="btn btn-cyan" onclick="mineAsteroids()">💎 Бурить астероид</button>
+            <button class="btn btn-cyan" onclick="mineAsteroids()">💎 Бурить астероид (+3,234 клик)</button>
         </div>
+
         <div class="cyber-card" style="border-color: rgba(255, 0, 85, 0.4);" id="combat-card-2">
             <div class="card-title"><span>🏴‍☠️ Пиратский крейсер</span></div>
-            <div class="stat-row">
-                <div class="stat-label"><span>Прочность цели</span><span id="enemy-hp-text">150 / 150</span></div>
-                <div class="progress-track"><div class="progress-fill" id="enemy-hp-bar" style="width: 100%; background: var(--pink);"></div></div>
-            </div>
             <button class="btn btn-pink" onclick="attackEnemy()">🔥 Залп из орудий</button>
         </div>
+
         <div class="cyber-card">
             <div class="card-title"><span>📡 Бортовой журнал</span></div>
             <div class="terminal" id="combat-log">
-                <div>> [SYS] Все 50 звездных систем подключены. Логи активны.</div>
+                <div>> [SYS] Все системы и 50 галактик функционируют нормально.</div>
             </div>
         </div>
     </section>
 
-    <!-- АНГАР, ИГРЫ И РЕАЛЬНЫЙ МАЙНИНГ С ИНЕРЦИЕЙ -->
+    <!-- АНГАР, ИГРЫ И МАЙНИНГ С ИНЕРЦИЕЙ -->
     <section id="scr-hangar" class="screen">
-        <!-- КАТЕГОРИИ АРКАДНЫХ ИГР -->
+        <!-- КАТЕГОРИИ ИГР -->
         <div class="cyber-card">
-            <div class="card-title"><span>🎰 Казино и Игровой Зал</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Выберите категорию и игру:</p>
+            <div class="card-title"><span>🎰 Казино & Игры (Категории)</span></div>
             <div class="grid-3">
                 <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Слоты')">🎰 Слоты</button>
                 <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Мины')">💣 Мины</button>
@@ -190,25 +191,27 @@
             </div>
         </div>
 
-        <!-- МАЙНИНГ-ФЕРМА С ИНЕРЦИЕЙ И ОХЛАЖДЕНИЕМ -->
+        <!-- МАЙНИНГ С ИНЕРЦИЕЙ -->
         <div class="cyber-card">
             <div class="card-title"><span>⚡ Крипто-Ферма & Инерция</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Активных GPU: <b id="gpu-count" style="color:var(--cyan)">4</b> шт. • Фарм в реальном времени.</p>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Активных GPU: <b id="gpu-count" style="color:var(--cyan)">4</b> шт.</p>
             <div class="stat-row">
-                <div class="stat-label"><span>Нагрев / Инерция фермы</span><span id="inertia-text">24%</span></div>
+                <div class="stat-label"><span>Инерция / Нагрев</span><span id="inertia-text">24%</span></div>
                 <div class="progress-track"><div class="progress-fill" id="inertia-bar" style="width: 24%; background: var(--gold);"></div></div>
             </div>
-            <p style="font-size: 9px; color: var(--pink); margin-top:4px;" id="inertia-warning">⚠️ При 100% инерции ферма останавливается! Требуется охлаждение.</p>
-            <button class="btn btn-cyan" onclick="buyGPU()" style="margin-top:8px;">🛒 Купить видеокарту (10,000 🪙)</button>
+            <button class="btn btn-cyan" onclick="buyGPU()" style="margin-top:6px;">🛒 Купить видеокарту (10,000 🪙)</button>
             <button class="btn btn-gold" onclick="payInertiaCooling()" style="margin-top:6px;">❄️ Оплатить инерцию / охлаждение (2,000 🪙)</button>
             <button class="btn btn-outline" onclick="collectFarm()" style="margin-top:6px;">📥 Снять фарм с фермы</button>
         </div>
 
-        <!-- ДОНАТ ЗВЕЗДАМИ С ОТПРАВКОЙ В ЛС @bobik11222 -->
+        <!-- ОТДЕЛЬНЫЕ ДОНАТЫ (МОНЕТЫ И АЛМАЗЫ ЗА ЗВЕЗДЫ → @bobik11222) -->
         <div class="cyber-card">
-            <div class="card-title"><span>⭐ Telegram Stars Донат (→ @bobik11222)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Оплата пересылается в личку владельцу: <b>@bobik11222</b></p>
-            <button class="btn btn-stars" onclick="payRealStars(100, 20000)">⭐ Купить за 100 Stars (= 20,000 🪙)</button>
+            <div class="card-title"><span>⭐ Банк Донатов (Telegram Stars)</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Перевод звезд поступает напрямую в ЛС: <b>@bobik11222</b></p>
+            <div class="grid-2">
+                <button class="btn btn-stars" onclick="payRealStars('coins', 100, 50000)">🪙 50,000 Монет<br><small>100 Stars</small></button>
+                <button class="btn btn-stars" onclick="payRealStars('crystals', 100, 2000)">💎 2,000 Алмазов<br><small>100 Stars</small></button>
+            </div>
         </div>
     </section>
 
@@ -216,7 +219,7 @@
     <section id="scr-clans" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>🤝 Галактический Рынoк (Трейды)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Контролируется модераторами и администраторами:</p>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Контроль осуществляют назначенные модераторы и администраторы:</p>
             <div class="grid-2">
                 <button class="btn btn-cyan" onclick="tradeAction('buy')">Купить 200 💎 за 10k 🪙</button>
                 <button class="btn btn-pink" onclick="tradeAction('sell')">Продать 200 💎 за 8k 🪙</button>
@@ -228,7 +231,7 @@
         </div>
     </section>
 
-    <!-- ПРОФИЛЬ, НАСТРОЙКИ И ПРОМОКОДЫ -->
+    <!-- ПРОФИЛЬ, ПРОМОКОДЫ, ТЕМЫ И ЯЗЫКИ -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>👤 Досье Пилота</span></div>
@@ -238,24 +241,20 @@
             <p style="font-size:12px;">Роль: <b id="profile-role-text" style="color:var(--pink);">Владелец (@bobik11222)</b></p>
         </div>
 
-        <!-- АКТИВАЦИЯ ПРОМОКОДОВ -->
         <div class="cyber-card">
-            <div class="card-title"><span>🎟 Активация промокода</span></div>
+            <div class="card-title"><span>🎟 Промокоды</span></div>
             <input type="text" id="promo-input" class="cyber-input" placeholder="Введите промокод (например: BOBIK2026)">
             <button class="btn btn-gold" onclick="activatePromo()">Активировать промокод</button>
         </div>
 
-        <!-- НАСТРОЙКИ ТЕМ И ЯЗЫКОВ -->
         <div class="cyber-card">
-            <div class="card-title"><span>🎨 Настройки Темы и Языка</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Выберите цветовую схему:</p>
+            <div class="card-title"><span>🎨 Темы оформления и Языки</span></div>
             <div class="grid-2" style="margin-bottom:8px;">
                 <button class="btn btn-cyan" onclick="setTheme('default')" style="font-size:10px;">Кибер Циан</button>
                 <button class="btn btn-pink" onclick="setTheme('pink')" style="font-size:10px;">Неон Розовый</button>
                 <button class="btn btn-gold" onclick="setTheme('matrix')" style="font-size:10px;">Матрица</button>
                 <button class="btn btn-gold" onclick="setTheme('gold')" style="font-size:10px;">Золотой Космос</button>
             </div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Выбор языка интерфейса:</p>
             <div class="grid-3">
                 <button class="btn btn-outline" onclick="setLang('ru')" style="font-size:10px;">🇷🇺 RU</button>
                 <button class="btn btn-outline" onclick="setLang('en')" style="font-size:10px;">🇬🇧 EN</button>
@@ -264,25 +263,25 @@
         </div>
     </section>
 
-    <!-- ROOT КОНСОЛЬ ВЛАДЕЛЬЦА (С ВЫДАЧЕЙ АДМИНОВ И МОДЕРОВ) -->
+    <!-- ROOT КОНСОЛЬ ВЛАДЕЛЬЦА -->
     <section id="scr-owner" class="screen">
         <div class="cyber-card" style="border-color: var(--pink);">
-            <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ ВЛАДЕЛЬЦА (@bobik11222)</span></div>
+            <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ (@bobik11222)</span></div>
             <div class="grid-2">
                 <button class="btn btn-gold" onclick="adminRes(1000000, 20000)">💰 +1M 🪙</button>
                 <button class="btn btn-cyan" onclick="adminLvl()">⬆️ +100 Уровней</button>
             </div>
             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">🛡 Управление ролями (Админ / Модер):</p>
-                <input type="text" id="staff-user-id" class="cyber-input" placeholder="Telegram ID пользователя">
+                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">🛡 Назначить Админа / Модератора:</p>
+                <input type="text" id="staff-user-id" class="cyber-input" placeholder="Telegram ID">
                 <div class="grid-2">
                     <button class="btn btn-gold" onclick="grantRole('admin')">⭐ Выдать Админа</button>
                     <button class="btn btn-cyan" onclick="grantRole('moderator')">🛡 Выдать Модера</button>
                 </div>
             </div>
             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">⭐ Выдать донат-пакет по ID:</p>
-                <button class="btn btn-stars" onclick="adminGiveDonate()">💎 Начислить +50,000 🪙 за Звезды</button>
+                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">💎 Выдача донат-пакетов по ID:</p>
+                <button class="btn btn-stars" onclick="adminGiveDonate()">Начислить Монеты/Алмазы</button>
             </div>
         </div>
     </section>
@@ -302,11 +301,11 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    // Безопасное сохранение с миграцией версий (данные не сбрасываются)
-    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v12')) || {
+    // Защищенное сохранение данных версии v13 без сброса
+    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v13')) || {
         credits: 109040, crystals: 5394, stars: 0, lvl: 692, hp: 100, maxHp: 100,
-        galaxy: "Альфа", ship: "Дредноут MK-X", upgradeLvl: 12, gpus: 4, inertia: 24,
-        lastInertiaCheck: Date.now(), role: "owner", theme: "default", lang: "ru", staffRoles: {}
+        galaxy: "Альфа", upgradeLvl: 12, gpus: 4, inertia: 24, lastInertiaCheck: Date.now(),
+        role: "owner", theme: "default", lang: "ru", staffRoles: {}
     };
 
     let userId = OWNER_ID, userName = "Qui détestez-vous";
@@ -316,7 +315,7 @@
     }
 
     function save() {
-        localStorage.setItem('kahalis_supreme_v12', JSON.stringify(state));
+        localStorage.setItem('kahalis_supreme_v13', JSON.stringify(state));
         updateUI();
     }
 
@@ -341,14 +340,12 @@
         document.getElementById('profile-telegram-id').innerText = userId;
         document.getElementById('ui-lvl').innerText = state.lvl;
         document.getElementById('ui-galaxy-name').innerText = state.galaxy;
-        document.getElementById('current-ship-name').innerText = state.ship;
         document.getElementById('upgrade-lvl-text').innerText = `${state.upgradeLvl} / 50`;
 
         setTheme(state.theme);
         renderGalaxies();
-        checkInertiaTimer();
         updateUI();
-        addLog("Экосистема KAHALIS SUPREME успешно загружена. Все 50 галактик активны.");
+        addLog("KAHALIS SUPREME V13 инициализирован. Все системы и коробки активны.");
     }
 
     function updateUI() {
@@ -359,11 +356,10 @@
         document.getElementById('inertia-text').innerText = `${Math.floor(state.inertia)}%`;
         document.getElementById('inertia-bar').style.width = `${state.inertia}%`;
 
-        // Управление ролями и отображением консоли
         const isOwner = (userId === OWNER_ID);
         const staffRole = state.staffRoles[userId] || (isOwner ? "owner" : "pilot");
-        
         const badge = document.getElementById('ui-role-badge');
+        
         if (isOwner) {
             badge.innerText = "ВЛАДЕЛЕЦ"; badge.className = "role-badge role-owner";
         } else if (staffRole === "admin") {
@@ -386,14 +382,32 @@
         if(btn) btn.classList.add('active');
     }
 
-    // Генерация 50 Галактик
+    // Открытие коробок (кейсов)
+    function openBox(type) {
+        if(type === 'credits') {
+            if(state.credits < 1000) { showToast("Нужно 1,000 🪙!"); return; }
+            state.credits -= 1000;
+            state.crystals += 15;
+            showToast("🎁 В боксе найдено: +15 💎 кристаллов!");
+            addLog("Кейсы: Открыт обычный бокс за кредиты.");
+        } else {
+            if(state.crystals < 50) { showToast("Нужно 50 💎!"); return; }
+            state.crystals -= 50;
+            state.credits += 5000;
+            showToast("🎁 В элитном кейсе найдено: +5,000 🪙!");
+            addLog("Кейсы: Открыт элитный кейс за алмазы.");
+        }
+        save();
+    }
+
+    // Генерация 50 галактик
     function renderGalaxies() {
         const container = document.getElementById('galaxies-list');
         let html = '';
         for (let i = 1; i <= 50; i++) {
             let reqLvl = i * 2;
             let cost = i * 5000;
-            let name = `Сектор-${i} (Галактика)`;
+            let name = `Сектор-${i}`;
             html += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,240,255,0.05); border:1px solid rgba(0,240,255,0.2); padding:6px 10px; border-radius:6px;">
                 <div>
                     <b style="font-size:11px; color:var(--cyan);">${name}</b>
@@ -412,52 +426,49 @@
         state.galaxy = name;
         document.getElementById('ui-galaxy-name').innerText = name;
         showToast(`🌌 Успешный прыжок в ${name}!`);
-        addLog(`Корабль совершил гиперпрыжок в ${name}.`);
+        addLog(`Гиперпрыжок в галактику ${name} выполнен.`);
         save();
     }
 
-    // 50 Уровней улучшений систем
+    // Улучшения систем
     function upgradeShipSystem() {
-        if(state.upgradeLvl >= 50) { showToast("Достигнут максимальный 50 уровень систем!"); return; }
+        if(state.upgradeLvl >= 50) { showToast("Достигнут максимальный 50 уровень!"); return; }
         let cost = (state.upgradeLvl + 1) * 10000;
         if(state.credits < cost) { showToast(`Нужно ${cost.toLocaleString()} 🪙!`); return; }
         state.credits -= cost;
         state.upgradeLvl++;
         document.getElementById('upgrade-lvl-text').innerText = `${state.upgradeLvl} / 50`;
-        showToast(`⚙️ Системы улучшены до уровня ${state.upgradeLvl}!`);
-        addLog(`Ангар: Системы крейсера прокачаны до ур. ${state.upgradeLvl}`);
+        showToast(`⚙️ Системы улучшены до ур. ${state.upgradeLvl}!`);
+        addLog(`Апгрейд: Системы крейсера прокачаны до ${state.upgradeLvl}`);
         save();
     }
 
-    function openShipsModal() {
-        showToast("🛸 В ангаре доступно 50 моделей крейсеров. Флагман активен!");
-    }
-
-    // Шахта и бои
+    // Шахта (3,234 за клик)
     function mineAsteroids() {
-        state.crystals += 15; state.credits += 600;
-        addLog(`Шахта: Добыто +15 💎 и +600 🪙`);
-        showToast("💎 Ресурсы добыты!");
+        let gain = 3234;
+        state.credits += gain;
+        addLog(`Шахта: Клик по астероиду! Получено +${gain} 🪙`);
+        showToast(`💎 +${gain} Монет за клик!`);
         save();
     }
 
     function attackEnemy() {
-        state.credits += 800;
-        addLog(`Победа над пиратским крейсером! Получено +800 🪙`);
-        showToast("🏆 Победа над пиратом!");
+        state.credits += 1500;
+        addLog(`Пираты: Разгромлен крейсер противника (+1,500 🪙)`);
+        showToast("🏆 Победа над врагом!");
         save();
     }
 
-    // Игры (Казино по категориям)
+    // Казино игры
     function playGame(gameName) {
-        let bet = 1500;
-        if(state.credits < bet) { showToast("Нужно 1,500 🪙 для ставки!"); return; }
+        let bet = 2000;
+        if(state.credits < bet) { showToast("Нужно 2,000 🪙 для ставки!"); return; }
         state.credits -= bet;
-        let win = Math.random() > 0.42;
+        let win = Math.random() > 0.4;
         if(win) {
-            let prize = bet * 2.2;
+            let prize = bet * 2.5;
             state.credits += prize;
-            showToast(`🎉 Выигрыш в [${gameName}]: +${prize} 🪙`);
+            showToast(`🎉 Победа в [${gameName}]: +${prize} 🪙`);
             addLog(`Аркады (${gameName}): Успех! +${prize} 🪙`);
         } else {
             showToast(`❌ Проигрыш в [${gameName}]: -${bet} 🪙`);
@@ -466,60 +477,37 @@
         save();
     }
 
-    // Майнинг с инерцией (проверка раз в 20 минут / тики)
-    function checkInertiaTimer() {
-        let now = Date.now();
-        let diffMins = (now - state.lastInertiaCheck) / (1000 * 60);
-        if (diffMins >= 20) {
-            state.inertia = Math.min(100, state.inertia + 15);
-            state.lastInertiaCheck = now;
-            save();
-        }
-    }
-
+    // Майнинг и инерция
     function buyGPU() {
         let price = 10000;
         if(state.credits < price) { showToast("Нужно 10,000 🪙!"); return; }
         state.credits -= price;
         state.gpus++;
-        showToast("⚡ Видеокарта куплена!");
-        addLog(`Ферма: Установлена новая видеокарта. Всего: ${state.gpus}`);
+        showToast("⚡ Видеокарта добавлена на ферму!");
+        addLog(`Ферма: Установлена GPU. Всего: ${state.gpus}`);
         save();
     }
 
     function payInertiaCooling() {
-        if(state.credits < 2000) { showToast("Нужно 2,000 🪙 для охлаждения!"); return; }
+        if(state.credits < 2000) { showToast("Нужно 2,000 🪙!"); return; }
         state.credits -= 2000;
         state.inertia = 0;
-        showToast("❄️ Ферма охлаждена! Инерция сброшена до 0%.");
-        addLog(`Ферма: Произведено техобслуживание охлаждения.`);
+        showToast("❄️ Инерция фермы сброшена до 0%!");
+        addLog("Ферма: Оплачено техобслуживание и охлаждение.");
         save();
     }
 
     function collectFarm() {
         if (state.inertia >= 100) {
-            showToast("⚠️ Ферма перегрета (100% инерции)! Оплатите охлаждение!");
+            showToast("⚠️ Ферма перегрета (100% инерции)! Требуется оплата охлаждения!");
             return;
         }
-        let earned = state.gpus * 1500;
+        let earned = state.gpus * 2500;
         state.credits += earned;
-        state.inertia = Math.min(100, state.inertia + 10);
+        state.inertia = Math.min(100, state.inertia + 12);
         showToast(`📥 Снято с фермы: +${earned.toLocaleString()} 🪙`);
-        addLog(`Ферма: Снят пассивный доход (+${earned} 🪙). Инерция: ${state.inertia}%`);
+        addLog(`Ферма: Снят доход (+${earned} 🪙). Инерция: ${state.inertia}%`);
         save();
-    }
-
-    // Промокоды
-    function activatePromo() {
-        let code = document.getElementById('promo-input').value.trim().toUpperCase();
-        if(code === "BOBIK2026" || code === "KAHALIS") {
-            state.credits += 50000; state.crystals += 500;
-            showToast("🎁 Промокод активирован! +50k 🪙 и +500 💎");
-            addLog(`Промокод: Успешно активирован код ${code}`);
-            save();
-        } else {
-            showToast("❌ Неверный или уже использованный промокод!");
-        }
     }
 
     // Трейды
@@ -528,47 +516,62 @@
             if(state.credits < 10000) { showToast("Нужно 10k 🪙"); return; }
             state.credits -= 10000; state.crystals += 200;
             showToast("Куплено 200 💎 на рынке трейдов");
-            addLog(`Трейды: Обменено 10k кредитов на 200 кристаллов под присмотром модераторов.`);
+            addLog(`Трейды: Обменено 10k монет на 200 кристаллов под надзором модераторов.`);
         } else {
             if(state.crystals < 200) { showToast("Мало 💎"); return; }
             state.crystals -= 200; state.credits += 8000;
             showToast("Продано 200 💎 на рынке трейдов");
-            addLog(`Трейды: Продано 200 кристаллов за 8k кредитов.`);
+            addLog(`Трейды: Продано 200 кристаллов за 8k монет.`);
         }
         save();
     }
 
-    // Донат звёздами с пересылкой в ЛС @bobik11222
-    function payRealStars(starsCount, creditsReward) {
-        if (tg.openTelegramLink) {
-            tg.openTelegramLink(`https://t.me/bobik11222?text=Оплата%20${starsCount}%20Stars%20для%20аккаунта%20${userId}`);
-            addLog(`Донат: Запрос на перевод ${starsCount} Stars отправлен в ЛС @bobik11222`);
+    // Промокоды
+    function activatePromo() {
+        let code = document.getElementById('promo-input').value.trim().toUpperCase();
+        if(code === "BOBIK2026" || code === "KAHALIS") {
+            state.credits += 100000; state.crystals += 1000;
+            showToast("🎁 Промокод активирован! +100k 🪙 и +1,000 💎");
+            addLog(`Промокод: Успешно применен код ${code}`);
+            save();
         } else {
-            state.stars += starsCount; state.credits += creditsReward;
-            showToast(`⭐ Зачислено +${creditsReward.toLocaleString()} 🪙!`);
+            showToast("❌ Неверный промокод!");
+        }
+    }
+
+    // Донаты звёздами с пересылкой в ЛС владельцу @bobik11222
+    function payRealStars(type, starsCount, rewardAmount) {
+        if (tg.openTelegramLink) {
+            let label = type === 'coins' ? `${rewardAmount} Монет` : `${rewardAmount} Алмазов`;
+            tg.openTelegramLink(`https://t.me/bobik11222?text=Оплата%20${starsCount}%20Stars%20за%20${label}%20для%20аккаунта%20${userId}`);
+            addLog(`Донат: Запрос на ${starsCount} Stars (${label}) отправлен в ЛС @bobik11222`);
+        } else {
+            if(type === 'coins') state.credits += rewardAmount;
+            else state.crystals += rewardAmount;
+            showToast(`⭐ Успешно начислено!`);
             save();
         }
     }
 
-    // Настройки тем и языков
+    // Темы и языки
     function setTheme(themeName) {
         state.theme = themeName;
         document.body.className = themeName === 'default' ? '' : `theme-${themeName}`;
         save();
-        showToast(`🎨 Тема изменена!`);
+        showToast("🎨 Тема успешно изменена!");
     }
 
     function setLang(langCode) {
         state.lang = langCode;
         save();
-        showToast(`🌐 Язык изменен на ${langCode.toUpperCase()}`);
+        showToast(`🌐 Язык переключен на ${langCode.toUpperCase()}`);
     }
 
-    // Консоль владельца (Выдача админов, модераторов, ресурсов)
+    // Консоль администратора
     function adminRes(c, cr) {
         state.credits += c; state.crystals += cr;
-        showToast("Root: Ресурсы зачислены!");
-        addLog("[ROOT] Администратор выдал ресурсы.");
+        showToast("Root: Ресурсы выданы!");
+        addLog("[ROOT] Администратор пополнил баланс.");
         save();
     }
 
@@ -583,15 +586,15 @@
         let targetId = document.getElementById('staff-user-id').value.trim();
         if(!targetId) { showToast("Введите Telegram ID!"); return; }
         state.staffRoles[targetId] = roleType;
-        showToast(`🛡 Пользователю ${targetId} выдана роль: ${roleType.toUpperCase()}`);
-        addLog(`[SECURITY] Назначена роль ${roleType} для ID ${targetId}`);
+        showToast(`🛡 ID ${targetId назначен ролью: ${roleType.toUpperCase()}`);
+        addLog(`[SECURITY] Выдана роль ${roleType} игроку ${targetId}`);
         save();
     }
 
     function adminGiveDonate() {
-        state.credits += 50000;
-        showToast("💎 Донат-пакет успешно выдан через консоль!");
-        addLog("[DONATE] Консоль выдала донат-пакет кредитов.");
+        state.credits += 100000; state.crystals += 5000;
+        showToast("💎 Пакет доната выдан через консоль!");
+        addLog("[DONATE] Консоль выдала премиум пакет ресурсов.");
         save();
     }
 
