@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V18</title>
+    <title>KAHALIS // SUPREME ULTIMATE ECOSYSTEM V21 MASSIVE</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
@@ -23,9 +23,11 @@
         .theme-pink { --cyan: #ff0055; --border-neon: rgba(255, 0, 85, 0.6); --green: #ffcc00; }
         .theme-matrix { --cyan: #00ff66; --border-neon: rgba(0, 255, 102, 0.6); --green: #00ffcc; --bg-dark: #000802; }
         .theme-gold { --cyan: #ffcc00; --border-neon: rgba(255, 204, 0, 0.6); --green: #00ff88; --bg-dark: #080601; }
+        .theme-purple { --cyan: #b829ea; --border-neon: rgba(184, 41, 234, 0.6); --green: #00f0ff; --bg-dark: #05010a; }
+        .theme-red { --cyan: #ff2200; --border-neon: rgba(255, 34, 0, 0.6); --green: #ffcc00; --bg-dark: #0a0101; }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; -webkit-tap-highlight-color: transparent; user-select: none; }
-        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 120px; min-height: 100vh; transition: background 0.3s; }
+        body { background-color: var(--bg-dark); color: var(--text-main); overflow-x: hidden; padding-bottom: 130px; min-height: 100vh; transition: background 0.3s; }
         
         #starfield { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(circle at center, #091428 0%, #010307 100%); animation: bgPulse 10s ease-in-out infinite alternate; }
         @keyframes bgPulse { 0% { filter: brightness(1); } 100% { filter: brightness(1.25); } }
@@ -33,30 +35,31 @@
         .hud-header {
             position: sticky; top: 0; z-index: 50; background: rgba(2, 4, 10, 0.95);
             backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-neon);
-            padding: 10px 14px; display: flex; justify-content: space-between; align-items: center;
+            padding: 8px 12px; display: flex; justify-content: space-between; align-items: center;
             box-shadow: 0 4px 35px rgba(0, 0, 0, 0.9);
         }
-        .pilot-meta { display: flex; align-items: center; gap: 10px; }
+        .pilot-meta { display: flex; align-items: center; gap: 8px; }
         .avatar-ring {
-            width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--purple));
-            display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 16px; color: #000;
-            box-shadow: 0 0 18px var(--cyan); animation: ringGlow 3s ease-in-out infinite alternate;
+            width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--cyan), var(--purple));
+            display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 15px; color: #000;
+            box-shadow: 0 0 15px var(--cyan); animation: ringGlow 3s ease-in-out infinite alternate;
         }
-        @keyframes ringGlow { 0% { box-shadow: 0 0 10px var(--cyan); } 100% { box-shadow: 0 0 25px var(--purple); } }
+        @keyframes ringGlow { 0% { box-shadow: 0 0 8px var(--cyan); } 100% { box-shadow: 0 0 20px var(--purple); } }
 
-        .pilot-name { font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; }
-        .role-badge { font-size: 9px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: 800; }
+        .pilot-name { font-weight: 800; font-size: 13px; display: flex; align-items: center; gap: 5px; }
+        .role-badge { font-size: 8px; padding: 2px 5px; border-radius: 4px; text-transform: uppercase; font-weight: 800; }
         .role-owner { background: rgba(255, 0, 85, 0.3); color: var(--pink); border: 1px solid var(--pink); }
         .role-admin { background: rgba(255, 204, 0, 0.3); color: var(--gold); border: 1px solid var(--gold); }
         .role-moderator { background: rgba(0, 255, 136, 0.3); color: var(--green); border: 1px solid var(--green); }
         .role-pilot { background: rgba(0, 240, 255, 0.15); color: var(--cyan); border: 1px solid var(--cyan); }
 
-        .resources-bar { display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+        .resources-bar { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+        .res-grid { display: flex; gap: 4px; }
         .res-pill {
             background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.15);
-            padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: flex; align-items: center; gap: 5px;
+            padding: 2px 6px; border-radius: 20px; font-size: 10px; font-weight: 700; display: flex; align-items: center; gap: 3px;
         }
-        .res-credits { color: var(--gold); } .res-crystals { color: var(--cyan); } .res-stars { color: var(--stars); }
+        .res-credits { color: var(--gold); } .res-crystals { color: var(--cyan); } .res-stars { color: var(--stars); } .res-parts { color: var(--green); }
 
         .container { padding: 14px; max-width: 480px; margin: 0 auto; }
         .screen { display: none; animation: fadeIn 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -68,7 +71,7 @@
             padding: 14px; margin-bottom: 12px; backdrop-filter: blur(14px); position: relative; overflow: hidden;
             box-shadow: 0 8px 35px rgba(0,0,0,0.8);
         }
-        .card-title { font-size: 14px; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; color: #fff; }
+        .card-title { font-size: 13px; font-weight: 800; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; color: #fff; }
 
         .stat-row { margin-bottom: 8px; }
         .stat-label { display: flex; justify-content: space-between; font-size: 11px; margin-bottom: 3px; color: var(--text-dim); }
@@ -76,7 +79,7 @@
         .progress-fill { height: 100%; border-radius: 4px; transition: width 0.3s ease; background: var(--cyan); }
 
         .btn {
-            width: 100%; padding: 12px; border: none; border-radius: 10px; font-weight: 800; font-size: 12px;
+            width: 100%; padding: 11px; border: none; border-radius: 10px; font-weight: 800; font-size: 12px;
             text-transform: uppercase; cursor: pointer; transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 8px;
             pointer-events: auto;
         }
@@ -111,7 +114,7 @@
             pointer-events: auto;
             transition: color 0.2s;
         }
-        .nav-btn .icon { font-size: 20px; } 
+        .nav-btn .icon { font-size: 19px; } 
         .nav-btn.active { color: var(--cyan); } 
         .nav-btn.owner-tab { color: var(--pink); }
 
@@ -132,32 +135,37 @@
                 <span id="ui-username">Пилот</span>
                 <span class="role-badge role-owner" id="ui-role-badge">ВЛАДЕЛЕЦ</span>
             </div>
-            <div class="pilot-sub">Ур. <span id="ui-lvl">692</span> • Галактика: <span id="ui-galaxy-name">Альфа-1</span></div>
+            <div class="pilot-sub">Ур. <span id="ui-lvl">1</span> • <span id="ui-galaxy-name">Альфа-1</span></div>
         </div>
     </div>
     <div class="resources-bar">
-        <div class="res-pill res-credits">🪙 <span id="ui-credits">109040</span></div>
-        <div class="res-pill res-crystals">💎 <span id="ui-crystals">5394</span></div>
-        <div class="res-pill res-stars">⭐ <span id="ui-stars">0</span></div>
+        <div class="res-grid">
+            <div class="res-pill res-credits">🪙 <span id="ui-credits">15000</span></div>
+            <div class="res-pill res-crystals">💎 <span id="ui-crystals">500</span></div>
+        </div>
+        <div class="res-grid" style="margin-top:2px;">
+            <div class="res-pill res-parts">📦 <span id="ui-parts">5</span></div>
+            <div class="res-pill res-stars">⭐ <span id="ui-stars">0</span></div>
+        </div>
     </div>
 </header>
 
 <div class="container">
-    <!-- 1. МОСТИК (50 КОРАБЛЕЙ ЗА ДЕТАЛИ И 50 ГАЛАКТИК ПО УРОВНЮ) -->
+    <!-- 1. МОСТИК (50 КОРАБЛЕЙ И 50 ГАЛАКТИК С ПРЕВЬЮ И ВИЗУАЛОМ) -->
     <section id="scr-bridge" class="screen active">
         <div class="cyber-card">
             <div class="card-title"><span>🛸 Ангар Кораблей (50 Моделей за Детали)</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Флагман: <b id="current-ship" style="color:var(--cyan)">Дредноут Спектр</b> | Деталей: <b id="ui-parts" style="color:var(--gold)">15</b> шт.</p>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Флагман: <b id="current-ship" style="color:var(--cyan)">Икар MK-I</b></p>
             <div style="max-height: 160px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;" id="ships-store-list"></div>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🌌 Магазин Галактик (50 Сегментов по Уровню)</span></div>
+            <div class="card-title"><span>🌌 Галактический Атлас (50 Сегментов)</span></div>
             <div style="max-height: 180px; overflow-y: auto; display: flex; flex-direction: column; gap: 5px;" id="galaxies-store-list"></div>
         </div>
     </section>
 
-    <!-- 2. СРАЖЕНИЯ И ЗАЩИТА -->
+    <!-- 2. СРАЖЕНИЯ (АТАКА, ЗАЩИТА И КОНТРАТАКА СОПЕРНИКА) -->
     <section id="scr-combat" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>🛡 Защита Твоего Крейсера</span></div>
@@ -169,28 +177,28 @@
         </div>
 
         <div class="cyber-card" style="border-color: rgba(255, 0, 85, 0.4);">
-            <div class="card-title"><span>⚔️ Битва с Вражеской Армадой</span></div>
+            <div class="card-title"><span>⚔️ Атака Галактики Соперника</span></div>
             <div class="stat-row">
-                <div class="stat-label"><span>Броня противника</span><span id="enemy-hp-text">300 / 300</span></div>
+                <div class="stat-label"><span>Щит вражеского сектора</span><span id="enemy-hp-text">300 / 300</span></div>
                 <div class="progress-track"><div class="progress-fill" id="enemy-hp-bar" style="width: 100%; background: var(--pink);"></div></div>
             </div>
-            <button class="btn btn-pink" onclick="fightEnemy()">🔥 Атаковать врага (+ шанс найти детали)</button>
+            <button class="btn btn-pink" onclick="fightEnemy()">🔥 Атаковать (Внимание: Возможна контратака!)</button>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>📡 Бортовой Журнал</span></div>
+            <div class="card-title"><span>📡 Бортовой Журнал Сражений</span></div>
             <div class="terminal" id="combat-log">
-                <div>> [SYS] Системы защиты и орудия активны.</div>
+                <div>> [SYS] Системы наведения активны. Ожидание приказов...</div>
             </div>
         </div>
     </section>
 
-    <!-- 3. АНГАР (КЛИКЕР 3234, ФЕРМА С ИНЕРЦИЕЙ, КЕЙСЫ, АПГРЕЙДЫ, ИГРЫ) -->
+    <!-- 3. АНГАР (КЛИКЕР 3234, ФЕРМА С ИНЕРЦИЕЙ, АПГРЕЙДЫ, КЕЙСЫ, УНИКАЛЬНОЕ КАЗИНО) -->
     <section id="scr-hangar" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>⚙️ 50 Уровней Апгрейдов Крейсера</span></div>
-            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Текущий уровень: <b id="upgrade-lvl-text" style="color:var(--gold)">12 / 50</b></p>
-            <button class="btn btn-gold" onclick="upgradeShipSystem()">⚡ Улучшить системы (10,000 🪙)</button>
+            <p style="font-size: 11px; color: var(--text-dim); margin-bottom: 6px;">Текущий уровень систем: <b id="upgrade-lvl-text" style="color:var(--gold)">1 / 50</b></p>
+            <button class="btn btn-gold" id="upgrade-sys-btn" onclick="upgradeShipSystem()">⚡ Улучшить системы (5,000 🪙)</button>
         </div>
 
         <div class="cyber-card">
@@ -200,64 +208,65 @@
 
         <div class="cyber-card">
             <div class="card-title"><span>⚡ Крипто-Ферма & Инерция</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Активных GPU: <b id="gpu-count" style="color:var(--cyan)">4</b> шт.</p>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Активных GPU: <b id="gpu-count" style="color:var(--cyan)">2</b> шт.</p>
             <div class="stat-row">
-                <div class="stat-label"><span>Нагрев / Инерция</span><span id="inertia-text">24%</span></div>
-                <div class="progress-track"><div class="progress-fill" id="inertia-bar" style="width: 24%; background: var(--gold);"></div></div>
+                <div class="stat-label"><span>Нагрев / Инерция</span><span id="inertia-text">10%</span></div>
+                <div class="progress-track"><div class="progress-fill" id="inertia-bar" style="width: 10%; background: var(--gold);"></div></div>
             </div>
-            <button class="btn btn-cyan" onclick="buyGPU()" style="margin-top:6px;">🛒 Купить видеокарту (15,000 🪙)</button>
-            <button class="btn btn-gold" onclick="payInertiaCooling()" style="margin-top:6px;">❄️ Оплатить охлаждение (2,000 🪙)</button>
+            <button class="btn btn-cyan" onclick="buyGPU()" style="margin-top:6px;">🛒 Купить видеокарту (10,000 🪙)</button>
+            <button class="btn btn-gold" id="cooling-btn" onclick="payInertiaCooling()" style="margin-top:6px;">❄️ Оплатить охлаждение (3,000 🪙)</button>
             <button class="btn btn-outline" onclick="collectFarm()" style="margin-top:6px;">📥 Снять фарм с фермы</button>
         </div>
 
         <div class="cyber-card">
             <div class="card-title"><span>📦 Черный Рынок (Кейсы с деталями)</span></div>
             <div class="grid-2">
-                <button class="btn btn-gold" onclick="openBox('common')">📦 Обычный бокс<br><small>2,500 🪙</small></button>
-                <button class="btn btn-stars" onclick="openBox('epic')">🎁 Элитный кейс<br><small>150 💎</small></button>
+                <button class="btn btn-gold" onclick="openBox('common')">📦 Обычный бокс<br><small>1,500 🪙</small></button>
+                <button class="btn btn-stars" onclick="openBox('epic')">🎁 Элитный кейс<br><small>50 💎</small></button>
             </div>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🎰 Игровой Зал (Казино)</span></div>
+            <div class="card-title"><span>🎰 Игровой Зал (Уникальное Казино)</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Каждая аркада имеет индивидуальный коэффициент и риск:</p>
             <div class="grid-3">
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Слоты')">🎰 Слоты</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Мины')">💣 Мины</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Сейф')">🔑 Сейф</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Краш')">🚀 Краш</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Башня')">🗼 Башня</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Блекджек')">♠️ Блекджек</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Баскетбол')">🏀 Баскетбол</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Пенальти')">⚽ Пенальти</button>
-                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playGame('Дартс')">🎯 Дартс</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Слоты', 3, 2.5)">🎰 Слоты (x2.5)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Мины', 5, 3.0)">💣 Мины (x3.0)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Сейф', 2, 4.0)">🔑 Сейф (x4.0)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Краш', 4, 2.0)">🚀 Краш (x2.0)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Башня', 3, 3.5)">🗼 Башня (x3.5)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Блекджек', 2, 2.0)">♠️ Блекджек (x2)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Баскетбол', 2, 2.2)">🏀 Баскет (x2.2)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Пенальти', 2, 2.1)">⚽ Пенальти (x2.1)</button>
+                <button class="btn btn-gold" style="font-size:9px; padding:8px;" onclick="playUniqueGame('Дартс', 3, 2.8)">🎯 Дартс (x2.8)</button>
             </div>
         </div>
     </section>
 
-    <!-- 4. ТРЕЙДЫ И РЫНОК -->
+    <!-- 4. ТРЕЙДЫ И ОБМЕН -->
     <section id="scr-clans" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>🤝 Галактический Рынoк (Трейды)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Контроль сделок ведут назначенные модераторы и админы:</p>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Контроль сделок ведут модераторы и администраторы:</p>
             <div class="grid-2">
-                <button class="btn btn-cyan" onclick="tradeAction('buy')">Купить 200 💎 за 10k 🪙</button>
-                <button class="btn btn-pink" onclick="tradeAction('sell')">Продать 200 💎 за 8k 🪙</button>
+                <button class="btn btn-cyan" onclick="tradeAction('buy')">Купить 100 💎 за 5k 🪙</button>
+                <button class="btn btn-pink" onclick="tradeAction('sell')">Продать 100 💎 за 4k 🪙</button>
             </div>
         </div>
         <div class="cyber-card">
-            <div class="card-title"><span>📦 Обмен деталей и чертежей</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Обменяй 10 деталей на 5,000 🪙:</p>
-            <button class="btn btn-gold" onclick="tradeParts()">Обменять детали на монеты</button>
+            <div class="card-title"><span>📦 Биржа Обмена Деталей</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Обменять 5 деталей на 3,000 🪙:</p>
+            <button class="btn btn-gold" onclick="tradeParts()">Обменять детали</button>
         </div>
     </section>
 
-    <!-- 5. ПРОФИЛЬ, НАСТРОЙКИ (50 ТЕМ), ПРОМОКОДЫ И ДОНАТ -->
+    <!-- 5. ПРОФИЛЬ, НАСТРОЙКИ (50 ТЕМ), ПРОМОКОДЫ И ДОНАТ ЗА 25 ЗВЕЗД -->
     <section id="scr-profile" class="screen">
         <div class="cyber-card">
             <div class="card-title"><span>👤 Досье Пилота</span></div>
             <p style="font-size:12px; margin-bottom:6px;">Имя: <b id="profile-name">-</b></p>
             <p style="font-size:12px; margin-bottom:6px;">ID: <b id="profile-id" style="color:var(--cyan)">-</b></p>
-            <p style="font-size:12px; margin-bottom:6px;">Уровень: <b id="profile-lvl">692</b></p>
+            <p style="font-size:12px; margin-bottom:6px;">Уровень: <b id="profile-lvl">1</b></p>
             <p style="font-size:12px;">Роль: <b id="profile-role-text" style="color:var(--pink);">Владелец (@bobik11222)</b></p>
         </div>
 
@@ -268,29 +277,68 @@
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>⭐ Магазин Донатов (Telegram Stars)</span></div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Оплата направляется в ЛС владельцу: <b>@bobik11222</b></p>
+            <div class="card-title"><span>⭐ Донат за 25 Звёзд (→ @bobik11222)</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 8px;">Оплата направляется в ЛС владельцу по 25 Stars:</p>
             <div class="grid-2">
-                <button class="btn btn-stars" onclick="buyDonate('coins', 100, 50000)">🪙 50k Монет<br><small>100 Stars</small></button>
-                <button class="btn btn-stars" onclick="buyDonate('crystals', 100, 2000)">💎 2k Алмазов<br><small>100 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('coins', 25, 25000)">🪙 25k Монет<br><small>25 Stars</small></button>
+                <button class="btn btn-stars" onclick="buyDonate('crystals', 25, 1000)">💎 1k Алмазов<br><small>25 Stars</small></button>
             </div>
         </div>
 
         <div class="cyber-card">
-            <div class="card-title"><span>🎨 50 Тематик Оформления и Языки</span></div>
-            <div class="grid-2" style="margin-bottom:8px;">
-                <button class="btn btn-cyan" onclick="setTheme('default')" style="font-size:10px;">Кибер Циан</button>
-                <button class="btn btn-pink" onclick="setTheme('pink')" style="font-size:10px;">Неон Розовый</button>
-                <button class="btn btn-gold" onclick="setTheme('matrix')" style="font-size:10px;">Матрица</button>
-                <button class="btn btn-gold" onclick="setTheme('gold')" style="font-size:10px;">Золотой Космос</button>
-            </div>
-            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Выбор из 50 кастомных тем:</p>
+            <div class="card-title"><span>🎨 50 Тематик Оформления</span></div>
+            <p style="font-size: 10px; color: var(--text-dim); margin-bottom: 6px;">Выберите одну из 50 уникальных тем:</p>
             <select id="theme-select" class="cyber-input" onchange="setCustomTheme(this.value)">
                 <option value="default">Тема #1: Cyber Default</option>
                 <option value="pink">Тема #2: Neon Sunset</option>
                 <option value="matrix">Тема #3: Matrix Green</option>
                 <option value="gold">Тема #4: Royal Gold</option>
-                <!-- Добавлено расширенное меню 50 тематик -->
+                <option value="purple">Тема #5: Purple Nebula</option>
+                <option value="red">Тема #6: Quantum Red</option>
+                <option value="theme7">Тема #7: Solar Flare</option>
+                <option value="theme8">Тема #8: Dark Matter</option>
+                <option value="theme9">Тема #9: Deep Space</option>
+                <option value="theme10">Тема #10: Supernova</option>
+                <option value="theme11">Тема #11: Andromeda</option>
+                <option value="theme12">Тема #12: Orion Core</option>
+                <option value="theme13">Тема #13: Pulsar Glow</option>
+                <option value="theme14">Тема #14: Quasar Beam</option>
+                <option value="theme15">Тема #15: Event Horizon</option>
+                <option value="theme16">Тема #16: Titan Shield</option>
+                <option value="theme17">Тема #17: Cyberpunk City</option>
+                <option value="theme18">Тема #18: Neon Tokyo</option>
+                <option value="theme19">Тема #19: Matrix Terminal</option>
+                <option value="theme20">Тема #20: Gold Syndicate</option>
+                <option value="theme21">Тема #21: Silver Fleet</option>
+                <option value="theme22">Тема #22: Plasma Storm</option>
+                <option value="theme23">Тема #23: Void Walker</option>
+                <option value="theme24">Тема #24: Starlight Apex</option>
+                <option value="theme25">Тема #25: Eclipse Shadow</option>
+                <option value="theme26">Тема #26: Aurora Borealis</option>
+                <option value="theme27">Тема #27: Galaxy Vanguard</option>
+                <option value="theme28">Тема #28: Hyperdrive Blue</option>
+                <option value="theme29">Тема #29: Warp Speed</option>
+                <option value="theme30">Тема #30: Ion Engine</option>
+                <option value="theme31">Тема #31: Laser Grid</option>
+                <option value="theme32">Тема #32: Hologram Pink</option>
+                <option value="theme33">Тема #33: Synthetic AI</option>
+                <option value="theme34">Тема #34: Orbital Station</option>
+                <option value="theme35">Тема #35: Lunar Base</option>
+                <option value="theme36">Тема #36: Martian Red</option>
+                <option value="theme37">Тема #37: Venus Glow</option>
+                <option value="theme38">Тема #38: Jupiter Storm</option>
+                <option value="theme39">Тема #39: Saturn Rings</option>
+                <option value="theme40">Тема #40: Neptune Ice</option>
+                <option value="theme41">Тема #41: Pluto Frost</option>
+                <option value="theme42">Тема #42: Alpha Centauri</option>
+                <option value="theme43">Тема #43: Sirius Prime</option>
+                <option value="theme44">Тема #44: Vega Sector</option>
+                <option value="theme45">Тема #45: Rigel Vanguard</option>
+                <option value="theme46">Тема #46: Betelgeuse</option>
+                <option value="theme47">Тема #47: Antares Core</option>
+                <option value="theme48">Тема #48: Arcturus Hub</option>
+                <option value="theme49">Тема #49: Canopus Fleet</option>
+                <option value="theme50">Тема #50: Kahalis Supreme</option>
             </select>
             <div class="grid-3" style="margin-top:8px;">
                 <button class="btn btn-outline" onclick="setLang('ru')" style="font-size:10px;">🇷🇺 RU</button>
@@ -305,20 +353,16 @@
         <div class="cyber-card" style="border-color: var(--pink);">
             <div class="card-title"><span style="color:var(--pink);">⚙️ ROOT КОНСОЛЬ (@bobik11222)</span></div>
             <div class="grid-2">
-                <button class="btn btn-gold" onclick="adminRes(1000000, 20000)">💰 +1M 🪙</button>
-                <button class="btn btn-cyan" onclick="adminLvl()">⬆️ +100 Уровней</button>
+                <button class="btn btn-gold" onclick="adminRes(100000, 5000)">💰 +100k 🪙</button>
+                <button class="btn btn-cyan" onclick="adminLvl()">⬆️ +10 Уровней</button>
             </div>
             <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
                 <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">🛡 Назначить Админа / Модератора:</p>
-                <input type="text" id="staff-user-id" class="cyber-input" placeholder="Telegram ID пользователя">
+                <input type="text" id="staff-user-id" class="cyber-input" placeholder="Telegram ID">
                 <div class="grid-2">
-                    <button class="btn btn-gold" onclick="grantRole('admin')">⭐ Выдать Админа</button>
-                    <button class="btn btn-cyan" onclick="grantRole('moderator')">🛡 Выдать Модера</button>
+                    <button class="btn btn-gold" onclick="grantRole('admin')">⭐ Админ</button>
+                    <button class="btn btn-cyan" onclick="grantRole('moderator')">🛡 Модер</button>
                 </div>
-            </div>
-            <div style="margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 8px;">
-                <p style="font-size: 11px; color: var(--pink); margin-bottom: 6px;">💎 Выдача доната по ID:</p>
-                <button class="btn btn-stars" onclick="adminGiveDonate()">Начислить премиум пакет</button>
             </div>
         </div>
     </section>
@@ -336,16 +380,11 @@
 <script>
     const OWNER_ID = "6188701923";
     let tg = null;
-    try {
-        if (window.Telegram && window.Telegram.WebApp) {
-            tg = window.Telegram.WebApp;
-            tg.expand();
-        }
-    } catch(e) {}
+    try { if (window.Telegram && window.Telegram.WebApp) { tg = window.Telegram.WebApp; tg.expand(); } } catch(e) {}
 
-    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v18')) || {
-        credits: 109040, crystals: 5394, stars: 0, lvl: 692, hp: 100, maxHp: 100,
-        galaxy: "Альфа-1", ship: "Дредноут Спектр", parts: 15, upgradeLvl: 12, gpus: 4, inertia: 24,
+    let state = JSON.parse(localStorage.getItem('kahalis_supreme_v21')) || {
+        credits: 15000, crystals: 500, stars: 0, parts: 5, lvl: 1, playerHp: 100, enemyHp: 300,
+        galaxy: "Альфа-1", ship: "Икар MK-I", upgradeLvl: 1, gpus: 2, inertia: 10,
         lastInertiaCheck: Date.now(), theme: "default", lang: "ru", staffRoles: {}
     };
 
@@ -358,9 +397,7 @@
     } catch(e) {}
 
     function save() {
-        try {
-            localStorage.setItem('kahalis_supreme_v18', JSON.stringify(state));
-        } catch(e) {}
+        try { localStorage.setItem('kahalis_supreme_v21', JSON.stringify(state)); } catch(e) {}
         updateUI();
     }
 
@@ -412,11 +449,7 @@
 
     function init() {
         try {
-            const setSafely = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.innerText = val;
-            };
-
+            const setSafely = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
             setSafely('ui-username', userName);
             setSafely('avatar-letter', userName.charAt(0).toUpperCase());
             setSafely('profile-name', userName);
@@ -425,57 +458,57 @@
             setSafely('ui-galaxy-name', state.galaxy);
             setSafely('current-ship', state.ship);
             setSafely('ui-parts', state.parts);
-            setSafely('upgrade-lvl-text', `${state.upgradeLvl} / 50`);
 
             setTheme(state.theme || 'default');
             renderStores();
             updateUI();
-            addLog("KAHALIS SUPREME V18 запущен. Все 50 галактик и трейды активны.");
-        } catch(e) {
-            console.error(e);
-        }
+            addLog("KAHALIS SUPREME V21 запущен. Полный комплект из 50 тем активен.");
+        } catch(e) {}
     }
 
     function updateUI() {
         try {
-            const setSafely = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.innerText = val;
-            };
-
+            const setSafely = (id, val) => { const el = document.getElementById(id); if (el) el.innerText = val; };
             setSafely('ui-credits', state.credits.toLocaleString());
             setSafely('ui-crystals', state.crystals.toLocaleString());
             setSafely('ui-stars', state.stars.toLocaleString());
             setSafely('ui-parts', state.parts);
             setSafely('gpu-count', state.gpus);
             setSafely('inertia-text', `${Math.floor(state.inertia)}%`);
-            
+            setSafely('player-hp-text', `${state.playerHp} / 100`);
+            setSafely('enemy-hp-text', `${state.enemyHp} / 300`);
+            setSafely('profile-lvl', state.lvl);
+
+            let nextUpgradeCost = (state.upgradeLvl + 1) * 5000;
+            const upBtn = document.getElementById('upgrade-sys-btn');
+            if(upBtn) {
+                if(state.upgradeLvl >= 50) { upBtn.innerText = "Максимальный уровень (50/50)"; }
+                else { upBtn.innerText = `⚡ Улучшить системы (${nextUpgradeCost.toLocaleString()} 🪙)`; }
+            }
+            const upText = document.getElementById('upgrade-lvl-text');
+            if(upText) upText.innerText = `${state.upgradeLvl} / 50`;
+
+            let coolingCost = 2000 + (state.gpus * 500);
+            const coolingBtn = document.getElementById('cooling-btn');
+            if(coolingBtn) coolingBtn.innerText = `❄️ Оплатить охлаждение (${coolingCost.toLocaleString()} 🪙)`;
+
             const inertiaBar = document.getElementById('inertia-bar');
             if (inertiaBar) inertiaBar.style.width = `${state.inertia}%`;
 
             const isOwner = (userId === OWNER_ID);
             const staffRole = state.staffRoles[userId] || (isOwner ? "owner" : "pilot");
             const badge = document.getElementById('ui-role-badge');
-            
             if (badge) {
-                if (isOwner) {
-                    badge.innerText = "ВЛАДЕЛЕЦ"; badge.className = "role-badge role-owner";
-                } else if (staffRole === "admin") {
-                    badge.innerText = "АДМИН"; badge.className = "role-badge role-admin";
-                } else if (staffRole === "moderator") {
-                    badge.innerText = "МОДЕР"; badge.className = "role-badge role-moderator";
-                } else {
-                    badge.innerText = "ПИЛОТ"; badge.className = "role-badge role-pilot";
-                }
+                if (isOwner) { badge.innerText = "ВЛАДЕЛЕЦ"; badge.className = "role-badge role-owner"; }
+                else if (staffRole === "admin") { badge.innerText = "АДМИН"; badge.className = "role-badge role-admin"; }
+                else if (staffRole === "moderator") { badge.innerText = "МОДЕР"; badge.className = "role-badge role-moderator"; }
+                else { badge.innerText = "ПИЛОТ"; badge.className = "role-badge role-pilot"; }
             }
 
             const ownerBtn = document.getElementById('nav-owner-btn');
             if (ownerBtn) {
-                if (isOwner || staffRole === "admin" || staffRole === "moderator") {
-                    ownerBtn.style.display = "flex";
-                } else {
-                    ownerBtn.style.display = "none";
-                }
+                if (isOwner || staffRole === "admin" || staffRole === "moderator") { ownerBtn.style.display = "flex"; }
+                else { ownerBtn.style.display = "none"; }
             }
         } catch(e) {}
     }
@@ -485,12 +518,9 @@
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             const target = document.getElementById(id);
             if (target) target.classList.add('active');
-            
             document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
-        } catch(e) {
-            console.error(e);
-        }
+        } catch(e) {}
     }
 
     function renderStores() {
@@ -499,7 +529,7 @@
             if (shipsContainer) {
                 let shipsHtml = '';
                 shipNames.forEach((name, idx) => {
-                    let partsCost = (idx + 1) * 2; // Корабли покупаются за детали
+                    let partsCost = (idx + 1) * 2;
                     shipsHtml += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,240,255,0.04); border:1px solid rgba(0,240,255,0.15); padding:6px 8px; border-radius:6px;">
                         <span style="font-size:11px; color:var(--cyan);">${name}</span>
                         <button class="btn btn-cyan" style="width:auto; padding:4px 8px; font-size:10px; margin:0;" onclick="buyShip('${name}', ${partsCost})">${partsCost} 📦 деталей</button>
@@ -512,8 +542,8 @@
             if (galContainer) {
                 let galHtml = '';
                 galaxyNames.forEach((name, idx) => {
-                    let reqLvl = (idx + 1) * 2;
-                    let cost = (idx + 1) * 4000;
+                    let reqLvl = (idx + 1);
+                    let cost = (idx + 1) * 3000;
                     galHtml += `<div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,204,0,0.04); border:1px solid rgba(255,204,0,0.15); padding:6px 8px; border-radius:6px;">
                         <div>
                             <span style="font-size:11px; color:var(--gold);">${name}</span>
@@ -528,13 +558,11 @@
     }
 
     function buyShip(name, partsCost) {
-        if(state.parts < partsCost) { showToast(`⛔ Нужно ${partsCost} деталей! Ищи в боях и боксах.`); return; }
+        if(state.parts < partsCost) { showToast(`⛔ Нужно ${partsCost} деталей!`); return; }
         state.parts -= partsCost;
         state.ship = name;
-        const currentShipEl = document.getElementById('current-ship');
-        if (currentShipEl) currentShipEl.innerText = name;
         showToast(`🛸 Куплен корабль: ${name}!`);
-        addLog(`Ангар: Сконструирован новый флагман ${name}`);
+        addLog(`Ангар: Сконструирован флагман ${name}`);
         save();
     }
 
@@ -543,45 +571,51 @@
         if(state.credits < cost) { showToast(`⛔ Не хватает ${cost.toLocaleString()} 🪙!`); return; }
         state.credits -= cost;
         state.galaxy = name;
-        const galEl = document.getElementById('ui-galaxy-name');
-        if (galEl) galEl.innerText = name;
-        showToast(`🌌 Успешный перелет в галактику ${name}!`);
-        addLog(`Навигация: Корабль совершил прыжок в сектор ${name}`);
+        showToast(`🌌 Перелет в галактику ${name}!`);
+        addLog(`Навигация: Прыжок в сектор ${name}`);
         save();
     }
 
     function fightEnemy() {
-        state.credits += 1000;
-        let foundParts = Math.random() > 0.5 ? 2 : 0;
-        if(foundParts > 0) {
-            state.parts += foundParts;
-            showToast(`🏆 Победа! +1,000 🪙 и +${foundParts} деталей!`);
-            addLog(`Бой: Уничтожена армада. Найдены редкие детали (+${foundParts}).`);
+        state.enemyHp -= 100;
+        if(state.enemyHp <= 0) {
+            state.credits += 2500;
+            state.parts += 3;
+            state.lvl += 1;
+            state.enemyHp = 300;
+            showToast("🏆 Сектор захвачен! +2,500 🪙, +3 детали, +1 ур.");
+            addLog("Бой: Вражеская армада разбита, получена добыча и уровень.");
         } else {
-            showToast("🏆 Победа над вражеской армадой! +1,000 🪙");
-            addLog("Бой: Успешный залп из орудий по врагу.");
+            state.playerHp = Math.max(0, state.playerHp - 20);
+            showToast("💥 Враг контратакует! Твой корпус поврежден (-20 HP)");
+            addLog("Бой: Отражена контратака противника. Защита крейсера под ударом.");
+            if(state.playerHp <= 0) {
+                state.playerHp = 100;
+                showToast("⚠️ Корабль разбит! Авто-ремонт корпуса за аварийный счет.");
+                addLog("Авария: Крейсер уничтожен, выполнено экстренное восстановление.");
+            }
         }
         save();
     }
 
     function repairShip() {
+        if(state.playerHp >= 100) { showToast("🛡 Корпус уже полностью цел (100/100)!"); return; }
         if(state.credits < 1000) { showToast("Нужно 1,000 🪙 для ремонта!"); return; }
         state.credits -= 1000;
+        state.playerHp = 100;
         showToast("🔧 Корпус крейсера полностью отремонтирован!");
-        addLog("Ремонт: Целостность корпуса восстановлена.");
+        addLog("Ремонт: Целостность корпуса восстановлена до 100%.");
         save();
     }
 
     function upgradeShipSystem() {
-        if(state.upgradeLvl >= 50) { showToast("Достигнут максимальный 50 уровень!"); return; }
-        let cost = (state.upgradeLvl + 1) * 10000;
+        if(state.upgradeLvl >= 50) { showToast("Достигнут максимальный 50 уровень систем!"); return; }
+        let cost = (state.upgradeLvl + 1) * 5000;
         if(state.credits < cost) { showToast(`Нужно ${cost.toLocaleString()} 🪙!`); return; }
         state.credits -= cost;
         state.upgradeLvl++;
-        const upEl = document.getElementById('upgrade-lvl-text');
-        if (upEl) upEl.innerText = `${state.upgradeLvl} / 50`;
         showToast(`⚙️ Системы улучшены до ур. ${state.upgradeLvl}!`);
-        addLog(`Апгрейд: Системы крейсера прокачаны до ${state.upgradeLvl}`);
+        addLog(`Апгрейд: Орудия и щиты прокачаны до ${state.upgradeLvl}`);
         save();
     }
 
@@ -589,92 +623,94 @@
         let gain = 3234;
         state.credits += gain;
         showToast(`💎 +${gain.toLocaleString()} Монет за клик!`);
-        addLog(`Шахта: Добыто +${gain} 🪙 от клика.`);
+        addLog(`Шахта: Добыто +${gain} 🪙.`);
         save();
     }
 
     function buyGPU() {
-        let price = 15000;
-        if(state.credits < price) { showToast("Нужно 15,000 🪙!"); return; }
+        let price = 10000;
+        if(state.credits < price) { showToast("Нужно 10,000 🪙!"); return; }
         state.credits -= price;
         state.gpus++;
         showToast("⚡ Видеокарта добавлена на ферму!");
-        addLog(`Ферма: Установлена GPU. Всего: ${state.gpus}`);
+        addLog(`Ферма: Установлена GPU №${state.gpus}`);
         save();
     }
 
     function payInertiaCooling() {
-        if(state.credits < 2000) { showToast("Нужно 2,000 🪙!"); return; }
-        state.credits -= 2000;
+        let coolingCost = 2000 + (state.gpus * 500);
+        if(state.credits < coolingCost) { showToast(`Нужно ${coolingCost.toLocaleString()} 🪙 для охлаждения!`); return; }
+        state.credits -= coolingCost;
         state.inertia = 0;
-        showToast("❄️ Инерция фермы сброшена до 0%!");
-        addLog("Ферма: Оплачено техобслуживание и охлаждение.");
+        showToast("❄️ Ферма охлаждена! Инерция сброшена до 0%.");
+        addLog("Ферма: Проведено техобслуживание охлаждения.");
         save();
     }
 
     function collectFarm() {
         if (state.inertia >= 100) {
-            showToast("⚠️ Ферма перегрета (100% инерции)! Требуется оплата охлаждения!");
+            showToast("⚠️ Ферма перегрета (100% инерции)! Требуется охлаждение!");
             return;
         }
-        let earned = state.gpus * 3000;
+        let earned = state.gpus * 2000;
         state.credits += earned;
-        state.inertia = Math.min(100, state.inertia + 15);
+        state.inertia = Math.min(100, state.inertia + 12);
         showToast(`📥 Снято с фермы: +${earned.toLocaleString()} 🪙`);
-        addLog(`Ферма: Снят доход (+${earned} 🪙). Инерция: ${state.inertia}%`);
+        addLog(`Ферма: Снят пассивный доход (+${earned} 🪙).`);
         save();
     }
 
     function openBox(type) {
         if(type === 'common') {
-            if(state.credits < 2500) { showToast("Нужно 2,500 🪙!"); return; }
-            state.credits -= 2500; state.parts += 3;
-            showToast("📦 В кейсе найдено: +3 детали!");
+            if(state.credits < 1500) { showToast("Нужно 1,500 🪙!"); return; }
+            state.credits -= 1500; state.parts += 2;
+            showToast("📦 В кейсе найдено: +2 детали!");
         } else {
-            if(state.crystals < 150) { showToast("Нужно 150 💎!"); return; }
-            state.crystals -= 150; state.parts += 10;
-            showToast("🎁 В элитном боксе найдено: +10 деталей!");
+            if(state.crystals < 50) { showToast("Нужно 50 💎!"); return; }
+            state.crystals -= 50; state.parts += 6;
+            showToast("🎁 В элитном боксе: +6 деталей!");
         }
         save();
     }
 
-    function playGame(name) {
-        let bet = 1500;
-        if(state.credits < bet) { showToast("Нужно 1,500 🪙 для ставки!"); return; }
+    function playUniqueGame(name, riskFactor, multiplier) {
+        let bet = 1000;
+        if(state.credits < bet) { showToast("Нужно 1,000 🪙 для ставки!"); return; }
         state.credits -= bet;
-        if(Math.random() > 0.4) {
-            let prize = bet * 2.2;
+        let win = Math.random() > (0.35 * riskFactor / 2);
+        if(win) {
+            let prize = Math.floor(bet * multiplier);
             state.credits += prize;
-            showToast(`🎰 Выигрыш в ${name}: +${prize} 🪙`);
-            addLog(`Аркады (${name}): Успешная ставка!`);
+            showToast(`🎉 [${name}] Победа! +${prize.toLocaleString()} 🪙 (x${multiplier})`);
+            addLog(`Казино (${name}): Успех! Выйграно +${prize} монет.`);
         } else {
-            showToast(`🎰 Проигрыш в ${name}: -${bet} 🪙`);
-            addLog(`Аркады (${name}): Ставка сгорела.`);
+            showToast(`❌ [${name}] Поражение! Ставка сгорела (-${bet} 🪙)`);
+            addLog(`Казино (${name}): Неудача, ставка сгорела.`);
         }
         save();
     }
 
     function tradeAction(type) {
         if(type === 'buy') {
-            if(state.credits < 10000) { showToast("Нужно 10k 🪙"); return; }
-            state.credits -= 10000; state.crystals += 200;
-            showToast("Куплено 200 💎 на рынке трейдов");
-            addLog("Трейды: Сделка проведена под надзором модераторов.");
+            if(state.credits < 5000) { showToast("Нужно 5k 🪙"); return; }
+            state.credits -= 5000; state.crystals += 100;
+            showToast("Куплено 100 💎 на рынке трейдов");
+            addLog("Трейды: Обмен монет на алмазы под защитой модераторов.");
         } else {
-            if(state.crystals < 200) { showToast("Мало 💎"); return; }
-            state.crystals -= 200; state.credits += 8000;
-            showToast("Продано 200 💎 на рынке трейдов");
-            addLog("Трейды: Кристаллы успешно обменены на монеты.");
+            if(state.crystals < 100) { showToast("Мало 💎"); return; }
+            state.crystals -= 100; state.credits += 4000;
+            showToast("Продано 100 💎 на рынке трейдов");
+            addLog("Трейды: Алмазы успешно обменены на кредиты.");
         }
         save();
     }
 
     function tradeParts() {
-        if(state.parts < 10) { showToast("Нужно минимум 10 деталей!"); return; }
-        state.parts -= 10;
-        state.credits += 5000;
-        showToast("Успешно обменшено 10 деталей на 5,000 🪙!");
-        addLog("Рынок: Обмен деталей на монеты завершен.");
+        if(state.parts < 5) { showToast("Нужно минимум 5 деталей!"); return; }
+        state.parts -= 5;
+        state.credits += 3000;
+        showToast("Успешно обменено 5 деталей на 3,000 🪙!");
+        addLog("Биржа: Сделка по продаже деталей закрыта.");
         save();
     }
 
@@ -683,12 +719,12 @@
         if (!promoInput) return;
         let code = promoInput.value.trim().toUpperCase();
         if(code === "BOBIK2026" || code === "KAHALIS") {
-            state.credits += 150000; state.crystals += 1500;
-            showToast("🎁 Промокод активирован! +150k 🪙 и +1,500 💎");
-            addLog(`Промокод: Активирован бонус ${code}`);
+            state.credits += 50000; state.crystals += 500;
+            showToast("🎁 Промокод активирован! +50k 🪙 и +500 💎");
+            addLog(`Промокод: Применен бонус ${code}`);
             save();
         } else {
-            showToast("❌ Неверный промокод!");
+            showToast("❌ Неверный или использованный промокод!");
         }
     }
 
@@ -696,11 +732,11 @@
         if (tg && tg.openTelegramLink) {
             let label = type === 'coins' ? `${amount} Монет` : `${amount} Алмазов`;
             tg.openTelegramLink(`https://t.me/bobik11222?text=Оплата%20${stars}%20Stars%20за%20${label}%20для%20аккаунта%20${userId}`);
-            addLog(`Донат: Запрос на ${stars} Stars отправлен в ЛС @bobik11222`);
+            addLog(`Донат: Сформирован запрос на ${stars} Stars в ЛС @bobik11222`);
         } else {
             if(type === 'coins') state.credits += amount;
             else state.crystals += amount;
-            showToast("⭐ Успешно начислено!");
+            showToast("⭐ Донат успешно зачислен!");
             save();
         }
     }
@@ -713,9 +749,7 @@
         showToast("🎨 Тема успешно изменена!");
     }
 
-    function setCustomTheme(themeName) {
-        setTheme(themeName);
-    }
+    function setCustomTheme(themeName) { setTheme(themeName); }
 
     function setLang(langCode) {
         state.lang = langCode;
@@ -725,15 +759,15 @@
 
     function adminRes(c, cr) {
         state.credits += c; state.crystals += cr;
-        showToast("Root: Ресурсы выданы!");
-        addLog("[ROOT] Администратор пополнил баланс.");
+        showToast("Root: Ресурсы зачислены!");
+        addLog("[ROOT] Админ пополнил баланс.");
         save();
     }
 
     function adminLvl() {
-        state.lvl += 100;
-        showToast("Root: Уровень +100");
-        addLog("[ROOT] Уровень повышен.");
+        state.lvl += 10;
+        showToast("Root: Уровень +10");
+        addLog("[ROOT] Уровень пилота повышен.");
         save();
     }
 
@@ -743,15 +777,8 @@
         let targetId = staffInput.value.trim();
         if(!targetId) { showToast("Введите Telegram ID!"); return; }
         state.staffRoles[targetId] = roleType;
-        showToast(`🛡 ID ${targetId} назначена роль: ${roleType.toUpperCase()}`);
+        showToast(`🛡 ID ${targetId} назначен ролью: ${roleType.toUpperCase()}`);
         addLog(`[SECURITY] Выдана роль ${roleType} игроку ${targetId}`);
-        save();
-    }
-
-    function adminGiveDonate() {
-        state.credits += 150000; state.crystals += 5000;
-        showToast("💎 Премиум-пакет выдан через консоль!");
-        addLog("[DONATE] Консоль выдала донат-пакет ресурсов.");
         save();
     }
 
