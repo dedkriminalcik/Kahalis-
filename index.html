@@ -2,9 +2,228 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Space RPG Mini App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kahalis Space RPG</title>
+    <!-- Подключаем официальный скрипт Telegram Mini Apps -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0d1117;
+            --card-bg: #161b22;
+            --accent-color: #58a6ff;
+            --accent-glow: rgba(88, 166, 255, 0.4);
+            --text-color: #c9d1d9;
+            --border-color: #30363d;
+            --danger-color: #f85149;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+            padding-bottom: 80px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 15px;
+        }
+
+        .user-info h3 {
+            font-size: 16px;
+            color: #fff;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            color: #8b949e;
+        }
+
+        .currency-badge {
+            background: rgba(255, 215, 0, 0.1);
+            border: 1px solid #ffd700;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #ffd700;
+            font-weight: bold;
+        }
+
+        /* Навигация по вкладкам */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Карточки и элементы */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 15px;
+        }
+
+        .card h2 {
+            font-size: 18px;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .btn {
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+
+        .btn:active {
+            opacity: 0.8;
+            transform: scale(0.98);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: #fff;
+        }
+
+        /* Нижнее меню */
+        nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            z-index: 100;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: #8b949e;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        .nav-item span {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.active {
+            color: var(--accent-color);
+        }
+
+        .log-box {
+            background: #040d21;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #7ee787;
+            margin-top: 10px;
+            max-height: 100px;
+            overflow-y: auto;
+        }
+    </style>
 </head>
 <body>
-    <h1>🌌 Космический Mini App работает!</h1>
-</body>
-</html>
+
+    <!-- Шапка профиля -->
+    <header>
+        <div class="user-info">
+            <h3 id="username">Пилот</h3>
+            <p>Сектор: Омега-9</p>
+        </div>
+        <div class="currency-badge" id="balance">🪙 2,400</div>
+    </header>
+
+    <!-- Вкладка 1: Главная (Космос) -->
+    <div id="tab-home" class="tab-content active">
+        <div class="card">
+            <h2>🚀 Космический Корабль</h2>
+            <p>Состояние корпуса: <b>100%</b></p>
+            <p>Щиты: <b>Активны (MK-2)</b></p>
+            <button class="btn" onclick="switchTab('tab-battles')">В бой / На задания</button>
+        </div>
+        <div class="card">
+            <h2>📢 Новости секторов</h2>
+            <p>Добро пожаловать в новую эру Kahalis RPG! Исследуйте астероиды и захватывайте сектора.</p>
+        </div>
+    </div>
+
+    <!-- Вкладка 2: Бои и Шахта -->
+    <div id="tab-battles" class="tab-content">
+        <div class="card">
+            <h2>⛏ Астероидная Шахта</h2>
+            <p>Добыча редких кристаллов и ресурсов для прокачки.</p>
+            <button class="btn" onclick="startAction('mine')">Начать бурение</button>
+        </div>
+        <div class="card">
+            <h2>⚔️ Космический Бой</h2>
+            <p>Рейд на пиратский крейсер сетей A-TOOLS.</p>
+            <button class="btn btn-danger" onclick="startAction('battle')">Атаковать флот</button>
+        </div>
+        <div class="log-box" id="action-log">Ожидание команд пилота...</div>
+    </div>
+
+    <!-- Вкладка 3: Кланы -->
+    <div id="tab-clans" class="tab-content">
+        <div class="card">
+            <h2>🛡 Силовые Кланы</h2>
+            <p>Объединяйтесь с другими пилотами для захвата станций.</p>
+            <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 10px 0;">
+            <p><b>1. Syndicate [SYN]</b> (Лидер: Aslan) — Участников: 12</p>
+            <button class="btn" onclick="alert('Вы уже состоите в элитном отряде!')">Информация о клане</button>
+        </div>
+    </div>
+
+    <!-- Вкладка 4: Профиль -->
+    <div id="tab-profile" class="tab-content">
+        <div class="card">
+            <h2>👤 Досье Пилота</h2>
+            <p>Уровень: <b>3 (Ветеран)</b></p>
+            <p>Опыт: <b>1,450 / 3,000 XP</b></p>
+            <p>Побед в боях: <b>24</b></p>
+            <p>Статус роли: <span style="color: var(--accent-color);">Владелец секторов</span></p>
+        </div>
+    </div>
+
+    <!-- Вкладка 5: Консоль Владельца (Админка) -->
+    <div id="tab-owner" class="tab-content">
+        <div class="card" style="border-color: var(--danger-color);">
+            <h2>⚙️ Консоль Владельца</h2>
+            <p>Панель глобального управления игрой:</p>
+            <button class="btn" onclick="alert('Все серверы работают в штатном режиме.')">Проверить ядра</button>
+            <button class="btn btn-danger" style="margin-top: 8px;" onclick="alert
