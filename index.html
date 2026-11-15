@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<title>KAHALIS // V34</title>
+<title>KAHALIS // V35</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <script async src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <style>
@@ -800,6 +800,32 @@ textarea.in{height:90px;font-size:12px;font-family:monospace;resize:none}
 @keyframes rbw{to{background-position:300% 0}}
 .nk-glow{color:var(--c)!important;text-shadow:0 0 6px var(--c),0 0 14px var(--c)}
 .nk-gold{color:var(--gold)!important;text-shadow:0 0 8px var(--gold),0 0 18px #ff9900}
+
+/* ===== V35: НАСТРОЙКИ, РОЛИ, СТАНЦИЯ, ДОСТИЖЕНИЯ ===== */
+.role-vip{background:rgba(0,255,136,.2);color:#6dffb6;border:1px solid #6dffb6}
+.role-premium{background:linear-gradient(90deg,rgba(255,0,153,.3),rgba(255,204,0,.3));color:#ffd86b;border:1px solid #ffd86b}
+.set{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;border-bottom:1px solid rgba(255,255,255,.06);font-size:12px;font-weight:700;gap:10px}
+.set:last-child{border-bottom:0}
+.tgl{width:48px;height:27px;border-radius:14px;background:rgba(255,255,255,.12);position:relative;cursor:pointer;border:1px solid rgba(255,255,255,.15);transition:background .2s;flex-shrink:0}
+.tgl::after{content:'';position:absolute;left:2px;top:2px;width:21px;height:21px;border-radius:50%;background:#fff;transition:transform .2s}
+.tgl.on{background:linear-gradient(135deg,var(--c),var(--g))}
+.tgl.on::after{transform:translateX(21px)}
+.swg{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:6px 0 10px}
+.sw{aspect-ratio:1/1;border-radius:50%;border:2px solid rgba(255,255,255,.15);cursor:pointer;padding:0}
+.sw.on{border-color:#fff;box-shadow:0 0 0 2px var(--c),0 0 14px var(--c)}
+.nomo *,.nomo *::before,.nomo *::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+.nomo #neb{display:none}
+.cmp .card{padding:10px;margin-bottom:8px}
+.cmp .btn{min-height:38px;padding:9px}
+.cmp .ct{margin-bottom:8px}
+.anom{position:fixed;z-index:60;width:62px;height:62px;border-radius:50%;border:2px solid var(--gold);background:rgba(5,9,20,.92);font-size:30px;cursor:pointer;box-shadow:0 0 22px var(--gold);animation:anb 1.2s ease-in-out infinite alternate;padding:0}
+@keyframes anb{from{transform:translateY(0) scale(1)}to{transform:translateY(-12px) scale(1.1)}}
+.goog-te-banner-frame,.skiptranslate iframe,#goog-gt-tt,.goog-te-balloon-frame{display:none!important}
+body{top:0!important}
+.stb{display:flex;align-items:center;gap:8px;padding:8px;margin-bottom:6px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.035)}
+.stb>div{flex:1;min-width:0}
+.stb b{font-size:12px}.stb small{display:block;font-size:10px;color:var(--dim)}
+.stb .btn{width:auto;margin:0;min-height:34px;padding:6px 10px;font-size:10px}
 </style>
 </head>
 <body>
@@ -1812,7 +1838,7 @@ init=function(){_init();renderAll();cloudLoad();loadTop();};
 
 
 // ===== V29: ЭФФЕКТЫ ИНТЕРФЕЙСА =====
-const hap=t=>{try{const h=tg&&tg.HapticFeedback;if(!h)return;if(t==='light')h.impactOccurred('light');else h.notificationOccurred(t);}catch(e){}};
+const hap=t=>{try{if(state&&state.set&&state.set.hap===false)return;const h=tg&&tg.HapticFeedback;if(!h)return;if(t==='light')h.impactOccurred('light');else h.notificationOccurred(t);}catch(e){}};
 let lx=innerWidth/2,ly=innerHeight/2;
 addEventListener('pointerdown',e=>{lx=e.clientX;ly=e.clientY;},{passive:true});
 document.addEventListener('click',e=>{if(e.target.closest('.btn,.tc,.nb'))hap('light');});
@@ -2514,9 +2540,9 @@ const gCost=i=>Math.floor(2500*Math.pow(i+1,1.55));
 const gReq=i=>Math.ceil((i+1)*0.8);
 const sCost=i=>(i+1)*2;
 const uCost=l=>Math.floor(4000*Math.pow(1.13,l));
-const incMul=()=>(1+0.02*((state.upgradeLvl||1)-1))*(1+galIdx()*0.02)*(state.mult||1);
+const incMul=()=>(1+0.02*((state.upgradeLvl||1)-1))*(1+galIdx()*0.02)*(1+0.015*stLvl('radar'))*(1+rolePerk())*(state.mult||1);
 const dmgMul=()=>(1+0.012*shipIdx())*(1+0.01*((state.upgradeLvl||1)-1));
-const armor=()=>Math.min(0.6,shipIdx()*0.012);
+const armor=()=>Math.min(0.75,shipIdx()*0.012+0.02*stLvl('yard'));
 
 function ensure35(){
   ensure34();
@@ -4172,6 +4198,488 @@ setTimeout(srvSync,800);
 renderPromos();
 evTick();
 try{updateUI();renderAll();}catch(e){console.error(e);}
+
+// =====================================================================
+// ===== V35: НАСТРОЙКИ, ЯЗЫКИ, РОЛИ, СТАНЦИЯ, ДОСТИЖЕНИЯ, ПУТЬ ПИЛОТА =====
+// =====================================================================
+
+// ---------- ИСПРАВЛЕНИЕ: из-за этой функции init() падал и пропадали темы / значения ----------
+renderStores=function(){
+  const sel=$('theme-select');
+  if(sel){
+    sel.innerHTML=themes.map((t,i)=>`<option value="${t[0]}">Тема #${i+1}: ${t[1]}</option>`).join('');
+    sel.value=state.theme||'default';
+  }
+};
+
+// ---------- РОЛИ: Пилот / VIP / Премиум / Модератор / Админ / Владелец ----------
+const ROLES={
+  pilot:{n:'Пилот',c:'role-pilot',p:0},
+  vip:{n:'VIP',c:'role-vip',p:.05},
+  premium:{n:'Премиум',c:'role-premium',p:.1},
+  moderator:{n:'Модератор',c:'role-moderator',p:0},
+  admin:{n:'Админ',c:'role-admin',p:0},
+  owner:{n:'Владелец',c:'role-owner',p:0}
+};
+function curRole(){
+  if(userId===OWNER_ID)return 'owner';
+  const k=(API_URL&&serverRole!==null)?serverRole:(state.staffRoles[userId]||'pilot');
+  return ROLES[k]?k:'pilot';
+}
+function rolePerk(){try{return ROLES[curRole()].p;}catch(e){return 0;}}
+const _uu11=updateUI;
+updateUI=function(){
+  _uu11();
+  const r=ROLES[curRole()];
+  sf('profile-role',r.n);
+  const b=$('ui-role-badge');
+  if(b){b.textContent=r.n.toUpperCase();b.className='rb '+r.c;}
+};
+// кнопки VIP / Премиум в консоли
+(function(){
+  const m=document.querySelector('button[onclick="grantRole(\'moderator\')"]');
+  if(m)m.parentElement.insertAdjacentHTML('afterend','<div class="g2" style="margin-top:8px"><button class="btn b-o" onclick="grantRole(\'vip\')">💚 VIP</button><button class="btn b-o" onclick="grantRole(\'premium\')">💎 Премиум</button></div>');
+  const r=document.querySelector('button[onclick="plRole(\'moderator\')"]');
+  if(r)r.closest('.g2').insertAdjacentHTML('afterend','<div class="g2" style="margin-top:8px" data-min="2"><button class="btn b-o" onclick="plRole(\'vip\')">💚 Дать VIP</button><button class="btn b-o" onclick="plRole(\'premium\')">💎 Дать Премиум</button></div>');
+})();
+grantRole=async function(r){
+  const id=$('staff-user-id').value.trim();
+  if(!id){showToast("Введите ID!");return;}
+  if(!ROLES[r])return;
+  if(API_URL&&tg&&tg.initData){
+    const d=await admCall('role',{to:id,role:r});
+    if(d)showToast(`🛡 Роль «${ROLES[r].n}» выдана игроку ${id}`);
+    return;
+  }
+  const lv=myLv(),cur=state.staffRoles[id]||'pilot';
+  if(id===OWNER_ID){showToast("⛔ Роль владельца менять нельзя");return;}
+  const low=['pilot','vip','premium','moderator'];
+  const ok=lv===3||(lv===2&&low.includes(r)&&low.includes(cur));
+  if(!ok){deny();return;}
+  state.staffRoles[id]=r;logA(`роль ${r} → ${id}`);
+  showToast(`🛡 Роль «${ROLES[r].n}» записана. Без сервера игрок получит её по подарочному коду (карточка ниже)`);
+  save();
+};
+
+// ---------- ПОДАРКИ ПО КОДУ (работают без сервера) ----------
+$('scr-owner').insertAdjacentHTML('beforeend',`
+<div class="card" data-min="2" style="border-color:var(--g)"><div class="ct">🎁 Подарок игроку по коду</div>
+  <p class="note">Работает и без сервера: создай код для ID игрока, отправь ему — он вставит в «Бонусы → Коды».</p>
+  <input type="text" id="gc-to" class="in" inputmode="numeric" placeholder="Telegram ID получателя">
+  <select id="gc-kind" class="in">
+    <option value="credits">🪙 Монеты</option><option value="crystals">💎 Алмазы</option><option value="parts">📦 Детали</option><option value="lvl">⬆️ Уровни</option>
+    <option value="ship">🛸 Корабль (номер 0–49)</option><option value="galaxy">🌌 Галактика (номер 0–49)</option>
+    <option value="role:vip">💚 Роль VIP</option><option value="role:premium">💎 Роль Премиум</option><option value="role:moderator">🛡 Роль Модератор</option><option value="role:admin">⭐ Роль Админ</option>
+  </select>
+  <input type="number" id="gc-val" class="in" inputmode="numeric" placeholder="Количество / номер (для ролей не нужно)">
+  <button class="btn b-g" onclick="mkGift()">🎁 Создать код</button>
+  <div id="gc-out"></div></div>`);
+function mkGift(){
+  const lv=myLv();
+  if(lv<2){deny();return;}
+  const to=$('gc-to').value.trim(),kind=$('gc-kind').value,val=Math.floor(+$('gc-val').value)||0;
+  if(!/^\d{5,15}$/.test(to)){showToast("Укажи верный ID игрока");return;}
+  const isRole=kind.startsWith('role:'),isItem=kind==='ship'||kind==='galaxy';
+  if(!isRole&&(isItem?(val<0||val>49):val<=0)){showToast(isItem?"Номер от 0 до 49":"Укажи количество");return;}
+  if(lv<3){
+    const cap={credits:1e5,crystals:1e3,parts:50,lvl:5};
+    if(isItem||kind==='role:admin'){showToast("⛔ Только владелец");return;}
+    if(cap[kind]&&val>cap[kind]){showToast("⛔ Лимит админа: "+cap[kind].toLocaleString());return;}
+  }
+  const body=[to,kind,val,Date.now().toString(36)+Math.floor(rnd()*1e3).toString(36)].join('.');
+  const code='KG-'+btoa(body).replace(/=/g,'')+'-'+chkH(body+'kgift');
+  logA(`подарок ${kind} ${val} → ${to}`);
+  $('gc-out').innerHTML=`<div class="chk" id="gc-code">${code}</div><div class="g2"><button class="btn b-o" onclick="copyTxt('gc-code')">📋 Копировать</button><button class="btn b-c" onclick="shareTxt('gc-code','Подарок в Kahalis! Вставь код в Бонусы → Коды:')">✈️ В Telegram</button></div>`;
+  showToast("🎁 Код создан");save();
+}
+function copyTxt(id){try{navigator.clipboard.writeText($(id).textContent);showToast("📋 Скопировано");}catch(e){showToast("Скопируй вручную");}}
+function shareTxt(id,text){
+  const u='https://t.me/share/url?url='+encodeURIComponent($(id).textContent)+'&text='+encodeURIComponent(text);
+  if(tg&&tg.openTelegramLink)tg.openTelegramLink(u);else window.open(u,'_blank');
+}
+$('scr-gifts').insertAdjacentHTML('beforeend',`
+<div class="card" data-cat="codes"><div class="ct">🎁 Подарок по коду</div>
+  <p class="note">Получил код от администратора? Вставь:</p>
+  <input type="text" id="gift-in" class="in" placeholder="KG-...">
+  <button class="btn b-g" onclick="redeemGift()">📥 Получить подарок</button></div>`);
+function redeemGift(){
+  ensure35();
+  state.usedGifts=state.usedGifts||{};
+  const c=$('gift-in').value.trim(),m=/^KG-([A-Za-z0-9+\/]+)-([A-Z0-9]{1,6})$/.exec(c);
+  if(!m){showToast("❌ Неверный код");return;}
+  let body;
+  try{body=atob(m[1]);}catch(e){showToast("❌ Неверный код");return;}
+  if(chkH(body+'kgift')!==m[2]){showToast("❌ Код подделан или повреждён");return;}
+  const p=body.split('.');
+  if(p.length!==4||p[0]!==userId){showToast("⛔ Этот код выписан на другой ID");return;}
+  if(state.usedGifts[p[3]]){showToast("❌ Код уже использован");return;}
+  const kind=p[1],v=parseInt(p[2])||0;
+  if(kind.startsWith('role:')){
+    if(API_URL&&tg&&tg.initData){showToast("ℹ️ Роли выдаёт сервер — попроси владельца выдать роль по ID в консоли");return;}
+    const r=kind.slice(5);
+    if(!ROLES[r]||r==='owner')return;
+    state.staffRoles[userId]=r;
+    showToast(`🛡 Тебе выдана роль: ${ROLES[r].n}!`);
+  }else if(kind==='ship'){const n=shipNames[v];if(n&&!state.ownShips.includes(n))state.ownShips.push(n);showToast(`🛸 Подарок: корабль ${n}!`);}
+  else if(kind==='galaxy'){const n=galaxyNames[v];if(n&&!state.ownGal.includes(n))state.ownGal.push(n);showToast(`🌌 Подарок: галактика ${n}!`);}
+  else if(kind==='lvl'){state.lvl+=v;showToast(`⬆️ Подарок: +${v} ур.`);}
+  else if(['credits','crystals','parts'].includes(kind)){state[kind]+=v;showToast(`🎁 Подарок: +${v.toLocaleString()}`);}
+  else return;
+  state.usedGifts[p[3]]=1;burst();$('gift-in').value='';save();
+}
+
+// ---------- НАСТРОЙКИ (новая категория снизу) ----------
+const LANGS=[['ru','Русский (оригинал)'],['en','English'],['uk','Українська'],['be','Беларуская'],['kk','Қазақша'],['uz','Oʻzbekcha'],['az','Azərbaycanca'],['hy','Հայերեն'],['ka','ქართული'],['tr','Türkçe'],['ar','العربية'],['fa','فارسی'],['he','עברית'],['hi','हिन्दी'],['bn','বাংলা'],['ur','اردو'],['ta','தமிழ்'],['te','తెలుగు'],['mr','मराठी'],['gu','ગુજરાતી'],['kn','ಕನ್ನಡ'],['ml','മലയാളം'],['pa','ਪੰਜਾਬੀ'],['ne','नेपाली'],['si','සිංහල'],['zh-CN','中文 (简体)'],['zh-TW','中文 (繁體)'],['ja','日本語'],['ko','한국어'],['vi','Tiếng Việt'],['th','ไทย'],['id','Bahasa Indonesia'],['ms','Bahasa Melayu'],['tl','Filipino'],['jw','Basa Jawa'],['su','Basa Sunda'],['ceb','Cebuano'],['km','ខ្មែរ'],['lo','ລາວ'],['my','မြန်မာ'],['mn','Монгол'],['ky','Кыргызча'],['tg','Тоҷикӣ'],['tk','Türkmençe'],['ps','پښتو'],['ku','Kurdî'],['es','Español'],['pt','Português'],['fr','Français'],['de','Deutsch'],['it','Italiano'],['nl','Nederlands'],['pl','Polski'],['cs','Čeština'],['sk','Slovenčina'],['hu','Magyar'],['ro','Română'],['bg','Български'],['sr','Српски'],['hr','Hrvatski'],['bs','Bosanski'],['sl','Slovenščina'],['mk','Македонски'],['sq','Shqip'],['el','Ελληνικά'],['sv','Svenska'],['no','Norsk'],['da','Dansk'],['fi','Suomi'],['is','Íslenska'],['et','Eesti'],['lv','Latviešu'],['lt','Lietuvių'],['ga','Gaeilge'],['cy','Cymraeg'],['gd','Gàidhlig'],['mt','Malti'],['eu','Euskara'],['ca','Català'],['gl','Galego'],['lb','Lëtzebuergesch'],['fy','Frysk'],['la','Latina'],['eo','Esperanto'],['sw','Kiswahili'],['af','Afrikaans'],['am','አማርኛ'],['ha','Hausa'],['yo','Yorùbá'],['ig','Igbo'],['zu','isiZulu'],['xh','isiXhosa'],['sn','Shona'],['so','Soomaali'],['mg','Malagasy'],['ht','Kreyòl ayisyen'],['yi','ייִדיש'],['mi','Māori'],['sm','Gagana Samoa'],['haw','ʻŌlelo Hawaiʻi'],['st','Sesotho'],['ny','Chichewa'],['rw','Kinyarwanda']];
+state.lang=state.lang||'ru';
+function setLang(code){
+  state.lang=code;
+  try{localStorage.setItem('kahalis_supreme_master_save',JSON.stringify(state));}catch(e){}
+  const exp='expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/',h=location.hostname;
+  if(code==='ru'){document.cookie='googtrans=;'+exp;document.cookie='googtrans=;'+exp+';domain='+h;}
+  else{document.cookie='googtrans=/ru/'+code+';path=/';document.cookie='googtrans=/ru/'+code+';path=/;domain='+h;}
+  setTimeout(()=>location.reload(),200);
+}
+if(state.lang&&state.lang!=='ru'){
+  document.body.insertAdjacentHTML('beforeend','<div id="gt-el" style="display:none"></div>');
+  window.gtInit=function(){try{new google.translate.TranslateElement({pageLanguage:'ru',autoDisplay:false},'gt-el');}catch(e){}};
+  const gs=document.createElement('script');
+  gs.src='https://translate.google.com/translate_a/element.js?cb=gtInit';
+  document.head.appendChild(gs);
+}
+state.set=Object.assign({snd:true,vol:.7,mvol:.7,hap:true,fxp:true,mot:true,neb:true,cmp:false,d3:true,fs:100},state.set||{});
+document.querySelector('.wrap').insertAdjacentHTML('beforeend','<section id="scr-set" class="screen"></section>');
+$('nav-owner-btn').insertAdjacentHTML('beforebegin','<button class="nb" data-s="scr-set"><span class="i">⚙️</span><span>Настройки</span></button>');
+$('scr-set').innerHTML=`
+<div class="card" id="set-theme"><div class="ct">🎨 Темы оформления <span class="rankb" id="set-tn">Cyber Default</span></div>
+  <p class="note">50 тем — меняют цвет всей игры. Нажми на кружок:</p>
+  <div class="swg" id="swg"></div></div>
+<div class="card" id="set-sound"><div class="ct">🔊 Звук</div>
+  <div class="set"><span>🔊 Звуковые эффекты</span><div class="tgl" data-k="snd"></div></div>
+  <div class="set"><span>📳 Вибрация</span><div class="tgl" data-k="hap"></div></div>
+  <p class="note" style="margin-top:8px">Громкость эффектов</p>
+  <input type="range" class="rng" id="set-vol" min="0" max="100">
+  <p class="note">Громкость музыки (mp3)</p>
+  <input type="range" class="rng" id="set-mvol" min="0" max="100">
+  <button class="btn b-g" onclick="sfx('win')">🔔 Проверить звук</button></div>
+<div class="card" id="set-lang"><div class="ct">🌍 Язык игры</div>
+  <p class="note">Выбери любой язык мира — игра переведётся автоматически (переводит Google, нужен интернет). «Русский» — оригинал.</p>
+  <select id="set-langsel" class="in">${LANGS.map(l=>`<option value="${l[0]}"${l[0]===state.lang?' selected':''}>${l[1]}</option>`).join('')}</select>
+  <p class="note" style="margin-top:6px">Игра перезагрузится, прогресс сохранится.</p></div>
+<div class="card" id="set-ui"><div class="ct">🖥 Интерфейс</div>
+  <div class="set"><span>✨ Анимации</span><div class="tgl" data-k="mot"></div></div>
+  <div class="set"><span>🌌 Туманность на фоне</span><div class="tgl" data-k="neb"></div></div>
+  <div class="set"><span>🎆 Частицы и салюты</span><div class="tgl" data-k="fxp"></div></div>
+  <div class="set"><span>🛸 3D-модели (шапка, мостик)</span><div class="tgl" data-k="d3"></div></div>
+  <div class="set"><span>📱 Компактный режим</span><div class="tgl" data-k="cmp"></div></div>
+  <p class="note" style="margin-top:8px">Размер интерфейса: <b id="set-fsv">100%</b></p>
+  <input type="range" class="rng" id="set-fs" min="85" max="130" step="5"></div>
+<div class="card" id="set-acc"><div class="ct">👤 Аккаунт и данные</div>
+  <p class="note">ID: <b style="color:var(--c)" id="set-id"></b> • Роль: <b id="set-role"></b></p>
+  <div class="g2"><button class="btn b-c" onclick="exportMy()">📋 Копия сохранения</button><button class="btn b-g" onclick="importMy()">📥 Загрузить</button></div>
+  <textarea id="set-box" class="in" placeholder="Здесь появится копия сохранения / вставь свою" style="margin-top:8px"></textarea>
+  <button class="btn b-p" onclick="resetMy()">♻️ Сбросить весь прогресс</button></div>
+<div class="card"><div class="ct">ℹ️ О игре</div>
+  <p class="note">Kahalis v35 • <span id="set-srv"></span></p>
+  <button class="btn b-o" onclick="showWelcomeAgain()">👋 Показать приветствие</button></div>`;
+// переносим существующие карточки в настройки
+(function(){
+  const tc=findCard('Тематик'),mc=findCard('Музыкальный Плеер');
+  if(tc){$('set-theme').appendChild(tc);tc.style.margin='8px 0 0';tc.style.border='0';tc.style.background='none';tc.style.boxShadow='none';const ct=tc.querySelector('.ct');if(ct)ct.remove();}
+  if(mc){
+    const v=$('vol');
+    if(v){const p=v.previousElementSibling;if(p&&p.tagName==='P')p.remove();v.remove();}
+    $('set-sound').insertBefore(mc,$('set-sound').children[1]);
+  }
+})();
+$('swg').innerHTML=themes.map(t=>{
+  const c=t[2].c||'#00f0ff',g=t[2].g||'#00ff88';
+  return `<button class="sw" data-th="${t[0]}" title="${t[1]}" style="background:conic-gradient(${c},${g},${c})"></button>`;
+}).join('');
+$('swg').addEventListener('click',e=>{const b=e.target.closest('[data-th]');if(b){setTheme(b.dataset.th);sfx('coin');}});
+$('scr-set').addEventListener('click',e=>{
+  const t=e.target.closest('.tgl');
+  if(!t)return;
+  const k=t.dataset.k;
+  state.set[k]=k==='cmp'?!state.set.cmp:(state.set[k]===false);
+  applySet();save();
+  if(k==='snd'&&state.set.snd)sfx('coin');
+});
+$('set-langsel').addEventListener('change',e=>setLang(e.target.value));
+$('set-vol').addEventListener('input',e=>{state.set.vol=e.target.value/100;});
+$('set-vol').addEventListener('change',()=>{sfx('coin');save();});
+$('set-mvol').addEventListener('input',e=>{state.set.mvol=e.target.value/100;$('bg-audio').volume=state.set.mvol;});
+$('set-mvol').addEventListener('change',save);
+$('set-fs').addEventListener('input',e=>{state.set.fs=+e.target.value;applySet();});
+$('set-fs').addEventListener('change',save);
+function applySet(){
+  const s=state.set;
+  document.body.classList.toggle('nomo',s.mot===false);
+  document.body.classList.toggle('cmp',!!s.cmp);
+  const n=$('neb');if(n)n.style.display=s.neb===false?'none':'';
+  document.body.style.zoom=(s.fs||100)/100;
+  $('bg-audio').volume=s.mvol===undefined?.7:s.mvol;
+  document.querySelectorAll('.tgl').forEach(t=>{const k=t.dataset.k;t.classList.toggle('on',k==='cmp'?!!s.cmp:s[k]!==false);});
+  $('set-vol').value=Math.round(s.vol*100);
+  $('set-mvol').value=Math.round((s.mvol===undefined?.7:s.mvol)*100);
+  $('set-fs').value=s.fs||100;
+  sf('set-fsv',(s.fs||100)+'%');
+  document.querySelectorAll('#swg .sw').forEach(b=>b.classList.toggle('on',b.dataset.th===(state.theme||'default')));
+  const t=themes.find(x=>x[0]===(state.theme||'default'));
+  if(t)sf('set-tn',t[1]);
+  const sel=$('theme-select');if(sel&&sel.value!==(state.theme||'default'))sel.value=state.theme||'default';
+}
+function exportMy(){
+  const t=JSON.stringify(state);
+  $('set-box').value=t;
+  try{navigator.clipboard.writeText(t);showToast("📋 Сохранение скопировано");}catch(e){showToast("Скопируй текст вручную");}
+}
+function importMy(){
+  try{
+    const c=JSON.parse($('set-box').value);
+    if(typeof c!=='object'||!c)throw 0;
+    state=Object.assign({},defaults,c);ensure35();
+    setTheme(state.theme||'default');showToast("📥 Сохранение загружено");save();
+  }catch(e){showToast("❌ Неверный формат");}
+}
+function resetMy(){
+  if(!confirm("Сбросить ВЕСЬ прогресс? Это нельзя отменить."))return;
+  const keep={staffRoles:state.staffRoles,lang:state.lang,set:state.set,seenInbox:state.seenInbox,refFrom:state.refFrom,refSent:state.refSent};
+  state=Object.assign({},defaults,keep,{lastInertiaCheck:Date.now()});
+  ensure35();save();showToast("♻️ Прогресс сброшен");
+}
+function showWelcomeAgain(){state.welcomed=0;showWelcome();}
+// звуки, вибрация, салюты — уважают настройки
+const _b11=burst;burst=function(){if(state.set.fxp===false)return;_b11();};
+const _ft11=floatText;floatText=function(a,b,c,d){if(state.set.fxp===false)return;_ft11(a,b,c,d);};
+const _live11=live;
+live=function(cv,k,g,o){o=o||{};const w=o.when;o.when=()=>state.set.d3!==false&&(!w||w());return _live11(cv,k,g,o);};
+
+// ---------- ОРБИТАЛЬНАЯ СТАНЦИЯ (новый раздел, большой «слив» монет и бонусы) ----------
+const ST=[
+  {k:'ore',n:'🏭 Рудный завод',base:8000,d:l=>`+${l*60} 🪙/мин (копится до 2 ч)`},
+  {k:'lab',n:'🔬 Лаборатория',base:6000,d:l=>`+${l*3}% к опыту`},
+  {k:'yard',n:'🛡 Верфь',base:7000,d:l=>`−${l*2}% урона по вам`},
+  {k:'radar',n:'📡 Радар',base:10000,d:l=>`+${(l*1.5).toFixed(1)}% к доходу`},
+  {k:'bank',n:'🏦 Банк',base:12000,d:l=>`проценты раз в день до ${(l*2000).toLocaleString()} 🪙`}
+];
+const ST_MAX=20;
+function stLvl(k){return(state.station&&state.station[k])||0;}
+const stCost=(b,l)=>Math.floor(b.base*Math.pow(1.38,l));
+function ensure36(){
+  state.station=Object.assign({ore:0,lab:0,yard:0,radar:0,bank:0,acc:0,t:Date.now(),bankDay:''},state.station||{});
+  state.path=state.path||{};state.achv=state.achv||{};
+  state.stats=state.stats||{};
+}
+ensure36();
+function stAccrue(){
+  ensure36();
+  const S=state.station,now=Date.now(),dt=Math.max(0,(now-S.t)/60000);
+  S.t=now;
+  S.acc=Math.min(S.ore*60*120,S.acc+S.ore*60*dt);
+}
+const expCard=findCard('Экспедиции');
+if(expCard)expCard.insertAdjacentHTML('afterend',`
+<div class="card"><div class="ct">🏗 Орбитальная станция <span class="rankb" id="st-sum">0 ур.</span></div>
+  <p class="note">Постройки дают постоянные бонусы — отличное место потратить монеты.</p>
+  <div id="st-list"></div>
+  <div class="g2" style="margin-top:8px"><button class="btn b-g" id="st-collect" onclick="stCollect()">📥 Забрать с завода</button><button class="btn b-c" id="st-bank" onclick="stBank()">🏦 Проценты банка</button></div></div>`);
+$('st-list').addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(b)stUp(b.dataset.st);});
+function stUp(k){
+  ensure36();stAccrue();
+  const b=ST.find(x=>x.k===k),l=stLvl(k);
+  if(!b||l>=ST_MAX){showToast("Максимальный уровень");return;}
+  const c=stCost(b,l);
+  if(state.credits<c){showToast(`Нужно ${c.toLocaleString()} 🪙!`);return;}
+  state.credits-=c;state.station[k]=l+1;
+  showToast(`🏗 ${b.n}: уровень ${l+1}!`);sfx('lvl');addXP(15);save();
+}
+function stCollect(){
+  stAccrue();
+  const g=Math.floor(state.station.acc);
+  if(g<1){showToast("Завод ещё ничего не накопил");return;}
+  state.credits+=g;state.station.acc=0;showToast(`🏭 Завод: +${g.toLocaleString()} 🪙`);save();
+}
+function stBank(){
+  ensure36();
+  const l=stLvl('bank'),d=today();
+  if(!l){showToast("Построй банк");return;}
+  if(state.station.bankDay===d){showToast("Проценты уже получены сегодня");return;}
+  const g=Math.min(Math.floor(state.credits*0.01*l),l*2000);
+  if(g<1){showToast("Слишком мало монет для процентов");return;}
+  state.station.bankDay=d;state.credits+=g;showToast(`🏦 Проценты: +${g.toLocaleString()} 🪙`);save();
+}
+let _stSig='';
+function renderStation(){
+  if(!$('scr-hangar').classList.contains('active'))return;
+  ensure36();stAccrue();
+  const sig=ST.map(b=>stLvl(b.k)).join(',')+'|'+(state.credits>>10);
+  if(sig!==_stSig){
+    _stSig=sig;
+    $('st-list').innerHTML=ST.map(b=>{
+      const l=stLvl(b.k),c=stCost(b,l);
+      return `<div class="stb"><div><b>${b.n} — ур. ${l}/${ST_MAX}</b><small>${l?b.d(l):'не построено'}${l<ST_MAX?' → '+b.d(l+1):''}</small></div><button class="btn ${l>=ST_MAX?'ok':(state.credits>=c?'b-g':'b-o')}" data-st="${b.k}" ${l>=ST_MAX?'disabled':''}>${l>=ST_MAX?'МАКС':c.toLocaleString()+' 🪙'}</button></div>`;
+    }).join('');
+  }
+  sf('st-sum',ST.reduce((a,b)=>a+stLvl(b.k),0)+' ур.');
+  const g=Math.floor(state.station.acc);
+  sf('st-collect',`📥 Завод: ${g.toLocaleString()} 🪙`);
+}
+const _xp11=addXP;
+addXP=function(n){_xp11(Math.max(1,Math.round(n*(1+0.03*stLvl('lab')))));};
+
+// ---------- КОМБО в шахте: быстрые клики дают до +50% ----------
+let _lastMine=0,_combo=0;
+const _mA12=mineAsteroid;
+mineAsteroid=function(){
+  const now=Date.now();
+  _combo=(now-_lastMine<650)?Math.min(25,_combo+1):0;
+  _lastMine=now;
+  const b=state.credits;
+  _mA12();
+  const g=state.credits-b;
+  if(g>0&&_combo>0){
+    state.credits+=Math.floor(g*_combo*0.02);
+    if(_combo%5===0)floatText('🔥 КОМБО x'+_combo,Math.max(8,lx-40),Math.max(80,ly-50),'var(--gold)');
+    save();
+  }
+};
+// счётчики для достижений
+const _se12=startExp;startExp=function(i){const had=state.expd;_se12(i);if(!had&&state.expd){ensure36();state.stats.exp=(state.stats.exp||0)+1;}};
+const _ct12=chooseTower;chooseTower=function(i){_ct12(i);ensure36();if(tower&&tower.floor>1)state.stats.tower=Math.max(state.stats.tower||0,tower.floor-1);};
+
+// ---------- ПУТЬ ПИЛОТА (обучающие задания) и ДОСТИЖЕНИЯ ----------
+const PATH=[
+  {t:'Побури астероид 5 раз',c:()=>state.stats.mine||0,n:5,r:{credits:5000}},
+  {t:'Победи в бою 1 раз',c:()=>state.stats.wins||0,n:1,r:{parts:3}},
+  {t:'Забери ежедневный бонус',c:()=>state.daily.streak||0,n:1,r:{credits:5000,crystals:5}},
+  {t:'Крутани колесо удачи',c:()=>state.wheel.last?1:0,n:1,r:{crystals:10}},
+  {t:'Купи 3-ю видеокарту',c:()=>state.gpus,n:3,r:{credits:10000}},
+  {t:'Улучши системы до 3 уровня',c:()=>state.upgradeLvl,n:3,r:{parts:3,crystals:5}},
+  {t:'Отправь экспедицию',c:()=>state.stats.exp||0,n:1,r:{credits:8000}},
+  {t:'Купи второй корабль',c:()=>state.ownShips.length,n:2,r:{crystals:15}},
+  {t:'Открой вторую галактику',c:()=>state.ownGal.length,n:2,r:{crystals:15}},
+  {t:'Построй здание на станции',c:()=>ST.reduce((a,b)=>a+stLvl(b.k),0),n:1,r:{credits:20000}},
+  {t:'Достигни 5 уровня',c:()=>state.lvl,n:5,r:{crystals:25,parts:5}},
+  {t:'Пригласи друга',c:()=>state.refList.length,n:1,r:{crystals:40,credits:30000}}
+];
+const ACH=[
+  {id:'a1',t:'Новичок: 10 побед',c:()=>state.stats.wins||0,n:10,r:{crystals:15}},
+  {id:'a2',t:'Ветеран: 100 побед',c:()=>state.stats.wins||0,n:100,r:{crystals:80}},
+  {id:'a3',t:'Шахтёр: 500 бурений',c:()=>state.stats.mine||0,n:500,r:{parts:5}},
+  {id:'a4',t:'Шахтёр-легенда: 5 000 бурений',c:()=>state.stats.mine||0,n:5000,r:{crystals:100}},
+  {id:'a5',t:'Игрок: 50 игр в казино',c:()=>state.stats.cas||0,n:50,r:{credits:20000}},
+  {id:'a6',t:'Миллионер: 1 000 000 🪙',c:()=>state.credits,n:1e6,r:{crystals:50}},
+  {id:'a7',t:'Магнат: 50 000 000 🪙',c:()=>state.credits,n:5e7,r:{crystals:300}},
+  {id:'a8',t:'Коллекционер: 10 кораблей',c:()=>state.ownShips.length,n:10,r:{crystals:60}},
+  {id:'a9',t:'Адмирал флота: 30 кораблей',c:()=>state.ownShips.length,n:30,r:{crystals:250}},
+  {id:'a10',t:'Путешественник: 10 галактик',c:()=>state.ownGal.length,n:10,r:{crystals:60}},
+  {id:'a11',t:'Покоритель: 30 галактик',c:()=>state.ownGal.length,n:30,r:{crystals:250}},
+  {id:'a12',t:'Уровень 25',c:()=>state.lvl,n:25,r:{crystals:80}},
+  {id:'a13',t:'Уровень 50',c:()=>state.lvl,n:50,r:{crystals:300}},
+  {id:'a14',t:'Ферма: 10 видеокарт',c:()=>state.gpus,n:10,r:{credits:100000}},
+  {id:'a15',t:'Инженер: системы 25 ур.',c:()=>state.upgradeLvl,n:25,r:{crystals:100}},
+  {id:'a16',t:'Друг людей: 5 друзей',c:()=>state.refList.length,n:5,r:{crystals:80}},
+  {id:'a17',t:'Серия 7 дней',c:()=>state.daily.streak||0,n:7,r:{crystals:30}},
+  {id:'a18',t:'Ловец аномалий: 20',c:()=>state.stats.anom||0,n:20,r:{crystals:40}},
+  {id:'a19',t:'Баттлпасс: 50 уровень',c:()=>bpLevel().l,n:50,r:{crystals:150}},
+  {id:'a20',t:'Баттлпасс: 125 уровень',c:()=>bpLevel().l,n:125,r:{crystals:600}},
+  {id:'a21',t:'Исследователь: 20 экспедиций',c:()=>state.stats.exp||0,n:20,r:{parts:20}},
+  {id:'a22',t:'Покоритель башни: этаж 10',c:()=>state.stats.tower||0,n:10,r:{crystals:80}},
+  {id:'a23',t:'Строитель: станция 25 ур.',c:()=>ST.reduce((a,b)=>a+stLvl(b.k),0),n:25,r:{crystals:100}},
+  {id:'a24',t:'Мастер станции: всё на 20 ур.',c:()=>ST.reduce((a,b)=>a+stLvl(b.k),0),n:100,r:{crystals:500}}
+];
+$('scr-gifts').insertAdjacentHTML('beforeend',`
+<div class="card" data-cat="path"><div class="ct">🧭 Путь пилота <span class="rankb" id="path-n">0/12</span></div>
+  <p class="note">Выполняй шаги по порядку — они научат игре и дадут награды.</p><div class="list" id="path-list" style="max-height:none"></div></div>
+<div class="card" data-cat="ach"><div class="ct">🏆 Достижения <span class="rankb" id="ach-n">0/24</span></div>
+  <div class="list" id="ach-list" style="max-height:480px"></div></div>`);
+$('scr-gifts').querySelector('.cats').insertAdjacentHTML('beforeend','<button class="cat" data-c="path">🧭 Путь пилота</button><button class="cat" data-c="ach">🏆 Достижения</button>');
+$('scr-gifts').querySelectorAll(':scope>[data-cat="path"],:scope>[data-cat="ach"]').forEach(c=>{c.style.display='none';});
+$('path-list').addEventListener('click',e=>{const b=e.target.closest('[data-pt]');if(b)claimPath(+b.dataset.pt);});
+$('ach-list').addEventListener('click',e=>{const b=e.target.closest('[data-ac]');if(b)claimAch(b.dataset.ac);});
+function claimPath(i){
+  ensure36();
+  const p=PATH[i];
+  if(!p||state.path[i]||p.c()<p.n||(i>0&&!state.path[i-1]))return;
+  grantReward(p.r);state.path[i]=1;addXP(20);
+  showToast(`🧭 Шаг ${i+1} выполнен!`);burst();save();
+}
+function claimAch(id){
+  ensure36();
+  const a=ACH.find(x=>x.id===id);
+  if(!a||state.achv[id]||a.c()<a.n)return;
+  grantReward(a.r);state.achv[id]=1;
+  showToast(`🏆 Достижение: ${a.t}`);burst();save();
+}
+let _pSig='',_aSig='';
+function renderMore(){
+  ensure36();
+  const g=$('scr-gifts').classList.contains('active');
+  if(g){
+    const hp=PATH.map((p,i)=>{
+      const have=Math.min(p.c(),p.n),done=state.path[i],lock=i>0&&!state.path[i-1],can=have>=p.n&&!lock;
+      return `<div class="row" style="${lock?'opacity:.45':''}"><div><b>${i+1}. ${p.t}</b><small>${have.toLocaleString()} / ${p.n.toLocaleString()} • ${rewText(p.r)}</small><div class="mini"><i style="width:${have/p.n*100}%"></i></div></div><button class="btn ${done?'ok':'b-g'}" data-pt="${i}" ${(done||!can)?'disabled':''}>${done?'✔':(lock?'🔒':'Забрать')}</button></div>`;
+    }).join('');
+    if(hp!==_pSig){_pSig=hp;$('path-list').innerHTML=hp;}
+    sf('path-n',Object.keys(state.path).length+'/'+PATH.length);
+    const ha=ACH.map(a=>{
+      const have=Math.min(a.c(),a.n),done=state.achv[a.id],can=have>=a.n;
+      return `<div class="row"><div><b>${a.t}</b><small>${have>=1e6?have.toExponential(1):Math.floor(have).toLocaleString()} / ${a.n>=1e6?a.n.toExponential(0):a.n.toLocaleString()} • ${rewText(a.r)}</small><div class="mini"><i style="width:${have/a.n*100}%"></i></div></div><button class="btn ${done?'ok':'b-g'}" data-ac="${a.id}" ${(done||!can)?'disabled':''}>${done?'✔':'Забрать'}</button></div>`;
+    }).join('');
+    if(ha!==_aSig){_aSig=ha;$('ach-list').innerHTML=ha;}
+    sf('ach-n',Object.keys(state.achv).length+'/'+ACH.length);
+  }
+  renderStation();
+  applySet();
+  sf('set-id',userId);sf('set-role',ROLES[curRole()].n);
+  sf('set-srv',API_URL?(_syncOk?'сервер подключён':'подключаюсь к серверу…'):'локальный режим');
+}
+const _ra12=renderAll;
+renderAll=function(){_ra12();try{renderMore();}catch(e){console.error('more',e);}};
+// переключение на «Бонусы» и «Ангар» сразу показывает свежие данные
+const _sw12=switchScreen;
+switchScreen=function(id,b){_sw12(id,b);try{renderMore();}catch(e){}};
+
+// ---------- КОСМИЧЕСКИЕ АНОМАЛИИ: случайные находки на экране ----------
+function schedAnom(first){setTimeout(spawnAnom,first?45000:(90000+rnd()*90000));}
+function spawnAnom(){
+  if(document.hidden||!state.welcomed||$('modal').style.display==='flex'||$('wel').style.display==='flex'){schedAnom(false);return;}
+  const el=document.createElement('button');
+  el.className='anom';
+  el.textContent=['🛰','📦','💫','☄️'][Math.floor(rnd()*4)];
+  el.style.left=(10+rnd()*Math.max(10,innerWidth-84))+'px';
+  el.style.top=(130+rnd()*Math.max(10,innerHeight-330))+'px';
+  document.body.appendChild(el);
+  sfx('alarm');
+  const kill=setTimeout(()=>el.remove(),12000);
+  el.addEventListener('click',()=>{clearTimeout(kill);el.remove();anomReward();});
+  schedAnom(false);
+}
+function anomReward(){
+  ensure36();
+  const r=rnd();
+  if(r<.7){const c=Math.floor((800+state.lvl*80)*(.6+rnd()*.8)*incMul());state.credits+=c;showToast(`🛰 Контейнер: +${c.toLocaleString()} 🪙`);}
+  else if(r<.9){const k=3+Math.floor(rnd()*8);state.crystals+=k;showToast(`🛰 Кристаллы: +${k} 💎`);}
+  else if(r<.98){state.parts+=2;showToast("🛰 Детали: +2 📦");}
+  else{state.crystals+=50;showToast("🛰 РЕДКАЯ НАХОДКА: +50 💎 🎉");burst();}
+  state.stats.anom=(state.stats.anom||0)+1;addXP(5);save();
+}
+schedAnom(true);
+
+// ---------- ОТЧЁТ «ПОКА ТЕБЯ НЕ БЫЛО» ----------
+const _away=Date.now()-(state.lastSeen||Date.now());
+state.lastSeen=Date.now();
+setInterval(()=>{state.lastSeen=Date.now();},20000);
+addEventListener('pagehide',()=>{state.lastSeen=Date.now();try{localStorage.setItem('kahalis_supreme_master_save',JSON.stringify(state));}catch(e){}});
+setTimeout(()=>{
+  if(_away>5*60000&&state.welcomed){
+    farmAccrue();stAccrue();
+    showToast(`🌙 Тебя не было ${Math.floor(_away/60000)} мин. На ферме ${Math.floor(state.farm.acc).toLocaleString()} 🪙, на заводе ${Math.floor(state.station.acc).toLocaleString()} 🪙`);
+  }
+},5000);
+
+renderStores();
+try{applySet();}catch(e){console.error(e);}
 try{init();}catch(e){console.error("init",e);try{updateUI();}catch(x){}}
 </script>
 </body>
