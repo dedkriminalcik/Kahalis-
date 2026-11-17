@@ -17,6 +17,12 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, LabeledPrice, PreCheckoutQuery
 from dotenv import load_dotenv
 
+try:  # твоя старая база (папка database) — необязательно; если не подхватилась, бот всё равно запустится
+    from database.models import init_db
+except Exception as _e:
+    print("ℹ️ database.models не подключена:", _e)
+    init_db = None
+
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = 6188701923
@@ -213,7 +219,7 @@ def h_sync(u, b):
         save()
     return {
         "ok": True, "role": u["role"], "banned": u["banned"], "announce": DB["announce"],
-        "event": DB["event"], "refs": u["refs"], "inbox": u["inbox"][:50],
+        "event": DB["event"], "refs": u["refs"], "inbox": u["inbox"][:50], "clan": clan_brief(u),
         "serverTime": int(time.time() * 1000),
     }
 
@@ -533,9 +539,218 @@ def h_admin(u, b):
     return fail("Неизвестное действие")
 
 
+# ---------------------------------------------------------------- кланы
+CLAN_COST = 50000
+
+
+def clan_level(xp):
+    return min(20, int((xp / 500) ** 0.5) + 1)
+
+
+def clan_cap(c):
+    return min(50, 20 + clan_level(c["xp"]) * 2)
+
+
+def clan_brief(u):
+    c = DB.get("clans", {}).get(u.get("clan", ""))
+    if not c or u["id"] not in c["members"]:
+        u["clan"] = ""
+        return None
+    return {
+        "id": c["id"], "name": c["name"], "tag": c["tag"],
+        "level": clan_level(c["xp"]), "role": c["members"][u["id"]]["role"],
+    }
+
+
+def clan_full(c, uid):
+    lv = clan_level(c["xp"])
+    mem = []
+    for mid, m in c["members"].items():
+        mu = DB["users"].get(mid, {})
+        mem.append({
+            "id": mid, "name": mu.get("name", "?"), "role": m["role"],
+            "contrib": m["contrib"], "lvl": mu.get("lvl", 1), "seen": mu.get("seen", 0),
+        })
+    order = {"leader": 0, "officer": 1, "member": 2}
+    mem.sort(key=lambda x: (order.get(x["role"], 3), -x["contrib"]))
+    return {
+        "id": c["id"], "name": c["name"], "tag": c["tag"], "desc": c["desc"], "motd": c["motd"],
+        "open": c["open"], "minLvl": c["minLvl"], "level": lv, "xp": c["xp"],
+        "xpCur": int(500 * (lv - 1) ** 2), "xpNext": int(500 * lv ** 2), "bank": c["bank"],
+        "cap": clan_cap(c), "members": mem, "chat": c["chat"][-40:], "me": c["members"][uid]["role"],
+    }
+
+
+def h_clan(u, b):
+    a = str(b.get("a") or "")
+    clans = DB.setdefault("clans", {})
+    cid = u.get("clan", "")
+    c = clans.get(cid) if cid else None
+    if c and u["id"] not in c["members"]:
+        c = None
+        u["clan"] = ""
+    now = int(time.time() * 1000)
+
+    def fail(e):
+        return {"ok": False, "error": e}
+
+    if a == "list":
+        q = str(b.get("q") or "").strip().lower()
+        lst = sorted(clans.values(), key=lambda x: x["xp"], reverse=True)
+        out = []
+        for x in lst:
+            if q and q not in x["name"].lower() and q not in x["tag"].lower():
+                continue
+            out.append({
+                "id": x["id"], "name": x["name"], "tag": x["tag"], "level": clan_level(x["xp"]),
+                "members": len(x["members"]), "cap": clan_cap(x), "open": x["open"],
+                "minLvl": x["minLvl"], "desc": x["desc"],
+            })
+            if len(out) >= 30:
+                break
+        return {"ok": True, "list": out}
+
+    if a == "info":
+        return {"ok": True, "clan": clan_full(c, u["id"]) if c else None}
+
+    if a == "create":
+        if c:
+            return fail("Ты уже в клане")
+        name = " ".join(str(b.get("name") or "").split())
+        tag = str(b.get("tag") or "").strip().upper()
+        if not (3 <= len(name) <= 16) or not all(ch.isalnum() or ch in " _-" for ch in name):
+            return fail("Название: 3–16 букв, цифр, пробел, _ или -")
+        if not (2 <= len(tag) <= 4) or not tag.isalnum():
+            return fail("Тег: 2–4 буквы или цифры")
+        if u["credits"] < CLAN_COST:
+            return fail("Нужно 50,000 монет")
+        for x in clans.values():
+            if x["name"].lower() == name.lower() or x["tag"] == tag:
+                return fail("Такое название или тег уже занят")
+        nid = secrets.token_hex(4)
+        clans[nid] = {
+            "id": nid, "name": name, "tag": tag, "desc": str(b.get("desc") or "")[:80], "motd": "",
+            "open": bool(b.get("open", True)), "minLvl": max(1, min(500, int(float(b.get("minLvl") or 1)))),
+            "created": now, "xp": 0, "bank": 0, "chat": [],
+            "members": {u["id"]: {"role": "leader", "contrib": 0, "joined": now}},
+        }
+        u["clan"] = nid
+        u["credits"] = max(0, u["credits"] - CLAN_COST)
+        log(u["name"], f"создал клан [{tag}] {name}")
+        save()
+        return {"ok": True, "clan": clan_full(clans[nid], u["id"])}
+
+    if a == "join":
+        if c:
+            return fail("Ты уже в клане")
+        t = clans.get(str(b.get("id") or ""))
+        if not t:
+            return fail("Клан не найден")
+        if not t["open"]:
+            return fail("Клан закрыт для вступления")
+        if u["lvl"] < t["minLvl"]:
+            return fail(f"Нужен {t['minLvl']} уровень")
+        if len(t["members"]) >= clan_cap(t):
+            return fail("В клане нет мест")
+        t["members"][u["id"]] = {"role": "member", "contrib": 0, "joined": now}
+        u["clan"] = t["id"]
+        save()
+        return {"ok": True, "clan": clan_full(t, u["id"])}
+
+    if not c:
+        return fail("Ты не в клане")
+    me = c["members"][u["id"]]["role"]
+
+    if a == "leave":
+        if me == "leader":
+            if len(c["members"]) > 1:
+                return fail("Сначала передай лидерство или распусти клан")
+            clans.pop(c["id"], None)
+        else:
+            c["members"].pop(u["id"], None)
+        u["clan"] = ""
+        save()
+        return {"ok": True}
+
+    if a == "donate":
+        try:
+            amt = int(float(b.get("amount")))
+        except Exception:
+            amt = 0
+        if amt <= 0 or amt > u["credits"]:
+            return fail("Неверная сумма")
+        u["credits"] -= amt
+        c["bank"] += amt
+        c["xp"] += amt // 100
+        c["members"][u["id"]]["contrib"] += amt
+        log(u["name"], f"клан [{c['tag']}] +{amt} в казну")
+        save()
+        return {"ok": True}
+
+    if a == "chat":
+        text = str(b.get("text") or "").strip()[:200]
+        if not text:
+            return fail("Пустое сообщение")
+        if now - u.get("lastChat", 0) < 1500:
+            return fail("Слишком часто")
+        u["lastChat"] = now
+        c["chat"].append({"u": u["id"], "n": u["name"], "t": now, "x": text})
+        if len(c["chat"]) > 100:
+            c["chat"].pop(0)
+        save()
+        return {"ok": True}
+
+    if a == "manage":
+        op = str(b.get("op") or "")
+        to = str(b.get("to") or "")
+        tm = c["members"].get(to)
+        if op == "motd":
+            if me not in ("leader", "officer"):
+                return fail("Нет прав")
+            c["motd"] = str(b.get("text") or "")[:120]
+            save()
+            return {"ok": True}
+        if op == "disband":
+            if me != "leader":
+                return fail("Только лидер")
+            for mid in list(c["members"]):
+                if mid in DB["users"]:
+                    DB["users"][mid]["clan"] = ""
+            clans.pop(c["id"], None)
+            log(u["name"], f"распустил клан [{c['tag']}]")
+            save()
+            return {"ok": True}
+        if not tm or to == u["id"]:
+            return fail("Игрок не найден")
+        if op == "kick":
+            if me == "leader" and tm["role"] != "leader" or me == "officer" and tm["role"] == "member":
+                c["members"].pop(to, None)
+                if to in DB["users"]:
+                    DB["users"][to]["clan"] = ""
+                    give(to, "msg", 0, f"🚪 Тебя исключили из клана [{c['tag']}]")
+                save()
+                return {"ok": True}
+            return fail("Нет прав")
+        if me != "leader":
+            return fail("Только лидер")
+        if op == "promote" and tm["role"] == "member":
+            tm["role"] = "officer"
+        elif op == "demote" and tm["role"] == "officer":
+            tm["role"] = "member"
+        elif op == "transfer":
+            tm["role"] = "leader"
+            c["members"][u["id"]]["role"] = "officer"
+        else:
+            return fail("Неверное действие")
+        save()
+        return {"ok": True}
+
+    return fail("Неизвестное действие")
+
+
 HANDLERS = {
     "sync": h_sync, "ack": h_ack, "top": h_top, "transfer": h_transfer,
-    "promo": h_promo, "invoice": h_invoice, "admin": h_admin,
+    "promo": h_promo, "invoice": h_invoice, "admin": h_admin, "clan": h_clan,
 }
 
 
@@ -748,6 +963,11 @@ async def main():
             keyboard.insert(0, [InlineKeyboardButton(text="⚙️ Консоль владельца", callback_data="owner_console")])
         await call.message.edit_text("🌌 **Космический терминал KAHALIS:**", reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard), parse_mode="Markdown")
 
+    if init_db:
+        try:
+            await init_db()
+        except Exception as e:
+            print("ℹ️ init_db не выполнен:", e)
     await start_api(bot)  # запускаем API игры рядом с ботом
     print("🚀 Бот запущен со звёздами!")
     await dp.start_polling(bot)
