@@ -17,12 +17,6 @@ from aiogram import Bot, Dispatcher, F
 from aiogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton, WebAppInfo, LabeledPrice, PreCheckoutQuery
 from dotenv import load_dotenv
 
-try:  # твоя старая база (папка database) — необязательно; если не подхватилась, бот всё равно запустится
-    from database.models import init_db
-except Exception as _e:
-    print("ℹ️ database.models не подключена:", _e)
-    init_db = None
-
 load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 OWNER_ID = 6188701923
@@ -963,11 +957,7 @@ async def main():
             keyboard.insert(0, [InlineKeyboardButton(text="⚙️ Консоль владельца", callback_data="owner_console")])
         await call.message.edit_text("🌌 **Космический терминал KAHALIS:**", reply_markup=InlineKeyboardMarkup(inline_keyboard=keyboard), parse_mode="Markdown")
 
-    if init_db:
-        try:
-            await init_db()
-        except Exception as e:
-            print("ℹ️ init_db не выполнен:", e)
+    print("KAHALIS main.py v37 — запущен (без SQLAlchemy)")
     await start_api(bot)  # запускаем API игры рядом с ботом
     print("🚀 Бот запущен со звёздами!")
     await dp.start_polling(bot)
